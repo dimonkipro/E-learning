@@ -1,9 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { toast } from "react-toastify";
 
 const API_URL = "http://localhost:5000/api";
-
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
@@ -28,10 +26,8 @@ export const signupUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_URL}/user/signup`, userData);
-      toast.success("Account created successfully");
       return response.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Signup failed");
       return rejectWithValue(error.response?.data?.message || "Signup failed");
     }
   }
@@ -45,10 +41,8 @@ export const verifyEmail = createAsyncThunk(
         code,
       });
 
-      toast.success("Email verified successfully");
       return response.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Verification failed");
       return rejectWithValue(
         error.response?.data?.message || "Verification failed"
       );
@@ -83,6 +77,7 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -95,6 +90,7 @@ const authSlice = createSlice({
       .addCase(signupUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload.user;
+        state.error = null;
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.isLoading = false;

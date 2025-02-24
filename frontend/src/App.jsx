@@ -6,6 +6,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import { ToastContainer } from "react-toastify";
+import Signup from "./pages/Signup";
+import VerifyEmail from "./pages/VerifyEmail";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
 
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/profile" element={<Profile />} />
 
         {/* ------------------AdminRoute---------------------------- */}
@@ -48,6 +52,22 @@ function App() {
         >
           {/* <Route index element={<InstructorDashboard />} />
           <Route path="dashboard" element={<InstructorDashboard />} /> */}
+        </Route>
+
+        {/* ------------------LearnerRoute---------------------------- */}
+
+        <Route
+          path="/learner"
+          // element={
+          //   <ProtectedRoute>
+          //     <LearnerRoute>
+          //       <AdminLayout />
+          //     </LearnerRoute>
+          //   </ProtectedRoute>
+          // }
+        >
+          {/* <Route index element={<LearnerDashboard />} />
+          <Route path="dashboard" element={<LearnerDashboard />} /> */}
         </Route>
       </Routes>
     </>

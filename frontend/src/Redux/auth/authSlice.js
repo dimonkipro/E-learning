@@ -50,6 +50,21 @@ export const verifyEmail = createAsyncThunk(
   }
 );
 
+export const forgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
+  async ({ email }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_URL}/user/forgot-password`, {email});
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Verification failed"
+      );
+    }
+  }
+);
+
 export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
   localStorage.removeItem("token");
   return null;
@@ -93,6 +108,18 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(signupUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(forgotPassword.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(forgotPassword.fulfilled, (state) => {
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })

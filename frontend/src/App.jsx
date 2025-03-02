@@ -8,6 +8,7 @@ import Profile from "./pages/Profile";
 import { ToastContainer } from "react-toastify";
 import Signup from "./pages/Signup";
 import VerifyEmail from "./pages/VerifyEmail";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/profile" element={<Profile />} />
 
         {/* ------------------AdminRoute---------------------------- */}

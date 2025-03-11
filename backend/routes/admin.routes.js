@@ -5,6 +5,7 @@ import {
   deleteUser,
   editUserRole,
   getAllUsers,
+  verifyUser,
 } from "../controllers/user.controller.js";
 
 const router = express.Router();
@@ -18,4 +19,5 @@ router.post("/course/new", uploadImage("courses_cover").single("image"), addCour
 router.get("/users", getAllUsers);
 router.delete("/users/:id", deleteUser);
 router.put("/users/:id/role", editUserRole);
+router.put("/users/:id/verify", verifyUser);
 export default router;

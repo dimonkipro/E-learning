@@ -52,3 +52,21 @@ export const editUserRole = async (req, res) => {
     res.status(500).send({ msg: "Internal Server Error" });
   }
 };
+export const verifyUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { isVerified: true }, // Set user as verified
+      { new: true }
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    res.json({ msg: "User verified successfully", user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ msg: "Internal Server Error" });
+  }
+};

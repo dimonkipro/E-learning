@@ -10,22 +10,27 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading, error } = useSelector((state) => state.auth);
+  const { isLoading } = useSelector((state) => state.auth);
   const [notification, setNotification] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(loginUser({ email, password })).unwrap();
-      // Set notification to trigger the toast
+      const response = await dispatch(loginUser({ email, password })).unwrap(); // Get returned user data
       setNotification({ type: "success", message: "Logged in successfully" });
-      // Redirect to the profile page after login
-      navigate("/profile");
+
+      // Navigate based on role
+      if (response.user.role === "admin") {
+        navigate("/admin");
+      } else if (response.user.role === "instructor") {
+        navigate("/instructor");
+      } else {
+        navigate("/profile");
+      }
     } catch (error) {
       setNotification({ type: "error", message: error });
     }
   };
-
   return (
     <div className="container col-8 rounded-4 p-4 position-absolute top-50 start-50 translate-middle shadow">
       <div className="row  p-4">
@@ -91,7 +96,7 @@ const Login = () => {
         </div>
       </div>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {/* {error && <p style={{ color: "red" }}>{error}</p>} */}
       {/* Render the notification component when set */}
       {notification && (
         <Notifications

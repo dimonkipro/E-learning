@@ -1,0 +1,4 @@
+.custom-bg-warning {
+    background-image: linear-gradient(90deg, #997404 0%, #FFC107 0%, #997404 51%) !important;
+    color: black;
+}

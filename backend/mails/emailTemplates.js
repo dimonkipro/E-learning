@@ -98,3 +98,8 @@ export const WELCOME_EMAIL_TEMPLATE = `
 <p>Hello {name},</p>
    <p>Welcome to E-ghazala! We're glad to have you on board.</p>
 `;
+
+export const SUCCESS_ENROLLMENT_EMAIL_TEMPLATE = `
+<p>Hello {name},</p>
+   <p>Your subscription to the course {courseTitle} is {status}.</p>
+`;

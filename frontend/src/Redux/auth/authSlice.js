@@ -14,6 +14,7 @@ export const loginUser = createAsyncThunk(
 
       // Save token in localStorage
       localStorage.setItem("token", response.data.token);
+      window.location.reload();
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Login failed");
@@ -87,7 +88,6 @@ export const checkAuth = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      localStorage.removeItem("token");
       return rejectWithValue(
         error.response?.data?.message || "Authentication check failed"
       );

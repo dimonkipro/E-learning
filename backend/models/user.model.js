@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
     img: { type: String },
     role: {
       type: String,
-      enum: ["instructor", "user", "admin"],
+      enum: ["instructor", "user", "admin", "learner"],
       default: "user",
     },
     lastLogin: {
@@ -41,9 +41,6 @@ const userSchema = new mongoose.Schema(
     isEmailVerified: {
       type: Boolean,
       default: false,
-    },
-    inscriptions: {
-      type: [String],
     },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,

@@ -119,7 +119,7 @@ const Courses = () => {
         ) : null}
       </div>
 
-      {/* Modal for Adding a New Category */}
+      {/* Modal for Adding a Course */}
       <div
         className={`modal ${showModal ? "show" : ""}`}
         style={{ display: showModal ? "block" : "none" }}

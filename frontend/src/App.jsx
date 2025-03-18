@@ -20,7 +20,12 @@ import Users from "./pages/admin/Users";
 import Courses from "./components/Courses";
 import CoursePage from "./pages/CoursePage";
 import EditCoursePage from "./pages/admin/EditCoursePage";
-
+import EnrollmentList from "./pages/admin/EnrollmentList";
+import ApplyEnrollment from "./pages/ApplyEnrollment";
+import LearnerDashboard from "./pages/learner/LearnerDashboard";
+import Inscriptions from "./pages/learner/Inscriptions";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
 
 function App() {
   const dispatch = useDispatch();
@@ -38,11 +43,17 @@ function App() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  const hideHeader =
+    user?.role === "admin" ||
+    user?.role === "instructor" ||
+    user?.role === "learner";
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
   return (
     <>
+    {!hideHeader ? <Header /> : <Sidebar /> }
       <ToastContainer />
       <Routes>
         {/* ------------------PublicRoute---------------------------- */}
@@ -61,8 +72,20 @@ function App() {
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
-          <Route path="/profile" element={<Profile />} />
+        {/* ------------------UserRoute---------------------------- */}
+
+        <Route element={<ProtectedRoute allowedRoles={["user", "learner"]} />}>
+          <Route
+            path="/profile"
+            element={
+              user?.role === "user" ? (
+                <Profile />
+              ) : (
+                <Navigate to="/learner" replace />
+              )
+            }
+          />
+          <Route path="/course/:courseId/apply" element={<ApplyEnrollment />} />
         </Route>
 
         {/* ------------------AdminRoute---------------------------- */}
@@ -74,6 +97,7 @@ function App() {
             <Route path="users" element={<Users />} />
             <Route path="courses" element={<Courses />} />
             <Route path="edit-course/:courseId" element={<EditCoursePage />} />
+            <Route path="enrollments" element={<EnrollmentList />} />
           </Route>
         </Route>
 
@@ -87,20 +111,16 @@ function App() {
         </Route>
 
         {/* ------------------LearnerRoute---------------------------- */}
-
-        <Route
-          path="/learner"
-          // element={
-          //   <ProtectedRoute>
-          //     <LearnerRoute>
-          //       <AdminLayout />
-          //     </LearnerRoute>
-          //   </ProtectedRoute>
-          // }
-        >
-          {/* <Route index element={<LearnerDashboard />} />
-          <Route path="dashboard" element={<LearnerDashboard />} /> */}
+        <Route element={<ProtectedRoute allowedRoles={["learner"]} />}>
+          <Route path="/learner" element={<AdminLayout />}>
+            <Route index element={<LearnerDashboard />} />
+            <Route path="dashboard" element={<LearnerDashboard />} />
+            <Route path="my-courses" element={<Inscriptions />} />
+            <Route path="courses" element={<Courses />} />
+          </Route>
         </Route>
+        {/* ------------------ErrorRoute---------------------------- */}
+
         <Route
           path="*"
           element={

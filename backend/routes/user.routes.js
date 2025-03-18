@@ -30,7 +30,7 @@ router.post("/user/reset-password/:token", resetPassword);
 // ------------------CourseRoutes----------------------------
 
 router.get("/course/all", getAllCourses);
-router.get("/course/:courseId", getCourseById);
+router.get("/courses/:courseId", getCourseById);
 router.get("/courses/category/:categoryId", getCoursesByCategory);
 router.get("/category/all", getAllCategories);
 

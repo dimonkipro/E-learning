@@ -1,34 +1,23 @@
 import { useState } from "react";
-import Notifications from "../components/Notifications";
 import { loginUser } from "../redux/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import loginImage from "../assets/login.jpg";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { isLoading } = useSelector((state) => state.auth);
-  const [notification, setNotification] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await dispatch(loginUser({ email, password })).unwrap(); // Get returned user data
-      setNotification({ type: "success", message: "Logged in successfully" });
-
-      // Navigate based on role
-      if (response.user.role === "admin") {
-        navigate("/admin");
-      } else if (response.user.role === "instructor") {
-        navigate("/instructor");
-      } else {
-        navigate("/profile");
-      }
+      await dispatch(loginUser({ email, password })).unwrap(); // Get returned user data
+      toast.success("Logged in successfully");
     } catch (error) {
-      setNotification({ type: "error", message: error });
+      toast.error(error);
     }
   };
   return (
@@ -96,14 +85,6 @@ const Login = () => {
         </div>
       </div>
 
-      {/* {error && <p style={{ color: "red" }}>{error}</p>} */}
-      {/* Render the notification component when set */}
-      {notification && (
-        <Notifications
-          type={notification.type}
-          message={notification.message}
-        />
-      )}
     </div>
   );
 };

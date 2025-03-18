@@ -8,12 +8,16 @@ import {
   checkAuth,
 } from "../controllers/auth.controller.js";
 import { verifyToken } from "../middleware/verifyToken.js";
+import isLearner from "../middleware/isLearner.js";
+
 import {
   getAllCategories,
   getAllCourses,
   getCourseById,
   getCoursesByCategory,
 } from "../controllers/course.controller.js";
+import { createInscription, getUserInscriptions } from "../controllers/enrollment.controller.js";
+import isVerified from "../middleware/isVerified.js";
 
 const router = express.Router();
 
@@ -33,5 +37,21 @@ router.get("/course/all", getAllCourses);
 router.get("/courses/:courseId", getCourseById);
 router.get("/courses/category/:categoryId", getCoursesByCategory);
 router.get("/category/all", getAllCategories);
+
+router.get(
+  "/inscriptions/me",
+  verifyToken,
+  isVerified,
+  isLearner,
+  getUserInscriptions
+);
+// ------------------EnrollmentRoutes----------------------------
+
+router.post(
+  "/inscription/new/:courseId",
+  verifyToken,
+  isVerified,
+  createInscription
+);
 
 export default router;

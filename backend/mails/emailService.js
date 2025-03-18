@@ -2,6 +2,7 @@ import { transporter } from "./nodemailer.config.js";
 import {
   PASSWORD_RESET_REQUEST_TEMPLATE,
   PASSWORD_RESET_SUCCESS_TEMPLATE,
+  SUCCESS_ENROLLMENT_EMAIL_TEMPLATE,
   VERIFICATION_EMAIL_TEMPLATE,
   WELCOME_EMAIL_TEMPLATE,
 } from "./emailTemplates.js";
@@ -76,5 +77,24 @@ export const sendResetSuccessEmail = async (email) => {
   } catch (error) {
     console.error("Error sending password reset success email", error);
     throw new Error(`Error sending password reset success email: ${error}`);
+  }
+};
+
+export const sendSuccessEnrollment = async (email, name, courseTitle, status) => {
+  try {
+    const html = SUCCESS_ENROLLMENT_EMAIL_TEMPLATE.replace("{name}", name)
+      .replace("{courseTitle}", courseTitle)
+      .replace("{status}", status);
+
+    const info = await transporter.sendMail({
+      from: sender,
+      to: email,
+      subject: "Inscription au formation validée",
+      html,
+    });
+    console.log("Enrollment approvement Email sent successfully", info.envelope);
+  } catch (error) {
+    console.error("Error sending enrollment approvement email", error);
+    throw new Error(`Error sending enrollment approvement email: ${error}`);
   }
 };

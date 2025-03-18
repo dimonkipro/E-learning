@@ -4,7 +4,7 @@ import userReducers from "../redux/auth/userSlice";
 import notificationReducer from "../redux/notifications/notificationSlice";
 import categoryReducer from "../redux/auth/categorySlice";
 import courseReducer from "../redux/auth/courseSlice";
-
+import enrollmentReducer from "../redux/auth/enrollmentSlice";
 const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -12,6 +12,7 @@ const store = configureStore({
     users: userReducers,
     categories: categoryReducer,
     courses: courseReducer,
+    enrollments: enrollmentReducer,
   },
 });
 

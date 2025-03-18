@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-import { Category } from "./Category.model.js";
-import { User } from "./user.model.js";
 
 const courseSchema = new mongoose.Schema(
   {
@@ -20,7 +18,7 @@ const courseSchema = new mongoose.Schema(
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: Category,
+      ref: "Category",
     },
     description: {
       type: String,
@@ -40,7 +38,7 @@ const courseSchema = new mongoose.Schema(
     },
     instructor: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: User,
+      ref: "User",
       required: true,
     },
     price: {
@@ -55,7 +53,7 @@ const courseSchema = new mongoose.Schema(
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: User,
+      ref: "User",
       required: true,
     },
     createdAt: {

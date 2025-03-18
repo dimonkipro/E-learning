@@ -1,0 +1,252 @@
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { createInscription } from "../redux/auth/enrollmentSlice";
+import { useParams } from "react-router-dom";
+import { clearCurrentCourse, fetchCourseById } from "../redux/auth/courseSlice";
+
+const ApplyEnrollment = () => {
+  const dispatch = useDispatch();
+  const { courseId } = useParams();
+
+  const { user } = useSelector((state) => state.auth);
+  const { loading } = useSelector((state) => state.enrollments);
+  const { currentCourse } = useSelector((state) => state.courses);
+
+  useEffect(() => {
+    dispatch(fetchCourseById(courseId));
+     return () => {
+          dispatch(clearCurrentCourse());
+        };
+  }, [dispatch, courseId]);
+
+  const [formData, setFormData] = useState({
+    name: user.name,
+    email: user.email,
+    cin: user.cin,
+    tel: user.tel || "",
+    paymentMethod: "cash",
+    motivation: "",
+  });
+
+  // Handle change for fields that are editable
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(createInscription({ courseId, formData }));
+  };
+
+  const getLevelBadgeClass = (level) => {
+    switch (level) {
+      case "beginner":
+        return "bg-success";
+      case "intermediate":
+        return "bg-info";
+      case "advanced":
+        return "custom-bg-warning";
+      case "expert":
+        return "bg-danger";
+      default:
+        return "bg-secondary";
+    }
+  };
+
+  return (
+    <div className="col-12">
+      {/* Hero */}
+      <div className="col-12 custom-bg-warning">
+        <div className="col-xl-7 mb-5 mb-xl-0">
+          <div className="p-3">
+            <span className="d-inline-block bg-light small rounded-3 px-3 py-2">
+              Certificat obtenue à la fin de la formation 🤩
+            </span>
+
+            <p className="m-3 lh-base display-1" style={{ fontWeight: "400" }}>
+              {currentCourse?.title}
+            </p>
+            <h4 className=" m-5 fw-light">{currentCourse?.description}</h4>
+            <div className="d-flex flex-wrap d-block d-md-none mt-4">
+              <span
+                className={`badge ${getLevelBadgeClass(
+                  currentCourse?.level
+                )} rounded-pill p-2 me-2 mt-3`}
+              >
+                Niveau: {currentCourse?.level}
+              </span>
+              <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
+                Formateur: {currentCourse?.instructor?.name}
+              </span>
+              <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
+                Categorie: {currentCourse?.category?.name}
+              </span>
+              <span
+                className="badge rounded-pill p-2 mt-3"
+                style={{ backgroundColor: "#28c76f" }}
+              >
+                Prix: {currentCourse?.price} TND
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side Fixed Card */}
+      <div
+        className="col-3 position-fixed end-0 d-none d-md-block d-lg-block me-2"
+        style={{ top: "15vh" }}
+      >
+        <div className="card text-center shadow">
+          <div className="d-flex position-relative">
+            <span
+              className="position-absolute top-0 start-0 badge rounded-pill 
+                      text-bg-secondary m-2 shadow opacity-75 p-2"
+            >
+              {currentCourse?.category.name}
+            </span>
+            <img
+              src={`http://localhost:5000/${currentCourse?.image.replace(
+                /\\/g,
+                "/"
+              )}`}
+              className="card-img-top object-fit-cover"
+              alt="..."
+            />
+            <p className="card-text">
+              <span
+                className={`badge ${getLevelBadgeClass(
+                  currentCourse?.level
+                )} text-white position-absolute bottom-0 end-0 m-2 shadow`}
+              >
+                {currentCourse?.level}
+              </span>
+            </p>
+          </div>
+
+          <div className="card-body">
+            <p className="card-title fw-bold">{currentCourse?.title}</p>
+
+            <p className="card-text">{currentCourse?.description}</p>
+
+            <div className="d-flex justify-content-between">
+              <p className="card-text bg-body-secondary rounded-4 p-1 m-0">
+                {currentCourse?.price} TND
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Apply Form */}
+      <div className="container col-10 col-md-5 mt-5">
+        <h1 className=" text-center">Demande d&apos;inscription</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="row g-2 mb-3">
+            {/* Name Field */}
+            <div className="col-md">
+              <div className="col-md form-floating">
+                <input
+                  type="text"
+                  className="form-control rounded-5"
+                  name="name"
+                  value={formData.name}
+                  disabled
+                />
+                <label className="form-label">Nom complet</label>
+              </div>
+            </div>
+
+            {/* CIN Field */}
+            <div className="col-md">
+              <div className="col-md form-floating">
+                <input
+                  type="text"
+                  className="form-control rounded-5"
+                  name="cin"
+                  value={user?.cin}
+                  disabled
+                />
+                <label className="form-label">N° carte d&apos;identité</label>
+              </div>
+            </div>
+          </div>
+
+          {/* Email Field */}
+          <div className="form-floating mb-3">
+            <input
+              type="email"
+              className="form-control rounded-5"
+              name="email"
+              value={formData.email}
+              disabled
+            />
+            <label className="form-label">Email</label>
+          </div>
+
+          <div className="row g-2 mb-3">
+            {/* Phone Field */}
+            <div className="col-md">
+              <div className="form-floating">
+                <input
+                  type="text"
+                  className="form-control rounded-5 focus-ring focus-ring-warning border"
+                  name="tel"
+                  value={formData.tel}
+                  onChange={handleChange}
+                  required
+                />
+                <label className="form-label">N° téléphone</label>
+              </div>
+            </div>
+
+            {/* Payment Field */}
+            <div className="col-md">
+              <div className="form-floating">
+                <select
+                  name="paymentMethod"
+                  className="form-select mb-2 focus-ring focus-ring-warning border rounded-5"
+                  value={formData.paymentMethod}
+                  onChange={handleChange}
+                >
+                  <option value="cash">Espèces</option>
+                  <option value="Virement bancaire">Virement bancaire</option>
+                </select>
+                <label className="form-label">Méthode de paiement</label>
+              </div>
+            </div>
+          </div>
+
+          {/* Motivation Field */}
+          <div className="form-floating mb-3">
+            <textarea
+              value={formData.motivation}
+              id="motivation"
+              onChange={(e) =>
+                setFormData({ ...formData, motivation: e.target.value })
+              }
+              className="form-control  border rounded focus-ring focus-ring-warning border"
+            />
+            <label htmlFor="motivation" className="form-label">
+              Motivation Letter
+            </label>
+          </div>
+
+          {/* Button */}
+          <div className="d-grid col-10 mx-auto my-4">
+            <button
+              type="submit"
+              className="btn btn-warning rounded-5 p-2"
+              disabled={loading || !user.isVerified}
+            >
+              {loading ? "Envoi en cours..." : "Envoyer la demande"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default ApplyEnrollment;

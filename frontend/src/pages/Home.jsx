@@ -3,22 +3,6 @@ const Home = () => {
   return (
     <div className="container">
       <h1>Home Page</h1>
-      <a className="btn" href="/login">
-        Login
-      </a>
-      <a className="btn" href="/signup">
-        SignUp
-      </a>
-      <a className="btn" href="/admin">
-        Admin
-      </a>
-      <a className="btn" href="/profile">
-        Profile
-      </a>
-      <a className="btn" href="/courses">
-        Courses
-      </a>
-
       <div className="row">
         <div className="col-md-7">
           <h2>
@@ -32,7 +16,7 @@ const Home = () => {
         </div>
 
         <div className="col-md-5">
-          <img src={image} alt="" />
+          <img src={image} alt="..." />
         </div>
       </div>
 

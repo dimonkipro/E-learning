@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCourseById, clearCurrentCourse } from "../redux/auth/courseSlice";
+import { toast } from "react-toastify";
 
 const CoursePage = () => {
   const theme = localStorage.getItem("theme");
@@ -41,14 +42,11 @@ const CoursePage = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="mt-4 mb-4">
+    <div className="mb-5">
       {currentCourse && (
         <>
           {/* Hero */}
-          <div
-            className="col-12 custom-bg-warning"
-            style={{ minHeight: "50vh" }}
-          >
+          <div className="col-12 custom-bg-warning">
             <div className="col-xl-7 mb-5 mb-xl-0">
               <div className="p-3">
                 <span className="d-inline-block bg-light small rounded-3 px-3 py-2">
@@ -88,7 +86,7 @@ const CoursePage = () => {
           </div>
 
           {/* Left Side Container */}
-          <div className="container col-12">
+          <div className="container col-12 ">
             {/* Details Card */}
             <div className="col-12 col-md-7 mt-5">
               <div className="card-body">
@@ -148,12 +146,11 @@ const CoursePage = () => {
                 <div id="trainer">
                   <h3 className="m-4">Formateur</h3>
                   {/* trainer Card */}
-                  <div className="card container col-6 text-center shadow">
-                    <div className="card-header bg-body">
+                  <div className="card col-6 col-lg-4 text-center shadow">
+                    <div className="d-flex position-relative">
                       <img
                         src="https://placehold.co/400"
-                        className="rounded-circle mx-auto d-block"
-                        style={{ width: "10rem" }}
+                        className="rounded-circle card-img-top object-fit-cover"
                         alt="..."
                       />
                     </div>
@@ -170,82 +167,124 @@ const CoursePage = () => {
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Right Side Fixed Card */}
-          <div
-            className="col-3 position-fixed end-0 d-none d-md-block d-lg-block me-2"
-            style={{ top: "15vh" }}
-          >
-            <div className="card text-center shadow">
-              <div className="d-flex position-relative">
-                <span
-                  className="position-absolute top-0 start-0 badge rounded-pill 
-                      text-bg-secondary m-2 shadow opacity-75 p-2"
-                >
-                  {currentCourse.category.name}
-                </span>
-                <img
-                  src={`http://localhost:5000/${currentCourse.image.replace(
-                    /\\/g,
-                    "/"
-                  )}`}
-                  className="card-img-top object-fit-cover"
-                  alt="..."
-                />
-                <p className="card-text">
+            {/* Right Side Fixed Card */}
+            <div
+              className="col-3 position-fixed end-0 d-none d-md-block d-lg-block me-2"
+              style={{ top: "15vh" }}
+            >
+              <div className="card text-center shadow">
+                <div className="d-flex position-relative">
                   <span
-                    className={`badge ${getLevelBadgeClass(
-                      currentCourse.level
-                    )} text-white position-absolute bottom-0 end-0 m-2 shadow`}
+                    className="position-absolute top-0 start-0 badge rounded-pill 
+                      text-bg-secondary m-2 shadow opacity-75 p-2"
                   >
-                    {currentCourse.level}
+                    {currentCourse.category.name}
                   </span>
-                </p>
-              </div>
-
-              <div className="card-body">
-                <p className="card-title fw-bold">{currentCourse.title}</p>
-
-                <p className="card-text">{currentCourse.description}</p>
-
-                <div className="d-flex justify-content-between">
-                  <p className="card-text bg-body-secondary rounded-4 p-1 m-0">
-                    {currentCourse.price} TND
+                  <img
+                    src={`http://localhost:5000/${currentCourse.image.replace(
+                      /\\/g,
+                      "/"
+                    )}`}
+                    className="card-img-top object-fit-cover"
+                    alt="..."
+                  />
+                  <p className="card-text">
+                    <span
+                      className={`badge ${getLevelBadgeClass(
+                        currentCourse.level
+                      )} text-white position-absolute bottom-0 end-0 m-2 shadow`}
+                    >
+                      {currentCourse.level}
+                    </span>
                   </p>
-
-                  {!user ? (
-                    <Link
-                      to="/login"
-                      className="link-secondary link-offset-2 link-underline-opacity-25
-                 link-underline-opacity-100-hover"
-                    >
-                      S&apos;inscrire
-                    </Link>
-                  ) : user.role === "user" && user.isVerified ? (
-                    // Show apply link for verified regular users
-                    <Link
-                      to={`/course/${currentCourse._id}/apply`}
-                      className="link-secondary link-offset-2 link-underline-opacity-25
-                 link-underline-opacity-100-hover"
-                    >
-                      S&apos;inscrire
-                    </Link>
-                  ) : null}
                 </div>
-              </div>
-              {user?.role == "admin" && (
-                <div className="card-footer">
-                  <div className="d-flex justify-content-end">
-                    <Link
-                      to={`/admin/edit-course/${currentCourse._id}`}
-                      className="link-secondary link-offset-2 link-underline-opacity-25 
-                      link-underline-opacity-100-hover"
-                    >
-                      Modifier
-                    </Link>
+
+                <div className="card-body">
+                  <p className="card-title fw-bold">{currentCourse.title}</p>
+
+                  <p className="card-text">{currentCourse.description}</p>
+
+                  <div className="d-flex justify-content-between">
+                    <p className="card-text bg-body-secondary rounded-4 p-1 m-0">
+                      {currentCourse.price} TND
+                    </p>
+
+                    {!user ? (
+                      <Link
+                        to="/login"
+                        className="link-secondary link-offset-2 link-underline-opacity-25
+                 link-underline-opacity-100-hover"
+                      >
+                        S&apos;inscrire
+                      </Link>
+                    ) : (user.role === "user" || user.role === "learner") &&
+                      user.isVerified ? (
+                      // Show apply link for verified regular users
+                      <Link
+                        to={`/course/${currentCourse._id}/apply`}
+                        className="link-secondary link-offset-2 link-underline-opacity-25
+                 link-underline-opacity-100-hover"
+                      >
+                        S&apos;inscrire
+                      </Link>
+                    ) : (
+                      <Link
+                        className="link-secondary link-offset-2 link-underline-opacity-25
+                 link-underline-opacity-100-hover"
+                        onClick={() =>
+                          toast.info(
+                            "Utilisateur non vérifié. Vous ne pouvez pas vous inscrire maintenant"
+                          )
+                        }
+                      >
+                        S&apos;inscrire
+                      </Link>
+                    )}
                   </div>
                 </div>
+                {user?.role == "admin" && (
+                  <div className="card-footer">
+                    <div className="d-flex justify-content-end">
+                      <Link
+                        to={`/admin/edit-course/${currentCourse._id}`}
+                        className="link-secondary link-offset-2 link-underline-opacity-25 
+                      link-underline-opacity-100-hover"
+                      >
+                        Modifier
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Enrollment Card */}
+            <div className="col-12 col-md-6 col-lg-6 z-3 position-relative mx-auto mt-5 p-4 rounded-4 shadow custom-bg-warning text-center">
+              <h1>Etes-vous prêt à plonger ?</h1>
+              <p>
+                Postulez maintenant et commencez à apprendre instantanément.
+              </p>
+              {user?.role !== "admin" && user?.isVerified ? (
+                <Link
+                  to={`/course/${currentCourse._id}/apply`}
+                  className="btn btn-light rounded-5 p-3"
+                >
+                  Inscrivez-vous maintenant
+                </Link>
+              ) : (
+                <>
+                  <button
+                    className="btn btn-light rounded-5 p-3"
+                    onClick={() =>
+                      toast.info(
+                        "Utilisateur non vérifié. Vous ne pouvez pas vous inscrire maintenant"
+                      )
+                    }
+                  >
+                    Inscrivez-vous maintenant
+                  </button>
+                </>
               )}
             </div>
           </div>

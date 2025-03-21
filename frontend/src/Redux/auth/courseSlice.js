@@ -52,11 +52,33 @@ export const fetchCourseById = createAsyncThunk(
   }
 );
 
+export const fetchCourseDetailsById = createAsyncThunk(
+  "courses/fetchById/details",
+  async (courseId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/course/${courseId}/details`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data);
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
 const courseSlice = createSlice({
   name: "courses",
   initialState: {
     courses: [],
     currentCourse: null,
+    courseModules: null,
     loading: false,
     error: null,
   },
@@ -64,6 +86,7 @@ const courseSlice = createSlice({
     // Add a reducer to clear current course when needed
     clearCurrentCourse: (state) => {
       state.currentCourse = null;
+      state.courseModules = null;
     },
   },
   extraReducers: (builder) => {
@@ -82,7 +105,7 @@ const courseSlice = createSlice({
       .addCase(addCourse.fulfilled, (state, action) => {
         state.courses.push(action.payload);
       })
-      // Add new reducers for single course fetch
+      // single course fetch
       .addCase(fetchCourseById.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -92,6 +115,20 @@ const courseSlice = createSlice({
         state.currentCourse = action.payload;
       })
       .addCase(fetchCourseById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Fetch Course dtails for instructor
+      .addCase(fetchCourseDetailsById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchCourseDetailsById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentCourse = action.payload.course;
+        state.courseModules = action.payload.modules;
+      })
+      .addCase(fetchCourseDetailsById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

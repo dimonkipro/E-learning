@@ -9,6 +9,7 @@ import {
 } from "../controllers/auth.controller.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 import isLearner from "../middleware/isLearner.js";
+import isVerified from "../middleware/isVerified.js";
 
 import {
   getAllCategories,
@@ -16,8 +17,15 @@ import {
   getCourseById,
   getCoursesByCategory,
 } from "../controllers/course.controller.js";
-import { createInscription, getUserInscriptions } from "../controllers/enrollment.controller.js";
-import isVerified from "../middleware/isVerified.js";
+import {
+  createInscription,
+  getUserInscriptions,
+} from "../controllers/enrollment.controller.js";
+import {
+  getVideoProgress,
+  updateVideoProgress,
+} from "../controllers/video.controller.js";
+import { getAllCourseDetails } from "../controllers/module.controller.js";
 
 const router = express.Router();
 
@@ -39,6 +47,13 @@ router.get("/courses/category/:categoryId", getCoursesByCategory);
 router.get("/category/all", getAllCategories);
 
 router.get(
+  "/course/:id/details",
+  verifyToken,
+  isVerified,
+  getAllCourseDetails
+);
+
+router.get(
   "/inscriptions/me",
   verifyToken,
   isVerified,
@@ -54,4 +69,6 @@ router.post(
   createInscription
 );
 
+router.post("/progress", updateVideoProgress);
+router.get("/progress/:userId/:videoId", getVideoProgress);
 export default router;

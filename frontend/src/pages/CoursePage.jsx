@@ -49,7 +49,7 @@ const CoursePage = () => {
           <div className="col-12 custom-bg-warning">
             <div className="col-xl-7 mb-5 mb-xl-0">
               <div className="p-3">
-                <span className="d-inline-block bg-light small rounded-3 px-3 py-2">
+                <span className="d-inline-block bg-light small rounded-3 px-3 py-2 text-dark">
                   Certificat obtenue à la fin de la formation 🤩
                 </span>
 
@@ -228,7 +228,7 @@ const CoursePage = () => {
                       >
                         S&apos;inscrire
                       </Link>
-                    ) : (
+                    ) : !user.isVerified ? (
                       <Link
                         className="link-secondary link-offset-2 link-underline-opacity-25
                  link-underline-opacity-100-hover"
@@ -240,10 +240,10 @@ const CoursePage = () => {
                       >
                         S&apos;inscrire
                       </Link>
-                    )}
+                    ) : null}
                   </div>
                 </div>
-                {user?.role == "admin" && (
+                {user?.role == "admin" ? (
                   <div className="card-footer">
                     <div className="d-flex justify-content-end">
                       <Link
@@ -255,12 +255,29 @@ const CoursePage = () => {
                       </Link>
                     </div>
                   </div>
+                ) : (
+                  user?.role == "instructor" && (
+                    <div className="card-footer">
+                      <div className="d-flex justify-content-end">
+                        <Link
+                          to={`/instructor/edit-course/${currentCourse._id}`}
+                          className="link-secondary link-offset-2 link-underline-opacity-25 
+                      link-underline-opacity-100-hover"
+                        >
+                          Modifier
+                        </Link>
+                      </div>
+                    </div>
+                  )
                 )}
               </div>
             </div>
 
             {/* Enrollment Card */}
-            <div className="col-12 col-md-6 col-lg-6 z-3 position-relative mx-auto mt-5 p-4 rounded-4 shadow custom-bg-warning text-center">
+            <div
+              className="col-12 col-md-6 col-lg-6 z-3 position-relative mx-auto mt-5 p-4 rounded-4 shadow custom-bg-warning text-center"
+              style={{ display: `${user?.role === "admin" ? "none" : ""}` }}
+            >
               <h1>Etes-vous prêt à plonger ?</h1>
               <p>
                 Postulez maintenant et commencez à apprendre instantanément.
@@ -272,7 +289,11 @@ const CoursePage = () => {
                 >
                   Inscrivez-vous maintenant
                 </Link>
-              ) : (
+              ) : !user ? (
+                <Link className="btn btn-light rounded-5 p-3" to={"/login"}>
+                  Inscrivez-vous maintenant
+                </Link>
+              ) : !user?.isVerified ? (
                 <>
                   <button
                     className="btn btn-light rounded-5 p-3"
@@ -285,7 +306,7 @@ const CoursePage = () => {
                     Inscrivez-vous maintenant
                   </button>
                 </>
-              )}
+              ) : null}
             </div>
           </div>
         </>

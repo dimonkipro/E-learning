@@ -57,21 +57,21 @@ const Signup = () => {
   };
 
   return (
-    <div className="container col-8 rounded-4 p-4 position-absolute top-50 start-50 translate-middle shadow">
-      <div className="row">
-        <div className="col-5 d-flex align-items-center">
-          <img src={registerImage} alt="..." />
-        </div>
-        <div className="col-7 text-center">
+    <div className="container col-8 rounded-4 p-4 my-5 shadow">
+      <div className="row text-center">
           <h2>Créer un compte </h2>
-          <p>C&apos;est simple et rapide.</p>
+          <p className="m-0">C&apos;est simple et rapide.</p>
+        <div className=" col-12 text-center">
+          <img src={registerImage} alt="..." style={{ width: "40%" }} />
+        </div>
+        <div className="col-11 mx-auto text-center my-4">
           <form onSubmit={handleSubmit}>
             <div className="row g-2 mb-3">
               <div className="col-md">
                 <div className="form-floating">
                   <input
                     type="text"
-                    className="form-control rounded-5"
+                    className="form-control rounded-5 focus-ring focus-ring-warning border"
                     id="name"
                     name="name"
                     value={formData.name}
@@ -89,7 +89,7 @@ const Signup = () => {
                 <div className="form-floating">
                   <input
                     type="text"
-                    className="form-control rounded-5"
+                    className="form-control rounded-5 focus-ring focus-ring-warning border"
                     id="cin"
                     name="cin"
                     value={formData.cin}
@@ -107,7 +107,7 @@ const Signup = () => {
             <div className="form-floating mb-3">
               <input
                 type="email"
-                className="form-control rounded-5"
+                className="form-control rounded-5 focus-ring focus-ring-warning border"
                 id="email"
                 name="email"
                 value={formData.email}
@@ -126,7 +126,7 @@ const Signup = () => {
             <div className="form-floating mb-3">
               <input
                 type="text"
-                className="form-control rounded-5"
+                className="form-control rounded-5 focus-ring focus-ring-warning border"
                 id="tel"
                 name="tel"
                 value={formData.tel}
@@ -143,7 +143,7 @@ const Signup = () => {
                 <div className="form-floating">
                   <input
                     type="password"
-                    className="form-control rounded-5"
+                    className="form-control rounded-5 focus-ring focus-ring-warning border"
                     id="password"
                     name="password"
                     value={formData.password}
@@ -160,7 +160,7 @@ const Signup = () => {
                 <div className="form-floating">
                   <input
                     type="password"
-                    className="form-control rounded-5"
+                    className="form-control rounded-5 focus-ring focus-ring-warning border"
                     id="confirmPassword"
                     name="confirmPassword"
                     value={formData.confirmPassword}

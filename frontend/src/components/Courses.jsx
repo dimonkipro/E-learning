@@ -1,25 +1,32 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { fetchCourses } from "../redux/auth/courseSlice";
 import AddCourseForm from "./AddCourseForm";
+import Pagination from "./Pagination";
 
 const Courses = () => {
   const dispatch = useDispatch();
 
   const { courses } = useSelector((state) => state.courses);
   const { user } = useSelector((state) => state.auth);
+
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const [showOffcanvas, setShowOffcanvas] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const currentPage = parseInt(searchParams.get("page")) || 1;
 
   // Get unique categories from courses
   const categoryMap = {};
+  
   courses.forEach((course) => {
     const cat = course.category;
     categoryMap[cat._id] = cat;
   });
+
   const categories = Object.values(categoryMap);
 
   // Filter courses based on selected category
@@ -35,6 +42,7 @@ const Courses = () => {
     indexOfFirstCourse,
     indexOfLastCourse
   );
+
   const getLevelBadgeClass = (level) => {
     switch (level.toLowerCase()) {
       case "beginner":
@@ -51,24 +59,17 @@ const Courses = () => {
   };
 
   useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedCategory]);
-
-  useEffect(() => {
     dispatch(fetchCourses());
   }, [dispatch]);
 
+  const handleCategoryChange = (categoryId) => {
+    setSelectedCategory(categoryId);
+    setSearchParams({ page: 1 });
+  };
+
   // Handle pagination actions
-  const handleNextPage = () => {
-    setCurrentPage((prevPage) => prevPage + 1);
-  };
-
-  const handlePrevPage = () => {
-    setCurrentPage((prevPage) => prevPage - 1);
-  };
-
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    setSearchParams({ page: pageNumber });
   };
 
   return (
@@ -91,7 +92,7 @@ const Courses = () => {
           {categories.map((category) => (
             <Link
               key={category._id}
-              onClick={() => setSelectedCategory(category._id)}
+              onClick={() => handleCategoryChange(category._id)}
               className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center text-break${
                 selectedCategory === category._id ? "active" : ""
               }`}
@@ -237,75 +238,12 @@ const Courses = () => {
             </div>
           </div>
 
-          {/* Pagination */}
-          <nav aria-label="Courses">
-            <ul className="pagination">
-              {/* Previous Page */}
-              <li
-                className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
-              >
-                <button
-                  className="page-link pagination"
-                  onClick={handlePrevPage}
-                  disabled={currentPage === 1}
-                  aria-label="Previous"
-                  style={{
-                    backgroundColor: "#fff",
-                    color: "black",
-                    boxShadow: "0 0 0 0",
-                  }}
-                >
-                  <span aria-hidden="true">&laquo;</span>
-                </button>
-              </li>
-
-              {/* Pages Number */}
-              {Array.from({ length: totalPages }, (_, index) => {
-                const pageNumber = index + 1;
-                return (
-                  <li
-                    key={pageNumber}
-                    className={`page-item ${
-                      currentPage === pageNumber ? "active" : ""
-                    } custom-pagination`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(pageNumber)}
-                      style={{
-                        backgroundColor: "#fff",
-                        color: "black",
-                        boxShadow: "0 0 0 0",
-                      }}
-                    >
-                      {pageNumber}
-                    </button>
-                  </li>
-                );
-              })}
-
-              {/* Next Page */}
-              <li
-                className={`page-item ${
-                  currentPage === totalPages ? "disabled" : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  aria-label="Next"
-                  style={{
-                    backgroundColor: "#fff",
-                    color: "black",
-                    boxShadow: "0 0 0 0",
-                  }}
-                >
-                  <span aria-hidden="true">&raquo;</span>
-                </button>
-              </li>
-            </ul>
-          </nav>
+          {/* Upper Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
 
         {/* Cards */}
@@ -330,8 +268,8 @@ const Courses = () => {
                       {course.category.name}
                     </span>
                     <img
-                      src={`http://localhost:5000/${course.image.replace(
-                        /\\/g,
+                      src={`http://localhost:5000/${course?.image.replaceAll(
+                        "\\",
                         "/"
                       )}`}
                       className="card-img-top w-100 h-100 object-fit-cover"
@@ -371,73 +309,12 @@ const Courses = () => {
           ))}
         </div>
 
-        {/* Pagination */}
-        <nav aria-label="Courses" className="mt-3">
-          <ul className="pagination justify-content-end">
-            {/* Previous Page */}
-            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-              <button
-                className="page-link pagination"
-                onClick={handlePrevPage}
-                disabled={currentPage === 1}
-                aria-label="Previous"
-                style={{
-                  backgroundColor: "#fff",
-                  color: "black",
-                  boxShadow: "0 0 0 0",
-                }}
-              >
-                <span aria-hidden="true">&laquo;</span>
-              </button>
-            </li>
-
-            {/* Pages Number */}
-            {Array.from({ length: totalPages }, (_, index) => {
-              const pageNumber = index + 1;
-              return (
-                <li
-                  key={pageNumber}
-                  className={`page-item ${
-                    currentPage === pageNumber ? "active" : ""
-                  } custom-pagination`}
-                >
-                  <button
-                    className="page-link"
-                    onClick={() => handlePageChange(pageNumber)}
-                    style={{
-                      backgroundColor: "#fff",
-                      color: "black",
-                      boxShadow: "0 0 0 0",
-                    }}
-                  >
-                    {pageNumber}
-                  </button>
-                </li>
-              );
-            })}
-
-            {/* Next Page */}
-            <li
-              className={`page-item ${
-                currentPage === totalPages ? "disabled" : ""
-              }`}
-            >
-              <button
-                className="page-link"
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-                aria-label="Next"
-                style={{
-                  backgroundColor: "#fff",
-                  color: "black",
-                  boxShadow: "0 0 0 0",
-                }}
-              >
-                <span aria-hidden="true">&raquo;</span>
-              </button>
-            </li>
-          </ul>
-        </nav>
+        {/* Lower Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );

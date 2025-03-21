@@ -63,7 +63,7 @@ const Users = () => {
 
   return (
     <div className="container">
-      <div className=" py-4">
+      <div className=" pb-4">
         <h2>Liste des utilisateurs</h2>
         <button
           className="btn btn-secondary rounded-5 p-2"

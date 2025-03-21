@@ -1,10 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserInscriptions } from "../../redux/auth/enrollmentSlice";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import Pagination from "../../components/Pagination";
 
 const Inscriptions = () => {
   const dispatch = useDispatch();
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = parseInt(searchParams.get("page")) || 1;
 
   const { userEnrollments, loading } = useSelector(
     (state) => state.enrollments
@@ -32,94 +35,23 @@ const Inscriptions = () => {
   };
 
   // Handle pagination actions
-  const handleNextPage = () => {
-    setCurrentPage((prevPage) => prevPage + 1);
-  };
-
-  const handlePrevPage = () => {
-    setCurrentPage((prevPage) => prevPage - 1);
-  };
-
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    setSearchParams({ page: pageNumber });
   };
 
   return (
-    <div className="container">
+    <div className="container mb-4">
       <h2>Mes formations</h2>
       {loading ? (
         <p>Loading...</p>
       ) : userEnrollments.length > 0 ? (
         <>
           {/* Upper Pagination */}
-          <nav aria-label="Courses" className="d-flex justify-content-end">
-            <ul className="pagination m-0">
-              {/* Previous Page */}
-              <li
-                className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
-              >
-                <button
-                  className="page-link pagination"
-                  onClick={handlePrevPage}
-                  disabled={currentPage === 1}
-                  aria-label="Previous"
-                  style={{
-                    backgroundColor: "#fff",
-                    color: "black",
-                    boxShadow: "0 0 0 0",
-                  }}
-                >
-                  <span aria-hidden="true">&laquo;</span>
-                </button>
-              </li>
-
-              {/* Pages Number */}
-              {Array.from({ length: totalPages }, (_, index) => {
-                const pageNumber = index + 1;
-                return (
-                  <li
-                    key={pageNumber}
-                    className={`page-item ${
-                      currentPage === pageNumber ? "active" : ""
-                    } custom-pagination`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(pageNumber)}
-                      style={{
-                        backgroundColor: "#fff",
-                        color: "black",
-                        boxShadow: "0 0 0 0",
-                      }}
-                    >
-                      {pageNumber}
-                    </button>
-                  </li>
-                );
-              })}
-
-              {/* Next Page */}
-              <li
-                className={`page-item ${
-                  currentPage === totalPages ? "disabled" : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  aria-label="Next"
-                  style={{
-                    backgroundColor: "#fff",
-                    color: "black",
-                    boxShadow: "0 0 0 0",
-                  }}
-                >
-                  <span aria-hidden="true">&raquo;</span>
-                </button>
-              </li>
-            </ul>
-          </nav>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
 
           {/* Cards */}
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 my-3">
@@ -131,23 +63,26 @@ const Inscriptions = () => {
                 key={inscription._id}
               >
                 <div className="card text-center shadow">
-                  <div className="d-flex position-relative">
-                    <span
-                      className="position-absolute top-0 start-0 badge rounded-pill 
+                  <Link
+                    to={`/learner/course/${inscription.courseId._id}/${inscription._id}`}
+                  >
+                    <div className="d-flex position-relative">
+                      <span
+                        className="position-absolute top-0 start-0 badge rounded-pill 
                           text-bg-secondary m-2 shadow opacity-75 p-2"
-                    >
-                      {inscription.courseId.category.name}
-                    </span>
-                    <img
-                      src={`http://localhost:5000/${inscription.courseId.image.replace(
-                        /\\/g,
-                        "/"
-                      )}`}
-                      className="card-img-top object-fit-cover"
-                      alt="..."
-                    />
-                  </div>
-
+                      >
+                        {inscription.courseId.category.name}
+                      </span>
+                      <img
+                        src={`http://localhost:5000/${inscription.courseId.image.replace(
+                          /\\/g,
+                          "/"
+                        )}`}
+                        className="card-img-top object-fit-cover"
+                        alt="..."
+                      />
+                    </div>
+                  </Link>
                   <div className="card-body">
                     <p className="card-title fw-bold">
                       {inscription.courseId.title}
@@ -191,74 +126,11 @@ const Inscriptions = () => {
           </div>
 
           {/* Lower Pagination */}
-          <nav aria-label="Courses" className="d-flex justify-content-end">
-            <ul className="pagination m-0">
-              {/* Previous Page */}
-              <li
-                className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
-              >
-                <button
-                  className="page-link pagination"
-                  onClick={handlePrevPage}
-                  disabled={currentPage === 1}
-                  aria-label="Previous"
-                  style={{
-                    backgroundColor: "#fff",
-                    color: "black",
-                    boxShadow: "0 0 0 0",
-                  }}
-                >
-                  <span aria-hidden="true">&laquo;</span>
-                </button>
-              </li>
-
-              {/* Pages Number */}
-              {Array.from({ length: totalPages }, (_, index) => {
-                const pageNumber = index + 1;
-                return (
-                  <li
-                    key={pageNumber}
-                    className={`page-item ${
-                      currentPage === pageNumber ? "active" : ""
-                    } custom-pagination`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(pageNumber)}
-                      style={{
-                        backgroundColor: "#fff",
-                        color: "black",
-                        boxShadow: "0 0 0 0",
-                      }}
-                    >
-                      {pageNumber}
-                    </button>
-                  </li>
-                );
-              })}
-
-              {/* Next Page */}
-              <li
-                className={`page-item ${
-                  currentPage === totalPages ? "disabled" : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  aria-label="Next"
-                  style={{
-                    backgroundColor: "#fff",
-                    color: "black",
-                    boxShadow: "0 0 0 0",
-                  }}
-                >
-                  <span aria-hidden="true">&raquo;</span>
-                </button>
-              </li>
-            </ul>
-          </nav>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </>
       ) : (
         <p>No courses found</p>

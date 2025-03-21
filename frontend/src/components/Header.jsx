@@ -6,8 +6,7 @@ const Header = () => {
   const { user } = useSelector((state) => state.auth);
 
   return (
-
-    <nav className="navbar bg-body-tertiary">
+    <nav className="navbar py-0 bg-body-tertiary mb-4">
       <div className="container-fluid container">
         <Link to={"/"}>
           <img
@@ -19,22 +18,22 @@ const Header = () => {
         </Link>
         <div className="d-flex flex-wrap" role="search">
           {user ? (
-            <a className="btn" href="/profile">
+            <Link className="btn" to={"/profile"}>
               Profile
-            </a>
+            </Link>
           ) : (
             <>
-              <a className="btn" href="/login">
+              <Link className="btn" to={"/login"}>
                 Login
-              </a>
-              <a className="btn" href="/signup">
+              </Link>
+              <Link className="btn" to={"/signup"}>
                 SignUp
-              </a>
+              </Link>
             </>
           )}
-          <a className="btn" href="/courses">
+          <Link className="btn" to={"/courses"}>
             Courses
-          </a>
+          </Link>
 
           <div className="rounded-pill bg-body-secondary p-2">
             <DarkModeToggle drop={"bottom-centered"} />

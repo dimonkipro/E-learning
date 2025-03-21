@@ -60,7 +60,7 @@ const ApplyEnrollment = () => {
       <div className="col-12 custom-bg-warning">
         <div className="col-xl-7 mb-5 mb-xl-0">
           <div className="p-3">
-            <span className="d-inline-block bg-light small rounded-3 px-3 py-2">
+            <span className="d-inline-block bg-light small rounded-3 px-3 py-2 text-dark">
               Certificat obtenue à la fin de la formation 🤩
             </span>
 

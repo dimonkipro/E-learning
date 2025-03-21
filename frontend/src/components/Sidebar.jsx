@@ -9,6 +9,7 @@ import { fetchUserInscriptions } from "../redux/auth/enrollmentSlice";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
+  const theme = localStorage.getItem("theme");
 
   const [show, setShow] = useState(false);
 
@@ -25,7 +26,6 @@ const Sidebar = () => {
   const showSidebar =
     user?.role === "admin" || user?.role === "instructor" || isLearner;
 
-  const theme = localStorage.getItem("theme");
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -117,11 +117,21 @@ const Sidebar = () => {
                 <>
                   <Nav.Link
                     as={Link}
-                    to="/trainer/dashboard"
+                    to="/instructor/dashboard"
                     className={theme === "light" ? "text-white" : "text-dark"}
                     onClick={handleClose}
                   >
                     Dashboard <i className="bi bi-speedometer2 ms-2"></i>
+                  </Nav.Link>
+
+                  {/* Courses */}
+                  <Nav.Link
+                    as={Link}
+                    to="/instructor/courses"
+                    onClick={handleClose}
+                    className={theme === "light" ? "text-white" : "text-dark"}
+                  >
+                    Courses <i className="bi bi-box-seam ms-2"></i>
                   </Nav.Link>
                 </>
               )}
@@ -151,7 +161,7 @@ const Sidebar = () => {
                     onClick={handleClose}
                     className={theme === "light" ? "text-white" : "text-dark"}
                   >
-                    My Courses <i className="bi bi-book ms-2"></i>
+                    My Courses <i className="bi bi-journal-check"></i>
                   </Nav.Link>
                 </>
               )}
@@ -160,9 +170,6 @@ const Sidebar = () => {
             {/* Logout */}
             <Nav.Item className="mt-auto">
               <Nav.Link
-                onClick={() => {
-                  handleClose();
-                }}
                 className="text-danger"
                 data-bs-toggle="modal"
                 data-bs-target="#logoutModal"
@@ -175,7 +182,7 @@ const Sidebar = () => {
       </Offcanvas>
 
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mx-4">
+      <div className="navbar py-0 px-5 bg-body-tertiary mb-4">
         {/* Dark Mode Button */}
         <div className="rounded-pill bg-body-secondary p-2">
           <DarkModeToggle drop={"bottom-centered"} />
@@ -201,14 +208,14 @@ const Sidebar = () => {
 
       {/* Logout Modal */}
       <div
-        className="modal fade"
+        className="modal"
         id="logoutModal"
         tabIndex="-1"
         role="dialog"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
       >
-        <div className="modal-dialog" role="document">
+        <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header d-flex justify-content-between">
               <h5 className="modal-title" id="exampleModalLabel">

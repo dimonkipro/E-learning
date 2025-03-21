@@ -12,14 +12,8 @@ const VerifyEmail = () => {
   const { isLoading } = useSelector((state) => state.auth);
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [notification, setNotification] = useState(null);
-  const [focusedIndex, setFocusedIndex] = useState(null);
 
-  const handleFocus = (index) => {
-    setFocusedIndex(index);
-  };
-  const handleBlur = () => {
-    setFocusedIndex(null);
-  };
+ 
   const handleChange = (index, value) => {
     const newCode = [...code];
     if (value.length > 1) {
@@ -80,42 +74,28 @@ const VerifyEmail = () => {
   }, [code]);
 
   return (
-    <div
-      className="container col-8 position-absolute top-50 start-50 translate-middle
-     p-4 rounded-4 shadow"
-    >
-      <div className="row p-4">
-        <div className="col-6 ">
-          <img src={image} alt="..." style={{ width: "100%" }} />
-        </div>
-        <div className="col-6 text-center">
-          <div className="mb-5">
+    <div className="container col-8 my-5 py-4 rounded-4 shadow">
+          <div className="text-center">
             <h1>Verifier votre E-mail</h1>
-            <p>Entrez le code à 6 chiffres envoyé à votre adresse e-mail.</p>
           </div>
+        <div className="col-12 text-center">
+          <img src={image} alt="..." style={{ width: "40%" }} />
+        </div>
+        <div className="col-10 my-2 mx-auto text-center">
+            <p>Entrez le code à 6 chiffres envoyé à votre adresse e-mail.</p>
 
           <form onSubmit={handleSubmit}>
-            <div className="input-group">
+            <div className="input-group  mb-4">
               {code.map((digit, index) => (
                 <input
                   key={index}
                   ref={(el) => (inputRefs.current[index] = el)}
                   type="text"
                   maxLength="6"
-                  className="form-control text-center fs-2 mb-4 rounded-circle mx-1"
+                  className="form-control text-center rounded-pill mb-2 mx-1 focus-ring focus-ring-warning border"
                   value={digit}
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  onFocus={() => handleFocus(index)}
-                  onBlur={handleBlur}
-                  style={
-                    focusedIndex === index
-                      ? {
-                          borderColor: "rgba(255, 193, 7, 0.77)",
-                          boxShadow: "0 0 0 .25rem rgba(255, 193, 7, 0.28)",
-                        }
-                      : {}
-                  }
                 />
               ))}
             </div>
@@ -130,7 +110,6 @@ const VerifyEmail = () => {
             </div>
           </form>
         </div>
-      </div>
       {notification && (
         <Notifications
           type={notification.type}

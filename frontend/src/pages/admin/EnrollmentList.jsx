@@ -31,7 +31,7 @@ const EnrollmentList = () => {
       {loading && (
         <p className="position-absolute top-50 start-50">Loading...</p>
       )}
-      <div className=" py-4">
+      <div className=" pb-4">
         <h2>Liste des inscriptions</h2>
         <button
           className="btn btn-secondary rounded-5 p-2"

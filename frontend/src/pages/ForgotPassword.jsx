@@ -25,27 +25,27 @@ const ForgotPassword = () => {
 
   return (
     <div>
-      <div className="container col-8 rounded-4 p-4 position-absolute top-50 start-50 translate-middle shadow">
-        <div className="row p-4">
-          <div className="col-6 d-flex align-items-center">
-            <img src={forgotImage} alt="..." style={{ width: "100%" }} />
+      <div className="container text-center col-8 rounded-4 my-5 py-4 shadow">
+        <div className="col-8 mx-auto text-center">
+          <h1>Mot de passe oublié ?</h1>
+          <p>
+            Nous l&apos;obtenons, des trucs comme ça se passe. Veuillez entrer
+            votre e-mail, nous vous enverrons un lien pour réinitialiser votre
+            mot de passe.
+          </p>
+        </div>
+        <div>
+          <div className="col-12 text-center">
+            <img src={forgotImage} alt="..." style={{ width: "50%" }} />
           </div>
-          <div className="col-6 text-center">
-            <div className="mb-5 text-center">
-              <h1>Mot de passe oublié ?</h1>
-              <p>
-                Nous l&apos;obtenons, des trucs comme ça se passe Veuillez
-                entrer votre e-mail, nous vous enverrons un lien pour
-                réinitialiser votre mot de passe.
-              </p>
-            </div>
+          <div className="col-10 mx-auto text-center my-4">
             <form onSubmit={handleSubmit}>
               <div className="form-floating mb-3 col-10 mx-auto">
                 <input
                   type="email"
                   value={email}
                   name="email"
-                  className="form-control rounded-5"
+                  className="form-control rounded-5 focus-ring focus-ring-warning border"
                   id="email"
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email"

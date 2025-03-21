@@ -4,7 +4,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import { connectDB } from "./db/connectDB.js";
-
+import chalk from "chalk";
 import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import instructorRoutes from "./routes/instructor.routes.js";
@@ -32,5 +32,9 @@ app.use("/api/instructor", verifyToken, isInstructor, instructorRoutes);
 
 app.listen(PORT, () => {
   connectDB();
-  console.log("Server is running on port: ", PORT);
+  console.log(
+    chalk.green("✓") +
+      chalk.cyan("Server is running on port: ") +
+      chalk.yellow(PORT)
+  );
 });

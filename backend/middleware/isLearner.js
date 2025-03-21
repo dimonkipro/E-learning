@@ -1,23 +1,24 @@
-import { Inscription } from "../models/Inscription.model.js";
+import { User } from "../models/user.model.js";
 
 const isLearner = async (req, res, next) => {
   try {
-    const inscriptions = await Inscription.find({ userId: req.userId });
+    const user = await User.findById(req.userId).select("-password");
 
-    if (inscriptions.length > 0) {
-      req.inscriptions = inscriptions; // Attach the user's inscriptions to the request
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    if (user.role === "learner") {
       return next();
     } else {
       return res
         .status(403)
-        .json({
-          success: false,
-          message: "Forbidden: No active subscription found",
-        });
+        .json({ success: false, message: "Forbidden: Access denied" });
     }
   } catch (error) {
-    console.error("Error in isLearner middleware:", error);
-    return res.status(500).json({ success: false, message: "Server error" });
+    res.status(401).send({ msg: "access denied" });
   }
 };
 

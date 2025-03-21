@@ -26,6 +26,11 @@ import LearnerDashboard from "./pages/learner/LearnerDashboard";
 import Inscriptions from "./pages/learner/Inscriptions";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
+import InstructorDashboard from "./pages/instructor/InstructorDashboard";
+import EditCourseModelPage from "./pages/instructor/EditCourseModelPage";
+import CourseDetails from "./pages/learner/CourseDetails";
+import CourseContent from "./pages/learner/CourseContent";
+import ErrorPage from "./components/ErrorPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -53,7 +58,7 @@ function App() {
   }
   return (
     <>
-    {!hideHeader ? <Header /> : <Sidebar /> }
+      {!hideHeader ? <Header /> : <Sidebar />}
       <ToastContainer />
       <Routes>
         {/* ------------------PublicRoute---------------------------- */}
@@ -105,8 +110,13 @@ function App() {
 
         <Route element={<ProtectedRoute allowedRoles={["instructor"]} />}>
           <Route path="/instructor" element={<AdminLayout />}>
-            {/* <Route index element={<InstructorDashboard />} />
-          <Route path="dashboard" element={<InstructorDashboard />} /> */}
+            <Route index element={<InstructorDashboard />} />
+            <Route path="dashboard" element={<InstructorDashboard />} />
+            <Route path="courses" element={<Courses />} />
+            <Route
+              path="edit-course/:courseId"
+              element={<EditCourseModelPage />}
+            />
           </Route>
         </Route>
 
@@ -117,18 +127,20 @@ function App() {
             <Route path="dashboard" element={<LearnerDashboard />} />
             <Route path="my-courses" element={<Inscriptions />} />
             <Route path="courses" element={<Courses />} />
+            <Route
+              path="course/:courseId/:enrollementId"
+              element={<CourseDetails />}
+            />
+
+            <Route
+              path="course/content/:courseId/:enrollementId"
+              element={<CourseContent />}
+            />
           </Route>
         </Route>
         {/* ------------------ErrorRoute---------------------------- */}
 
-        <Route
-          path="*"
-          element={
-            <p className="container display-1 text-center fw-bold position-absolute top-50 start-50 translate-middle ">
-              (❁´⁔`❁) <br /> 404 Page Not Found
-            </p>
-          }
-        />
+        <Route path="*" element={<ErrorPage text={"404 Page Not Found"} />} />
       </Routes>
     </>
   );

@@ -21,13 +21,12 @@ const Login = () => {
     }
   };
   return (
-    <div className="container col-8 rounded-4 p-4 position-absolute top-50 start-50 translate-middle shadow">
-      <div className="row  p-4">
-        <div className="col-7 d-flex align-items-center">
-          <img src={loginImage} alt="..." />
+    <div className="container col-8 rounded-4 my-5 py-4  shadow">
+          <h2 className="text-center">Se connecter</h2>
+        <div className="col-12 text-center">
+          <img src={loginImage} alt="..." style={{ width: "40%" }} />
         </div>
-        <div className="col-5 text-center">
-          <h2 className="mb-4">Se connecter</h2>
+        <div className=" container col-10 text-center my-4">
 
           <form onSubmit={handleSubmit}>
             <div className="form-floating mb-3">
@@ -35,7 +34,7 @@ const Login = () => {
                 type="email"
                 value={email}
                 name="email"
-                className="form-control rounded-5"
+                className="form-control rounded-5 focus-ring focus-ring-warning border"
                 id="email"
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
@@ -51,7 +50,7 @@ const Login = () => {
             <div className="form-floating mb-3">
               <input
                 type="password"
-                className="form-control rounded-5"
+                className="form-control rounded-5 focus-ring focus-ring-warning border"
                 id="password"
                 name="password"
                 value={password}
@@ -83,8 +82,6 @@ const Login = () => {
             </Link>
           </form>
         </div>
-      </div>
-
     </div>
   );
 };

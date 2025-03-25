@@ -1,8 +1,53 @@
 .custom-bg-warning {
     background-image: linear-gradient(90deg, #997404 0%, #FFC107 0%, #997404 51%) !important;
-    /* color: black; */
-    color: aliceblue;
+    /* color: aliceblue; */
 }
-.z-4{
+
+.custom-bg {
+    /* background-image:linear-gradient(90deg, #a4a390 30%, #abad90 60%, #c3c3b3 100%) !important; */
+    background-image: linear-gradient(90deg, #98a19c 30%, #b2b19b 60%, #afb0a0 100%) !important;
+}
+
+.z-4 {
     z-index: 4;
+}
+
+body {
+    background-image: url("./assets/bg.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.btn-warning {
+    background: linear-gradient(90deg, #98a19c 30%, #b2b19b 60%, #afb0a0 100%) !important;
+
+}
+
+.list-group-item-warning {
+
+    background: linear-gradient(90deg, #98a19c 30%, #b2b19b 60%, #afb0a0 100%) !important;
+}
+
+.card {
+    background: transparent !important;
+    border: none !important;
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.custom-card {
+    transition: transform 0.3s ease-in-out;
+    /* box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important; */
+    overflow: hidden;
+}
+
+.custom-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
 }

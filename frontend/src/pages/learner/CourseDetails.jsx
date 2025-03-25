@@ -62,7 +62,8 @@ const CourseDetails = () => {
   return (
     <div className="col-12">
       {/* Hero */}
-      <div className="col-12 custom-bg-warning">
+      {/* <div className="col-12 text-white shadow"> */}
+      <div className="col-11 mx-auto text-white shadow rounded-5">
         <div className="col-xl-7 mb-5 mb-xl-0">
           <div className="p-3">
             <span className="d-inline-block bg-light small rounded-3 px-3 py-2 text-dark">
@@ -139,7 +140,7 @@ const LinkToolTip = ({ id, children, title, to, className }) => (
 );
 
 const ModuleContent = ({ module }) => (
-  <div className=" p-2 mb-4 shadow border-bottom rounded-4 ">
+  <div className=" p-2 mb-4 shadow border-bottom border-end border-secondary rounded-4 ">
     {/* Collapsible Module Title */}
     <div className="d-flex align-items-center">
       <button
@@ -154,19 +155,19 @@ const ModuleContent = ({ module }) => (
     </div>
 
     {/* Collapsible Content */}
-    <div id={module?._id} className="col-10 mx-auto collapse mt-2">
+    <div id={module?._id} className="col-10 mx-auto collapse show mt-2">
       {/* Video Title */}
       {module?.videos.map((video) => (
         <div
           key={video?._id}
-          className="d-flex justify-content-between align-items-center p-2 border-bottom rounded mb-2"
+          className="d-flex justify-content-between align-items-center p-2 border-bottom border-secondary rounded mb-2"
         >
           <h5>{video?.title}</h5>
           <i className="bi bi-camera-video h4 mb-0"></i>
         </div>
       ))}
       {/* Test */}
-      <div className="d-flex justify-content-between align-items-center p-2 border-bottom rounded-3 mb-2">
+      <div className="d-flex justify-content-between align-items-center p-2 border-bottom border-secondary rounded-3 mb-2">
         <h5>Test</h5>
         <i className="bi bi-file-earmark-text h4 mb-0"></i>
       </div>

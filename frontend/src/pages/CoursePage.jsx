@@ -5,7 +5,7 @@ import { fetchCourseById, clearCurrentCourse } from "../redux/auth/courseSlice";
 import { toast } from "react-toastify";
 
 const CoursePage = () => {
-  const theme = localStorage.getItem("theme");
+  // const theme = localStorage.getItem("theme");
   const { courseId } = useParams();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
@@ -46,7 +46,8 @@ const CoursePage = () => {
       {currentCourse && (
         <>
           {/* Hero */}
-          <div className="col-12 custom-bg-warning">
+          {/* <div className="col-12 text-white shadow"> */}
+          <div className="col-11 mx-auto text-white shadow rounded-5">
             <div className="col-xl-7 mb-5 mb-xl-0">
               <div className="p-3">
                 <span className="d-inline-block bg-light small rounded-3 px-3 py-2 text-dark">
@@ -92,13 +93,16 @@ const CoursePage = () => {
               <div className="card-body">
                 {/* Nav Links */}
                 <ul
-                  className={`nav nav-tabs position-sticky top-0 
-                  bg-${theme === "dark" ? "dark" : "white"}`}
+                  // className={`nav nav-tabs position-sticky top-0
+                  // bg-${theme === "dark" ? "dark" : "white"}`}
+                  className="nav nav-tabs position-sticky top-0 custom-bg rounded border-0 shadow z-3"
                 >
                   <li className="nav-item">
                     <a
                       className={`nav-link link-secondary ${
-                        activeLink === "desc" ? "active link-warning " : ""
+                        activeLink === "desc"
+                          ? "active link-light custom-bg "
+                          : ""
                       }`}
                       href="#desc"
                       onClick={() => setActiveLink("desc")}
@@ -109,7 +113,9 @@ const CoursePage = () => {
                   <li className="nav-item">
                     <a
                       className={`nav-link link-secondary ${
-                        activeLink === "goals" ? "active link-warning" : ""
+                        activeLink === "goals"
+                          ? "active link-light custom-bg"
+                          : ""
                       }`}
                       href="#goals"
                       onClick={() => setActiveLink("goals")}
@@ -120,7 +126,9 @@ const CoursePage = () => {
                   <li className="nav-item">
                     <a
                       className={`nav-link link-secondary ${
-                        activeLink === "trainer" ? "active link-warning" : ""
+                        activeLink === "trainer"
+                          ? "active link-light custom-bg"
+                          : ""
                       }`}
                       href="#trainer"
                       onClick={() => setActiveLink("trainer")}
@@ -173,7 +181,7 @@ const CoursePage = () => {
               className="col-3 position-fixed end-0 d-none d-md-block d-lg-block me-2"
               style={{ top: "15vh" }}
             >
-              <div className="card text-center shadow">
+              <div className="card text-center">
                 <div className="d-flex position-relative">
                   <span
                     className="position-absolute top-0 start-0 badge rounded-pill 
@@ -275,7 +283,7 @@ const CoursePage = () => {
 
             {/* Enrollment Card */}
             <div
-              className="col-12 col-md-6 col-lg-6 z-3 position-relative mx-auto mt-5 p-4 rounded-4 shadow custom-bg-warning text-center"
+              className="col-12 col-md-6 col-lg-6 z-3 position-relative mx-auto mt-5 p-4 rounded-4 shadow text-white text-center"
               style={{ display: `${user?.role === "admin" ? "none" : ""}` }}
             >
               <h1>Etes-vous prêt à plonger ?</h1>

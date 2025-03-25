@@ -182,7 +182,7 @@ const Sidebar = () => {
       </Offcanvas>
 
       {/* Header */}
-      <div className="navbar py-0 px-5 bg-body-tertiary mb-4">
+      <div className="navbar py-0 px-5 mb-4">
         {/* Dark Mode Button */}
         <div className="rounded-pill bg-body-secondary p-2">
           <DarkModeToggle drop={"bottom-centered"} />

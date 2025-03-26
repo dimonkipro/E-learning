@@ -58,7 +58,12 @@ const CourseContent = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!isEnrolled)
-    return <ErrorPage text={"L'inscriptions au cours encore non approuvées"} />;
+    return (
+      <ErrorPage
+        text={"L'inscriptions au cours encore non approuvées"}
+        emojis={"(❁´⁔`❁)"}
+      />
+    );
 
   return (
     <div className="container">

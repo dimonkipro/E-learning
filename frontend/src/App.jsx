@@ -137,11 +137,23 @@ function App() {
               path="course/content/:courseId/:enrollementId"
               element={<CourseContent />}
             />
+            <Route
+              path="enrollment/success"
+              element={
+                <ErrorPage
+                  text={"L'inscriptions au cours envoyée avec succée"}
+                  emojis={"(●'◡'●)"}
+                />
+              }
+            />
           </Route>
         </Route>
         {/* ------------------ErrorRoute---------------------------- */}
 
-        <Route path="*" element={<ErrorPage text={"404 Page Not Found"} />} />
+        <Route
+          path="*"
+          element={<ErrorPage text={"404 Page Not Found"} emojis={"(❁´⁔`❁)"} />}
+        />
       </Routes>
       <Footer />
     </>

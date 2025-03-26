@@ -41,17 +41,19 @@ const Inscriptions = () => {
 
   return (
     <div className="container mb-4">
-      <h2>Mes formations</h2>
       {loading ? (
         <p>Loading...</p>
       ) : userEnrollments.length > 0 ? (
         <>
           {/* Upper Pagination */}
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+          <div className="d-flex justify-content-between align-items-center flex-wrap mb-4">
+            <h2>Mes formations</h2>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
 
           {/* Cards */}
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 my-3">

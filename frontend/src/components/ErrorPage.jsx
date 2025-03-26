@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 
-const ErrorPage = ({text}) => {
+const ErrorPage = ({text, emojis}) => {
   return (
-    <div>
-      <p className="container display-1 text-center fw-bold position-absolute top-50 start-50 translate-middle ">
-        (❁´⁔`❁) <br /> {text}
+    <div className="container">
+      <p className="display-1 text-center fw-bold my-5">
+        {emojis} <br /> {text}
       </p>
     </div>
   );

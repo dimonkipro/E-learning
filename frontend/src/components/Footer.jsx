@@ -22,19 +22,19 @@ const Footer = () => {
         {/* Numbers */}
         <div className="col-12 mx-auto d-flex flex-wrap gap-4">
           <div className="flex-fill d-flex flex-column text-center rounded-4 p-4 custom-card">
-            <i className="bi bi-people h2 d-flex flex-column" />
+            <i className="bi bi-people-fill h2 d-flex flex-column" />
             Apprenants
-            <p className="mb-0 fs-1">50</p>
+            <p className="mb-0 fs-1 fw-bold">+50</p>
           </div>
           <div className="flex-fill d-flex flex-column text-center rounded-4 p-4 custom-card">
             <i className="bi bi-collection  h2 d-flex flex-column" />
             Formations
-            <p className="mb-0 fs-1">+20</p>
+            <p className="mb-0 fs-1 fw-bold">+20</p>
           </div>
           <div className="flex-fill d-flex flex-column text-center rounded-4 p-4 custom-card">
             <i className="bi bi-person-hearts h2 d-flex flex-column" />
             Partenaires
-            <p className="mb-0 fs-1">+15</p>
+            <p className="mb-0 fs-1 fw-bold">+15</p>
           </div>
         </div>
 

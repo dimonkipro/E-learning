@@ -57,7 +57,12 @@ const CourseDetails = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!isEnrolled)
-    return <ErrorPage text={"Votre inscription au formation été refusée"} />;
+    return (
+      <ErrorPage
+        text={"Votre inscription au formation été refusée"}
+        emojis={"(❁´⁔`❁)"}
+      />
+    );
 
   return (
     <div className="col-12">
@@ -105,6 +110,7 @@ const CourseDetails = () => {
         <div className="d-flex mb-5 justify-content-center">
           <LinkToolTip
             title="Voir Plus..."
+            placement={"right"}
             to={`/learner/course/content/${courseId}/${enrollementId}`}
             className={
               "d-flex gap-3 link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover"
@@ -128,12 +134,12 @@ const CourseDetails = () => {
   );
 };
 
-const LinkToolTip = ({ id, children, title, to, className }) => (
+export const LinkToolTip = ({ id, children, title, to, className, onClick, placement }) => (
   <OverlayTrigger
-    placement="right"
+    placement={placement}
     overlay={<Tooltip id={id}>{title}</Tooltip>}
   >
-    <Link to={to} className={className}>
+    <Link to={to} className={className} onClick={onClick}>
       {children}
     </Link>
   </OverlayTrigger>

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { createInscription } from "../redux/auth/enrollmentSlice";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { clearCurrentCourse, fetchCourseById } from "../redux/auth/courseSlice";
 
 const ApplyEnrollment = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const { courseId } = useParams();
 
   const { user } = useSelector((state) => state.auth);
@@ -36,7 +37,11 @@ const ApplyEnrollment = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(createInscription({ courseId, formData }));
+    dispatch(createInscription({ courseId, formData }))
+      .unwrap()
+      .then(() => {
+        navigate("/learner/enrollment/success");
+      })
   };
 
   const getLevelBadgeClass = (level) => {
@@ -143,9 +148,9 @@ const ApplyEnrollment = () => {
       <div className="container col-10 col-md-5 mt-5">
         <h1 className=" text-center">Demande d&apos;inscription</h1>
         <form onSubmit={handleSubmit}>
-          <div className="row g-2 mb-3">
+          <div className="row g-2">
             {/* Name Field */}
-            <div className="col-md">
+            <div className="col-md mb-3">
               <div className="col-md form-floating">
                 <input
                   type="text"
@@ -159,7 +164,7 @@ const ApplyEnrollment = () => {
             </div>
 
             {/* CIN Field */}
-            <div className="col-md">
+            <div className="col-md mb-3">
               <div className="col-md form-floating">
                 <input
                   type="text"
@@ -185,9 +190,9 @@ const ApplyEnrollment = () => {
             <label className="form-label">Email</label>
           </div>
 
-          <div className="row g-2 mb-3">
+          <div className="row g-2">
             {/* Phone Field */}
-            <div className="col-md">
+            <div className="col-md mb-3">
               <div className="form-floating">
                 <input
                   type="text"
@@ -202,18 +207,18 @@ const ApplyEnrollment = () => {
             </div>
 
             {/* Payment Field */}
-            <div className="col-md">
+            <div className="col-md mb-3">
               <div className="form-floating">
                 <select
                   name="paymentMethod"
-                  className="form-select mb-2 focus-ring focus-ring-warning border rounded-5"
+                  className="form-select focus-ring focus-ring-warning border rounded-5"
                   value={formData.paymentMethod}
                   onChange={handleChange}
                 >
                   <option value="cash">Espèces</option>
                   <option value="Virement bancaire">Virement bancaire</option>
                 </select>
-                <label className="form-label">Méthode de paiement</label>
+                <label className="form-label">Paiement</label>
               </div>
             </div>
           </div>
@@ -229,7 +234,7 @@ const ApplyEnrollment = () => {
               className="form-control  border rounded focus-ring focus-ring-warning border"
             />
             <label htmlFor="motivation" className="form-label">
-              Motivation Letter
+              Lettre de motivation
             </label>
           </div>
 

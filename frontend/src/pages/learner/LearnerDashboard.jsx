@@ -1,103 +1,160 @@
+import { useState } from "react";
 import { useSelector } from "react-redux";
 
 const LearnerDashboard = () => {
+  const [formData, setFormData] = useState({
+    password: "",
+    tel: "",
+  });
+
   const { user } = useSelector((state) => state.auth);
+  const { userEnrollments, loading } = useSelector(
+    (state) => state.enrollments
+  );
+
+  const handleChange = (e) => {
+    e.preventDefault();
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const totalEnrollments =
+    userEnrollments?.map((enrollment) => enrollment).length || 0;
+
+  const totalApproved =
+    userEnrollments?.filter((enrollment) => enrollment?.status === "approved")
+      .length || 0;
+
+  const totalPending =
+    userEnrollments?.filter((enrollment) => enrollment?.status === "pending")
+      .length || 0;
+
+  const totalRejected =
+    userEnrollments?.filter((enrollment) => enrollment?.status === "rejected")
+      .length || 0;
 
   return (
     <div className="container">
-      <div>
-        <h1>Learner Dashboard</h1>
-        <p>Welcome, {user?.name}!</p>
-        <p>Email: {user?.email}</p>
-        <p>Role: {user?.role}</p>
+      <h2 className="mb-5 text-center">Bienvenue, {user?.name} ^_^</h2>
+      <div className="col-12 col-md-6 mb-4">
+        <h2 className="text-center text-decoration-underline text-white fw-light">
+          Coordonnées
+        </h2>
+        <h3 className="text-secondary mb-0">E-mail</h3>
+        <h4 className="text-center  fw-light">{user?.email}</h4>
+
+        <form>
+          <div className="col mx-auto my-3">
+            <div className="row g-2 mb-3">
+              <div className="col-md">
+                <label htmlFor="Tel" className="form-label">
+                  Numéro de téléphone
+                </label>
+                <input
+                  type="text"
+                  className="form-control rounded-4"
+                  id="Tel"
+                  name="tel"
+                  value={user?.tel}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="col-md">
+                <label htmlFor="Password" className="form-label">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  className="form-control rounded-4"
+                  id="Password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+            <div className="d-grid col-8 mx-auto my-4">
+              <button
+                type="submit"
+                className="btn btn-primary rounded p-2"
+                // disabled={isLoading}
+              >
+                Confirmer
+                {/* {isLoading ? "Connexion en cours..." : "Se connecter"} */}
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
 
-      <ul>
-        <li className="nav-item dropdown no-arrow mx-1">
-          <button
-            type="button"
-            className="btn btn-primary position-relative"
-            id="alertsDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            <i className="bi bi-bell"></i>
-            <span className="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle"></span>
-          </button>
-
-          {/* Alert Modal */}
-          <div
-            className="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-            aria-labelledby="alertsDropdown"
-          >
-            <h6 className="dropdown-header">Alerts Center</h6>
-            <a className="dropdown-item d-flex align-items-center" href="#">
-              <div className="mr-3">
-                <div className="icon-circle bg-primary">
-                  <i className="fas fa-file-alt text-white"></i>
+      {/* Enrollments Cards */}
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        userEnrollments?.length > 0 && (
+          <div>
+            <h2>Inscriptions</h2>
+            <div className="container col-11 mx-auto row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+              <div className="col my-3">
+                <div
+                  className="card  py-2"
+                  style={{ borderLeft: " 10px solid rgb(42, 144, 167)" }}
+                >
+                  <div className="card-body">
+                    <div className="col d-flex align-items-center justify-content-between text-info-emphasis text-uppercase">
+                      Mes inscriptions{" "}
+                      <div className="h3 mb-0 fw-bold ">{totalEnrollments}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div>
-                <div className="small text-gray-500">December 12, 2019</div>
-                <span className="font-weight-bold">
-                  A new monthly report is ready to download!
-                </span>
-              </div>
-            </a>
-            <a
-              className="dropdown-item text-center small text-gray-500"
-              href="#"
-            >
-              Show All Alerts
-            </a>
-          </div>
-        </li>
-      </ul>
 
-      {/* Earning card */}
-      <div className="col-xl-3 col-md-6 mb-4">
-        <div
-          className="card shadow h-100 py-2"
-          style={{ borderLeft: " .25rem solid #4e73df" }}
-        >
-          <div className="card-body">
-            <div className="row no-gutters align-items-center">
-              <div className="col mr-2">
-                <div className="text-xs font-weight-bold text-success text-uppercase mb-1">
-                  Mes formation{" "}
+              <div className="col my-3">
+                <div
+                  className="card py-2"
+                  style={{ borderLeft: " 10px solid rgb(25, 135, 84)" }}
+                >
+                  <div className="card-body">
+                    <div className="col d-flex align-items-center justify-content-between text-success text-uppercase">
+                      Inscriptions acceptée
+                      <div className="h3 mb-0 fw-bold ">{totalApproved}</div>
+                    </div>
+                  </div>
                 </div>
-                <div className="h5 mb-0 font-weight-bold text-gray-800">10</div>
               </div>
-              <div className="col-auto">
-                <i className="fas fa-dollar-sign fa-2x text-gray-300"></i>
+
+              <div className="col my-3">
+                <div
+                  className="card py-2"
+                  style={{ borderLeft: " 10px solid rgb(255, 193, 7) " }}
+                >
+                  <div className="card-body">
+                    <div className="col d-flex align-items-center justify-content-between text-warning-emphasis text-uppercase">
+                      Inscription en attente
+                      <div className="h3 mb-0 fw-bold ">{totalPending}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col my-3">
+                <div
+                  className="card py-2"
+                  style={{ borderLeft: " 10px solid rgb(220, 53, 69)" }}
+                >
+                  <div className="card-body">
+                    <div className="col d-flex align-items-center justify-content-between text-danger-emphasis text-uppercase">
+                      Inscription rejetée
+                      <div className="h3 mb-0 fw-bold ">{totalRejected}</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Collapsed Card */}
-      <div className="col-6">
-        <button
-          className="btn btn-primary"
-          data-bs-toggle="collapse"
-          href="#collapseExample"
-          role="button"
-          aria-expanded="false"
-          aria-controls="collapseExample"
-        >
-          Link with href
-        </button>
-        <div className="collapse" id="collapseExample">
-          <div className="card card-body">
-            Some placeholder content for the collapse component. This panel is
-            hidden by default but revealed when the user activates the relevant
-            trigger.
-          </div>
-        </div>
-      </div>
+        )
+      )}
     </div>
   );
 };

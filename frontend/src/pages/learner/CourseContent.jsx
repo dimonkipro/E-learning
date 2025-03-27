@@ -16,6 +16,7 @@ const CourseContent = () => {
 
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+console.log(selectedVideo);
 
   const { user } = useSelector((state) => state.auth);
 
@@ -25,13 +26,15 @@ const CourseContent = () => {
     (state) => state.courses
   );
 
-  const isEnrolled = userEnrollments?.some(
-    (enrollment) =>
-      enrollment?._id === enrollementId &&
-      enrollment?.userId === user?._id &&
-      enrollment?.courseId?._id === courseId &&
-      enrollment?.status === "approved"
-  );
+  const isEnrolled =
+    user?.role === "instructor" ||
+    userEnrollments?.some(
+      (enrollment) =>
+        enrollment?._id === enrollementId &&
+        enrollment?.userId === user?._id &&
+        enrollment?.courseId?._id === courseId &&
+        (enrollment?.status === "approved" || enrollment?.status === "pending")
+    );
 
   // Fetch Course Details By Id
   useEffect(() => {
@@ -121,8 +124,8 @@ const CourseContent = () => {
                 module={module}
                 onVideoSelect={(video) => {
                   setSelectedVideo(video);
-                  setIsSidebarVisible(false); // Close offcanvas when video is selected
                 }}
+                selectedVideo={selectedVideo}
               />
             ))
           ) : (
@@ -134,8 +137,12 @@ const CourseContent = () => {
   );
 };
 
-const ModuleContent = ({ module, onVideoSelect }) => (
-  <div className=" p-2 mb-4 shadow border-bottom rounded-4 ">
+const ModuleContent = ({ module, onVideoSelect, selectedVideo }) => (
+  <div
+    className={` p-2 mb-4 shadow border-bottom rounded-4 ${
+      module._id === selectedVideo?.module_id ? "bg-secondary-subtle" : ""
+    }`}
+  >
     {/* Collapsible Module Title */}
     <div className="d-flex align-items-center">
       <i className="bi bi-check-circle p-2 h4 mb-0"></i>
@@ -155,12 +162,14 @@ const ModuleContent = ({ module, onVideoSelect }) => (
       {module?.videos.map((video) => (
         <div
           key={video?._id}
-          className="d-flex justify-content-between align-items-center p-2 border-bottom rounded mb-2"
-          onClick={() => onVideoSelect(video)} // Add click handler
+          className={`d-flex justify-content-between align-items-center p-2 border-bottom rounded-5 mb-2 ${
+            video._id === selectedVideo?._id ? "bg-light" : ""
+          }`}
+          onClick={() => onVideoSelect(video)}
           style={{ cursor: "pointer" }}
         >
           <i className="bi bi-camera-video h5 mb-0"></i>
-          <span>{video?.title}</span>
+          <span className="me-2">{video?.title}</span>
         </div>
       ))}
 

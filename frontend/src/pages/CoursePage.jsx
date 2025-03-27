@@ -268,7 +268,7 @@ const CoursePage = () => {
                     <div className="card-footer">
                       <div className="d-flex justify-content-end">
                         <Link
-                          to={`/instructor/edit-course/${currentCourse._id}`}
+                          to={`/instructor/course/${currentCourse._id}`}
                           className="link-secondary link-offset-2 link-underline-opacity-25 
                       link-underline-opacity-100-hover"
                         >

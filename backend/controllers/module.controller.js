@@ -7,7 +7,6 @@ import { Course } from "../models/Course.model.js";
 import fs from "fs";
 import path from "path";
 
-
 // ------------------Modules----------------------------
 
 export const addModule = async (req, res) => {
@@ -119,6 +118,12 @@ export const addVideo = async (req, res) => {
   try {
     const moduleId = req.params.id;
     const { title, order, duration } = req.body;
+
+    // Check if file was uploaded
+    if (!req.file) {
+      return res.status(400).json({ msg: "No video file uploaded." });
+    }
+
     const videoUrl = req.file.path;
     const nDuration = duration * 60;
 
@@ -149,7 +154,7 @@ export const addVideo = async (req, res) => {
     const newVideo = new Video({
       module_id: moduleId,
       title,
-      video_url: videoUrl,
+      video_url: req.file ? req.file.path : undefined,
       duration: nDuration,
       order,
     });
@@ -244,7 +249,9 @@ export const getAllCourseDetails = async (req, res) => {
     }
 
     // Find all modules linked to the course
-    const modules = await Module.find({ course_id: courseId });
+    const modules = await Module.find({ course_id: courseId }).sort({
+      order: 1,
+    });
 
     // Fetch tests, questions, and videos for each module
     const modulesWithTestsAndVideos = await Promise.all(

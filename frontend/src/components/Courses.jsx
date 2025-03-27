@@ -76,7 +76,7 @@ const Courses = () => {
   return (
     <div className="container">
       {/* Text / Upper Pagination */}
-      <div className="d-flex justify-content-between align-items-center flex-wrap mb-3">
+      <div className="d-flex justify-content-between align-items-center flex-wrap mb-4">
         <div className="d-flex align-items-center col-8  flex-wrap">
           <h2 className="me-4">
             {selectedCategory
@@ -183,7 +183,7 @@ const Courses = () => {
         {/* Card */}
         {currentcourses.map((course) => (
           <div className="col" key={course._id}>
-            <div className="card h-100 text-center shadow">
+            <div className="card h-100 text-center shadow bounce-hover">
               {/* <div className="card h-100 text-center shadow"> */}
               <Link
                 to={`/courses/${course._id}`}

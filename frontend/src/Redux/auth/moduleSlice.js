@@ -28,7 +28,7 @@ export const addModule = createAsyncThunk(
 );
 export const addVideo = createAsyncThunk(
   "video/add",
-  async ({formData, moduleId}, { rejectWithValue }) => {
+  async ({ formData, moduleId }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${API_URL}/instructor/module/${moduleId}/video/new`,
@@ -49,9 +49,38 @@ export const addVideo = createAsyncThunk(
   }
 );
 
+export const addTest = createAsyncThunk(
+  "test/add",
+  async ({ testData, moduleId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/instructor/module/${moduleId}/test/new`,
+        testData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      toast.success("Test ajouté avec succès");
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
 const moduleSlice = createSlice({
   name: "modules",
-  initialState: { modules: [], videos: [], loading: false, error: null },
+  initialState: {
+    modules: [],
+    videos: [],
+    tests: [],
+    loading: false,
+    error: null,
+  },
   extraReducers: (builder) => {
     builder.addCase(addModule.fulfilled, (state, action) => {
       state.loading = false;
@@ -66,6 +95,21 @@ const moduleSlice = createSlice({
       state.videos.push(action.payload);
     });
     builder.addCase(addVideo.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+    // New test reducers
+    builder.addCase(addTest.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+
+    builder.addCase(addTest.fulfilled, (state, action) => {
+      state.loading = false;
+      state.tests.push(action.payload);
+    });
+
+    builder.addCase(addTest.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
     });

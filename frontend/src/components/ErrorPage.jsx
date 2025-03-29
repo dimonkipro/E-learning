@@ -1,13 +1,12 @@
 /* eslint-disable react/prop-types */
 
-const ErrorPage = ({text, emojis}) => {
+const ErrorPage = ({ text, emojis }) => {
   return (
-    <div className="container">
-      <p className="display-1 text-center fw-bold my-5">
-        {emojis} <br /> {text}
-      </p>
+    <div className="container my-5">
+      <p className="display-2 text-center fw-bold">{emojis}</p>
+      <p className="display-2 text-center">{text}</p>
     </div>
   );
-}
+};
 
-export default ErrorPage
+export default ErrorPage;

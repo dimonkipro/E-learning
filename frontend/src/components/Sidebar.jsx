@@ -17,7 +17,7 @@ const Sidebar = () => {
   const { userEnrollments } = useSelector((state) => state.enrollments);
 
   useEffect(() => {
-    if (user?.role === "learner" ) {
+    if (user?.role === "learner") {
       dispatch(fetchUserInscriptions());
     }
   }, [dispatch, user]);
@@ -25,7 +25,6 @@ const Sidebar = () => {
   const isLearner = userEnrollments?.length > 0;
   const showSidebar =
     user?.role === "admin" || user?.role === "instructor" || isLearner;
-
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -42,7 +41,7 @@ const Sidebar = () => {
         onHide={handleClose}
         placement="end"
         className={theme === "light" ? "bg-dark" : "bg-light"}
-        style={{ width: "300px" }}
+        style={{ width: "300px", transition: "all 0.7s ease" }}
       >
         <Offcanvas.Header
           closeButton

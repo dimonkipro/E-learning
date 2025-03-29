@@ -259,7 +259,10 @@ export const getAllCourseDetails = async (req, res) => {
         const video = await Video.find({ module_id: module._id }).sort({
           order: 1,
         });
-        const test = await Test.findOne({ module_id: module._id });
+        const test = await Test.findOne({ module_id: module._id }).populate(
+          "module_id",
+          "title"
+        );;
         let questions = [];
 
         if (test) {

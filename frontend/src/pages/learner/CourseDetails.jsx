@@ -9,6 +9,7 @@ import {
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import ErrorPage from "../../components/ErrorPage";
 import { addModule, addVideo } from "../../redux/auth/moduleSlice";
+import AddTestForm from "../../components/AddTestForm";
 
 const CourseDetails = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const CourseDetails = () => {
 
   const [title, setTitle] = useState("");
   const [order, setOrder] = useState("");
+  const [showTestModal, setShowTestModal] = useState(false);
 
   // const [videoTitle, setVideoTitle] = useState("");
   // const [videoOrder, setVideoOrder] = useState("");
@@ -156,7 +158,7 @@ const CourseDetails = () => {
               Certificat obtenue à la fin de la formation 🤩
             </span>
 
-            <p className="m-3 lh-base display-1" style={{ fontWeight: "400" }}>
+            <p className="m-3 lh-base display-2" style={{ fontWeight: "300" }}>
               {currentCourse?.title}
             </p>
             <h4 className=" m-5 fw-light">{currentCourse?.description}</h4>
@@ -203,7 +205,7 @@ const CourseDetails = () => {
               "d-flex gap-3 link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover"
             }
           >
-            <h1>Formation: {currentCourse?.title}</h1>
+            <h2>Formation: {currentCourse?.title}</h2>
             <i className="bi bi-box-arrow-in-up-right h3"></i>
           </LinkToolTip>
         </div>
@@ -235,6 +237,10 @@ const CourseDetails = () => {
                 setSelectedModuleId(module._id);
                 setSelectedModuleTitle(module.title);
                 setShowVideoModal(true);
+              }}
+              onAddTest={() => {
+                setSelectedModuleId(module._id);
+                setShowTestModal(true);
               }}
             />
           ))
@@ -375,6 +381,13 @@ const CourseDetails = () => {
           </div>
         </form>
       </div>
+      {/* // Add Test Modal */}
+      <AddTestForm
+        showTestModal={showTestModal}
+        setShowTestModal={setShowTestModal}
+        selectedModuleId={selectedModuleId}
+        courseId={courseId}
+      />
     </div>
   );
 };
@@ -398,7 +411,7 @@ export const LinkToolTip = ({
   </OverlayTrigger>
 );
 
-const ModuleContent = ({ module, onAddVideo, isInstructor }) => (
+const ModuleContent = ({ module, onAddVideo, isInstructor, onAddTest }) => (
   <div className="p-2 mb-4 shadow border-bottom border-end border-secondary rounded-4 animate">
     {/* Collapsible Module Title */}
     <div className="d-flex align-items-center">
@@ -426,12 +439,15 @@ const ModuleContent = ({ module, onAddVideo, isInstructor }) => (
           <i className="bi bi-camera-video h5 mb-0"></i>
         </div>
       ))}
-
       {/* Test */}
-      <div className="d-flex justify-content-between align-items-center p-2 border-bottom border-secondary rounded-3 mb-3">
-        <h6 className="mb-0">Test</h6>
-        <i className="bi bi-file-earmark-text h5 mb-0"></i>
-      </div>
+      {module?.test ? (
+        <div className="d-flex justify-content-between align-items-center p-2 border-bottom border-secondary rounded-3 mb-3">
+          <h6 className="mb-0">Test</h6>
+          <i className="bi bi-file-earmark-text h5 mb-0"></i>
+        </div>
+      ) : (
+        <p>Pas de test pour ce module</p>
+      )}
 
       {/* Instructor Buttons */}
       {isInstructor && (
@@ -446,10 +462,16 @@ const ModuleContent = ({ module, onAddVideo, isInstructor }) => (
               <i className="bi bi-patch-plus-fill h4 mb-0 text-success"></i>
             </button>
           </div>
-          <div className="text-success col rounded-3 border-bottom border-secondary animate">
+          <div
+            className={`text-success col rounded-3 border-bottom border-secondary ${
+              !module?.test && " animate"
+            }`}
+          >
             <button
-              className="btn w-100 p-2 flex-wrap d-flex justify-content-around align-items-center"
-              onClick={onAddVideo}
+              className={`btn w-100 p-2 flex-wrap d-flex justify-content-around align-items-center ${
+                module?.test && "disabled"
+              }`}
+              onClick={onAddTest}
               style={{ border: "0px" }}
             >
               <h6 className="mb-0 me-3">Ajouter un test</h6>

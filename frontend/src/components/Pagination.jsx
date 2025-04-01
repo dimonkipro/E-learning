@@ -34,7 +34,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 >
                   <button
                     className={`page-link ${
-                      currentPage === pageNumber ? "border-warning" : ""
+                      currentPage === pageNumber ? "border-primary" : ""
                     }`}
                     onClick={() => onPageChange(pageNumber)}
                     style={{

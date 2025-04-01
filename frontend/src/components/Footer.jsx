@@ -41,7 +41,7 @@ const Footer = () => {
         {/* Lower Side */}
         <div className="col-12 col-md-10 col-lg-11 mx-auto d-flex flex-wrap gap-4 my-4">
           {/* Social */}
-          <div className="flex-fill col-12 col-md-5 col-sm-5 d-flex text-center justify-content-around rounded-4 p-3 custom-card shadow">
+          <div className="flex-fill col-12 col-md-5 col-sm-5 d-flex text-center justify-content-around rounded-4 p-2 custom-card shadow">
             {/* <div className="col-12 col-lg-6 col-md-6 mx-auto d-flex flex-wrap justify-content-around rounded-4 p-4 custom-card my-3 shadow "> */}
             <Link to={""} target="_blank">
               <i className="bi bi-instagram h2"></i>
@@ -66,7 +66,7 @@ const Footer = () => {
           </div>
 
           {/* Phone */}
-          <div className="flex-fill col-12 col-md-5 col-sm-5 d-flex text-center justify-content-around rounded-4 p-3 custom-card shadow">
+          <div className="flex-fill col-12 col-md-5 col-sm-5 d-flex text-center justify-content-around rounded-4 p-2 custom-card shadow">
             <i className="bi bi-telephone-outbound h2 m-0"></i>
             <p className="fs-3 m-0">(+216) 50 464 602</p>
           </div>

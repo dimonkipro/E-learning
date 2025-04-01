@@ -71,4 +71,4 @@ const ModuleContentSideBar = ({
   );
 };
 
-export default ModuleContentSideBar
+export default ModuleContentSideBar;

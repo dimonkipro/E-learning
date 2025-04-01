@@ -28,13 +28,13 @@ const CourseContent = () => {
   const { currentCourse, courseModules, loading, error } = useSelector(
     (state) => state.courses
   );
-  
+
   const isEnrolled = userEnrollments?.some(
     (enrollment) =>
       enrollment?._id === enrollementId &&
-    enrollment?.userId === user?._id &&
-    enrollment?.courseId?._id === courseId &&
-    enrollment?.status === "approved"
+      enrollment?.userId === user?._id &&
+      enrollment?.courseId?._id === courseId &&
+      enrollment?.status === "approved"
   );
   const isInstructor = currentCourse?.instructor?._id === user?._id;
 

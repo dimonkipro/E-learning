@@ -5,6 +5,7 @@ import {
   updateInscriptionStatus,
 } from "../../redux/auth/enrollmentSlice";
 import { Link } from "react-router-dom";
+import { LinkToolTip } from "../learner/CourseDetails";
 
 const EnrollmentList = () => {
   const dispatch = useDispatch();
@@ -31,14 +32,18 @@ const EnrollmentList = () => {
       {loading && (
         <p className="position-absolute top-50 start-50">Loading...</p>
       )}
-      <div className=" pb-4">
+      <div className=" pb-4 d-flex justify-content-between align-items-center">
         <h2>Liste des inscriptions</h2>
-        <button
-          className="btn btn-secondary rounded-5 p-2"
+        <LinkToolTip
+          title={showPending ? "Afficher tout" : "Inscriptions non validé"}
+          placement={"bottom"}
+          className={
+            "link-primary fs-5 link-offset-2 animate link-underline-opacity-25 link-underline-opacity-100-hover me-4"
+          }
           onClick={() => setShowPending(!showPending)}
         >
-          {showPending ? "Afficher tout" : "Inscriptions non validé"}
-        </button>
+          Filtrer <i className="bi bi-funnel"></i>
+        </LinkToolTip>
       </div>
       <div className="table-responsive rounded">
         <table className=" table table-hover align-middle table-borderless table-striped">

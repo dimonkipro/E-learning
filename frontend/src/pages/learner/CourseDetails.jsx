@@ -31,15 +31,15 @@ const CourseDetails = () => {
     videoDuration: "",
     video: null,
   });
-useEffect(() => {
-  if (courseId) {
-    dispatch(fetchCourseDetailsById(courseId));
-  }
+  useEffect(() => {
+    if (courseId) {
+      dispatch(fetchCourseDetailsById(courseId));
+    }
 
-  return () => {
-    dispatch(clearCurrentCourse());
-  };
-}, [courseId, dispatch]);
+    return () => {
+      dispatch(clearCurrentCourse());
+    };
+  }, [courseId, dispatch]);
 
   const { currentCourse, courseModules, loading, error } = useSelector(
     (state) => state.courses
@@ -48,25 +48,25 @@ useEffect(() => {
   const { user } = useSelector((state) => state.auth);
 
   const { userEnrollments } = useSelector((state) => state.enrollments);
-  
+
   const isEnrolled = userEnrollments?.some(
     (enrollment) =>
       enrollment?._id === enrollementId &&
-    enrollment?.userId === user?._id &&
+      enrollment?.userId === user?._id &&
       enrollment?.courseId?._id === courseId &&
       (enrollment?.status === "approved" || enrollment?.status === "pending")
-    );
-    const isInstructor = currentCourse?.instructor?._id === user?._id;
-    
-if (!isEnrolled && !isInstructor) {
-  return (
-    <ErrorPage
-      text={"Vous n'avez pas accès à cette page"}
-      emojis={"(❁´⁔`❁)"}
-      to={user?.role === "instructor" ? "/instructor/courses" : "/"}
-    />
   );
-}
+  const isInstructor = currentCourse?.instructor?._id === user?._id;
+
+  if (!isEnrolled && !isInstructor) {
+    return (
+      <ErrorPage
+        text={"Vous n'avez pas accès à cette page"}
+        emojis={"(❁´⁔`❁)"}
+        to={user?.role === "instructor" ? "/instructor/courses" : "/"}
+      />
+    );
+  }
 
   const getLevelBadgeClass = (level) => {
     switch (level?.toLowerCase()) {
@@ -83,7 +83,6 @@ if (!isEnrolled && !isInstructor) {
     }
   };
 
-  
   // Handle Input Change
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

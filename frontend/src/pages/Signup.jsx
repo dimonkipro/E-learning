@@ -59,8 +59,8 @@ const Signup = () => {
   return (
     <div className="container col-8 rounded-4 p-4 my-5 shadow">
       <div className="row text-center">
-          <h2>Créer un compte </h2>
-          <p className="m-0">C&apos;est simple et rapide.</p>
+        <h2>Créer un compte </h2>
+        <p className="m-0">C&apos;est simple et rapide.</p>
         <div className=" col-12 text-center">
           <img src={registerImage} alt="..." style={{ width: "40%" }} />
         </div>

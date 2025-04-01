@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 const API_URL = "http://localhost:5000/api";
 const token = localStorage.getItem("token");
 
-
 // Fetch all categories
 export const fetchCategories = createAsyncThunk(
   "categories/fetchAll",
@@ -24,12 +23,16 @@ export const addCategory = createAsyncThunk(
   "categories/add",
   async (name, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/admin/category/new`, { name },{
+      const response = await axios.post(
+        `${API_URL}/admin/category/new`,
+        { name },
+        {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
-        toast.success("Catégorie ajoutée avec succée")
+        }
+      );
+      toast.success("Catégorie ajoutée avec succée");
       return response.data.category;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);

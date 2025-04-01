@@ -16,6 +16,7 @@ const Courses = () => {
   const [showModal, setShowModal] = useState(false);
   const [showMyCourses, setShowMyCourses] = useState(false);
   const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const [sortOrder, setSortOrder] = useState("asc"); // or "desc"
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -36,11 +37,17 @@ const Courses = () => {
     : courses;
 
   let finalFilteredCourses = filteredCourses;
+
   if (user?.role === "instructor" && showMyCourses) {
     finalFilteredCourses = filteredCourses.filter(
       (course) => course?.instructor?._id === user?._id
     );
   }
+
+  // Sort courses by price
+  finalFilteredCourses = [...finalFilteredCourses].sort((a, b) => {
+    return sortOrder === "asc" ? a.price - b.price : b.price - a.price;
+  });
 
   const coursesPerPage = 4;
   const totalPages = Math.ceil(finalFilteredCourses.length / coursesPerPage);
@@ -84,8 +91,8 @@ const Courses = () => {
     <div className="col-11 mx-auto">
       {/* Text / Upper Pagination */}
       <div className="d-flex justify-content-between align-items-center flex-wrap mb-4">
-        <div className="d-flex align-items-center col-8  flex-wrap">
-          <h2 className="me-4">
+        <div className="d-flex align-items-center gap-4 col-8  flex-wrap">
+          <h2 className="">
             {selectedCategory
               ? categories.find((c) => c._id === selectedCategory)?.name
               : "Tout les Formations"}
@@ -93,39 +100,31 @@ const Courses = () => {
 
           {/* Ctegories toggle button */}
           <LinkToolTip
-            title="Voir Plus..."
+            title={"Categories / Prix"}
             placement={"bottom"}
             onClick={() => setShowOffcanvas(true)}
             className={
               "link-primary fs-5 animate link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover me-4"
             }
           >
-            Categories {">"}
+            {" "}
+            Trier <i className="bi bi-funnel"></i>
           </LinkToolTip>
 
           {/* Add Course Button */}
           {user?.role === "admin" && (
-            <Link
-              className="btn btn-primary mt-2"
+            <LinkToolTip
+              title="Ajouter une formation"
+              placement={"bottom"}
+              className={
+                "link-primary fs-5 link-offset-2 animate link-underline-opacity-25 link-underline-opacity-100-hover me-4"
+              }
               onClick={() => {
                 setShowModal(true);
                 setShowOffcanvas(false);
               }}
             >
-              Ajouter une formation
-            </Link>
-          )}
-          {/* Instructor Filter */}
-          {user?.role === "instructor" && (
-            <LinkToolTip
-              title="filtrer"
-              placement={"bottom"}
-              onClick={() => setShowMyCourses(!showMyCourses)}
-              className={
-                "link-primary fs-5 link-offset-2 animate link-underline-opacity-25 link-underline-opacity-100-hover me-4"
-              }
-            >
-              {showMyCourses ? "Afficher tout" : "Cours attribués"} {">"}
+              Ajouter.. {">"}
             </LinkToolTip>
           )}
         </div>
@@ -143,9 +142,12 @@ const Courses = () => {
           }}
         >
           <div className="offcanvas-header">
-            <h5 className="offcanvas-title" id="offcanvasCategoriesLabel">
-              Categories
-            </h5>
+            <div className="d-flex align-items-center gap-2">
+              <h3 className="offcanvas-title" id="offcanvasCategoriesLabel">
+                Filtre
+              </h3>
+              <i className="bi bi-funnel h3 mb-0"></i>
+            </div>
             <button
               type="button"
               className="btn-close"
@@ -153,8 +155,30 @@ const Courses = () => {
               aria-label="Close"
             ></button>
           </div>
+
+          {/* Filter */}
           <div className="offcanvas-body">
-            <div className="list-group shadow">
+            {/* Instructor Filter */}
+            {user?.role === "instructor" && (
+              <div className="mb-3">
+                <LinkToolTip
+                  title="Trier"
+                  placement={"bottom"}
+                  onClick={() => {
+                    setShowMyCourses(!showMyCourses);
+                    setShowOffcanvas(false);
+                  }}
+                  className={
+                    "link-primary fs-5 link-offset-2 bounce-hover link-underline-opacity-25 link-underline-opacity-100-hover me-4"
+                  }
+                >
+                  {showMyCourses ? "Afficher tout" : "Cours attribués"} {">"}
+                </LinkToolTip>
+              </div>
+            )}
+            {/* Category Filter */}
+            <h5 className="mb-3">Trier par categorie</h5>
+            <div className="list-group shadow mb-4">
               <Link
                 onClick={() => {
                   setSelectedCategory(null);
@@ -189,6 +213,33 @@ const Courses = () => {
                   </span>
                 </Link>
               ))}
+            </div>
+
+            {/* Price Filter */}
+            <h5 className="mb-3">Trier par prix</h5>
+            <div className=" shadow rounded p-3">
+              <div
+                className="d-flex justify-content-between"
+                onClick={() => {
+                  setSortOrder("asc");
+                  setShowOffcanvas(false);
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                Croissant
+                <i className="bi bi-sort-numeric-up-alt h4 mx-3"></i>
+              </div>
+              <div
+                className="d-flex justify-content-between"
+                onClick={() => {
+                  setSortOrder("desc");
+                  setShowOffcanvas(false);
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                Décroissant
+                <i className="bi bi-sort-numeric-down-alt h4 mx-3"></i>
+              </div>
             </div>
           </div>
         </div>

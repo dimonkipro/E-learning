@@ -1,10 +1,15 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { addTest } from "../redux/auth/moduleSlice";
 import { useDispatch } from "react-redux";
 import { fetchCourseDetailsById } from "../redux/auth/courseSlice";
 
-// eslint-disable-next-line react/prop-types
-const AddTestForm = ({ showTestModal, setShowTestModal, selectedModuleId, courseId }) => {
+const AddTestForm = ({
+  showTestModal,
+  setShowTestModal,
+  selectedModuleId,
+  courseId,
+}) => {
   const dispatch = useDispatch();
   const [minimumScore, setMinimumScore] = useState("");
   const [questions, setQuestions] = useState([
@@ -68,7 +73,8 @@ const AddTestForm = ({ showTestModal, setShowTestModal, selectedModuleId, course
         testData,
         moduleId: selectedModuleId,
       })
-    ).unwrap()
+    )
+      .unwrap()
       .then(() => {
         dispatch(fetchCourseDetailsById(courseId));
         setShowTestModal(false);
@@ -77,7 +83,7 @@ const AddTestForm = ({ showTestModal, setShowTestModal, selectedModuleId, course
         setQuestions([
           { question: "", options: ["", "", "", ""], correctAnswer: "" },
         ]);
-      })
+      });
   };
 
   return (

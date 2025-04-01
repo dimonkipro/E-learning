@@ -2,7 +2,7 @@
 
 import { Link } from "react-router-dom";
 
-const ErrorPage = ({ text, emojis,to }) => {
+const ErrorPage = ({ text, emojis, to }) => {
   return (
     <div className="container text-center my-5">
       <p className="display-2 fw-bold">{emojis}</p>

@@ -27,7 +27,7 @@ const EnrollmentList = () => {
     : enrollments;
 
   return (
-    <div className="container">
+    <div className="col-11 mx-auto">
       {loading && (
         <p className="position-absolute top-50 start-50">Loading...</p>
       )}
@@ -40,7 +40,7 @@ const EnrollmentList = () => {
           {showPending ? "Afficher tout" : "Inscriptions non validé"}
         </button>
       </div>
-      <div className="table-responsive">
+      <div className="table-responsive rounded">
         <table className=" table table-hover align-middle table-borderless table-striped">
           <thead className="table-light position-sticky text-center">
             <tr>

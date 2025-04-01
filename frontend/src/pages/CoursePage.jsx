@@ -12,6 +12,14 @@ const CoursePage = () => {
   const { currentCourse, loading, error } = useSelector(
     (state) => state.courses
   );
+  useEffect(() => {
+    dispatch(fetchCourseById(courseId));
+
+    return () => {
+      dispatch(clearCurrentCourse());
+    };
+  }, [courseId, dispatch]);
+  const isInstructor = currentCourse?.instructor?._id === user?._id;
 
   const [activeLink, setActiveLink] = useState("desc");
 
@@ -30,14 +38,6 @@ const CoursePage = () => {
     }
   };
 
-  useEffect(() => {
-    dispatch(fetchCourseById(courseId));
-
-    return () => {
-      dispatch(clearCurrentCourse());
-    };
-  }, [courseId, dispatch]);
-
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -48,19 +48,19 @@ const CoursePage = () => {
           {/* Hero */}
           {/* <div className="col-12 text-white shadow"> */}
           <div className="col-11 mx-auto text-white shadow rounded-5">
-            <div className="col-xl-7 mb-5 mb-xl-0">
+            <div className="col-xl-9 col-md-9">
               <div className="p-3">
                 <span className="d-inline-block bg-light small rounded-3 px-3 py-2 text-dark">
                   Certificat obtenue à la fin de la formation 🤩
                 </span>
 
                 <p
-                  className="m-3 lh-base display-1"
+                  className="m-3 lh-base display-2"
                   style={{ fontWeight: "400" }}
                 >
                   {currentCourse?.title}
                 </p>
-                <h4 className=" m-5 fw-light">{currentCourse?.description}</h4>
+                <h4 className=" mx-5 fw-light">{currentCourse?.description}</h4>
                 <div className="d-flex flex-wrap d-block d-md-none mt-4">
                   <span
                     className={`badge ${getLevelBadgeClass(
@@ -264,7 +264,8 @@ const CoursePage = () => {
                     </div>
                   </div>
                 ) : (
-                  user?.role == "instructor" && (
+                  user?.role == "instructor" &&
+                  isInstructor && (
                     <div className="card-footer">
                       <div className="d-flex justify-content-end">
                         <Link
@@ -286,25 +287,34 @@ const CoursePage = () => {
               className="col-12 col-md-6 col-lg-6 z-3 position-relative mx-auto mt-5 p-4 rounded-4 shadow text-white text-center"
               style={{ display: `${user?.role === "admin" ? "none" : ""}` }}
             >
-              <h1>Etes-vous prêt à plonger ?</h1>
-              <p>
-                Postulez maintenant et commencez à apprendre instantanément.
-              </p>
-              {user?.role !== "admin" && user?.isVerified ? (
+              {isInstructor ? (
+                <h2>Gérez votre cours</h2>
+              ) : user?.role === "user" ||
+                (user?.role === "learner" && user?.isVerified) ? (
+                <>
+                  <h2>Êtes-vous prêt à plonger ?</h2>
+                  <p>
+                    Postulez maintenant et commencez à apprendre instantanément.
+                  </p>
+                </>
+              ) : !user || !user?.isVerified ? (
+                <h2>Inscrivez-vous maintenant</h2>
+              ) : null}
+              {isInstructor ? (
                 <Link
-                  to={`/course/${currentCourse._id}/apply`}
-                  className="btn btn-light rounded-5 p-3"
+                  className="btn btn-light rounded-5"
+                  to={`/instructor/course/${currentCourse._id}`}
                 >
-                  Inscrivez-vous maintenant
+                  Modifier
                 </Link>
               ) : !user ? (
-                <Link className="btn btn-light rounded-5 p-3" to={"/login"}>
+                <Link className="btn btn-light rounded-5" to={"/login"}>
                   Inscrivez-vous maintenant
                 </Link>
               ) : !user?.isVerified ? (
                 <>
                   <button
-                    className="btn btn-light rounded-5 p-3"
+                    className="btn btn-light rounded-5"
                     onClick={() =>
                       toast.info(
                         "Utilisateur non vérifié. Vous ne pouvez pas vous inscrire maintenant"
@@ -314,6 +324,14 @@ const CoursePage = () => {
                     Inscrivez-vous maintenant
                   </button>
                 </>
+              ) : user?.role === "user" ||
+                (user?.role === "learner" && user?.isVerified) ? (
+                <Link
+                  to={`/course/${currentCourse._id}/apply`}
+                  className="btn btn-light rounded-5"
+                >
+                  Inscrivez-vous maintenant
+                </Link>
               ) : null}
             </div>
           </div>

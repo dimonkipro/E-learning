@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserInscriptions } from "../../redux/auth/enrollmentSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Pagination from "../../components/Pagination";
 
@@ -9,15 +9,24 @@ const Inscriptions = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page")) || 1;
 
+  const [status, setStatus] = useState("all");
+  const { user } = useSelector((state) => state.auth);
   const { userEnrollments, loading } = useSelector(
     (state) => state.enrollments
   );
 
+  let finalUserEnrollments = userEnrollments;
+  if (user?.role === "learner" && status) {
+    finalUserEnrollments = userEnrollments.filter(
+      (enrollment) => enrollment?.status === status || status === "all"
+    );
+  }
+
   const coursesPerPage = 4;
-  const totalPages = Math.ceil(userEnrollments.length / coursesPerPage);
+  const totalPages = Math.ceil(finalUserEnrollments.length / coursesPerPage);
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-  const currentEnrollments = userEnrollments.slice(
+  const currentEnrollments = finalUserEnrollments.slice(
     indexOfFirstCourse,
     indexOfLastCourse
   );
@@ -39,15 +48,33 @@ const Inscriptions = () => {
     setSearchParams({ page: pageNumber });
   };
 
+  const handleStatusChange = (status) => {
+    setStatus(status);
+    setSearchParams({ page: 1 });
+  };
+
   return (
-    <div className="container mb-4">
+    <div className="col-11 mx-auto">
       {loading ? (
         <p>Loading...</p>
       ) : userEnrollments.length > 0 ? (
         <>
           {/* Upper Pagination */}
           <div className="d-flex justify-content-between align-items-center flex-wrap mb-4">
-            <h2>Mes formations</h2>
+            <div className="d-flex justify-content-between align-items-center gap-4 flex-wrap">
+              <h2>Mes formations</h2>
+
+              <select
+                className="form-select form-select-sm col"
+                value={status}
+                onChange={(e) => handleStatusChange(e.target.value)}
+              >
+                <option value="all">Tout</option>
+                <option value="approved">Approuvé</option>
+                <option value="pending">En attente</option>
+                <option value="rejected">Rejeté</option>
+              </select>
+            </div>
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}

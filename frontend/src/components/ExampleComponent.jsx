@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { addNotification } from "../redux/slices/notificationSlice";
+import { addNotification } from "../redux/notifications/notificationSlice";
 
 const ExampleComponent = () => {
   const dispatch = useDispatch();

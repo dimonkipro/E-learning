@@ -28,16 +28,15 @@ const CourseContent = () => {
   const { currentCourse, courseModules, loading, error } = useSelector(
     (state) => state.courses
   );
-
-  const isEnrolled =
-    user?.role === "instructor" ||
-    userEnrollments?.some(
-      (enrollment) =>
-        enrollment?._id === enrollementId &&
-        enrollment?.userId === user?._id &&
-        enrollment?.courseId?._id === courseId &&
-        enrollment?.status === "approved"
-    );
+  
+  const isEnrolled = userEnrollments?.some(
+    (enrollment) =>
+      enrollment?._id === enrollementId &&
+    enrollment?.userId === user?._id &&
+    enrollment?.courseId?._id === courseId &&
+    enrollment?.status === "approved"
+  );
+  const isInstructor = currentCourse?.instructor?._id === user?._id;
 
   // Fetch Course Details By Id
   useEffect(() => {
@@ -70,13 +69,15 @@ const CourseContent = () => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (!isEnrolled)
+  if (!isEnrolled && !isInstructor) {
     return (
       <ErrorPage
-        text={"L'inscriptions au cours encore non approuvées"}
+        text={"Vous n'avez pas accès à cette page"}
         emojis={"(❁´⁔`❁)"}
+        to={user?.role === "instructor" ? "/instructor/courses" : "/"}
       />
     );
+  }
 
   return (
     <div className="container">

@@ -25,17 +25,21 @@ const CourseDetails = () => {
   const [order, setOrder] = useState("");
   const [showTestModal, setShowTestModal] = useState(false);
 
-  // const [videoTitle, setVideoTitle] = useState("");
-  // const [videoOrder, setVideoOrder] = useState("");
-  // const [videoDuration, setvideoDuration] = useState("");
-  // const [videoUrl, setVideoUrl] = useState("");
-
   const [formData, setFormData] = useState({
     videoTitle: "",
     videoOrder: "",
     videoDuration: "",
     video: null,
   });
+useEffect(() => {
+  if (courseId) {
+    dispatch(fetchCourseDetailsById(courseId));
+  }
+
+  return () => {
+    dispatch(clearCurrentCourse());
+  };
+}, [courseId, dispatch]);
 
   const { currentCourse, courseModules, loading, error } = useSelector(
     (state) => state.courses
@@ -44,16 +48,25 @@ const CourseDetails = () => {
   const { user } = useSelector((state) => state.auth);
 
   const { userEnrollments } = useSelector((state) => state.enrollments);
-
-  const isEnrolled =
-    user?.role === "instructor" ||
-    userEnrollments?.some(
-      (enrollment) =>
-        enrollment?._id === enrollementId &&
-        enrollment?.userId === user?._id &&
-        enrollment?.courseId?._id === courseId &&
-        (enrollment?.status === "approved" || enrollment?.status === "pending")
+  
+  const isEnrolled = userEnrollments?.some(
+    (enrollment) =>
+      enrollment?._id === enrollementId &&
+    enrollment?.userId === user?._id &&
+      enrollment?.courseId?._id === courseId &&
+      (enrollment?.status === "approved" || enrollment?.status === "pending")
     );
+    const isInstructor = currentCourse?.instructor?._id === user?._id;
+    
+if (!isEnrolled && !isInstructor) {
+  return (
+    <ErrorPage
+      text={"Vous n'avez pas accès à cette page"}
+      emojis={"(❁´⁔`❁)"}
+      to={user?.role === "instructor" ? "/instructor/courses" : "/"}
+    />
+  );
+}
 
   const getLevelBadgeClass = (level) => {
     switch (level?.toLowerCase()) {
@@ -70,16 +83,7 @@ const CourseDetails = () => {
     }
   };
 
-  useEffect(() => {
-    if (courseId) {
-      dispatch(fetchCourseDetailsById(courseId));
-    }
-
-    return () => {
-      dispatch(clearCurrentCourse());
-    };
-  }, [courseId, dispatch]);
-
+  
   // Handle Input Change
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -139,13 +143,6 @@ const CourseDetails = () => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (!isEnrolled)
-    return (
-      <ErrorPage
-        text={"Votre inscription au formation été refusée"}
-        emojis={"(❁´⁔`❁)"}
-      />
-    );
 
   return (
     <div className="col-12">

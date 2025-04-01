@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import ExampleComponent from "../../components/ExampleComponent";
 
 const AdminDashboard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -100,6 +101,8 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
+      <ExampleComponent />
     </div>
   );
 };

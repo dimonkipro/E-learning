@@ -62,7 +62,7 @@ const Users = () => {
     : users;
 
   return (
-    <div className="container">
+    <div className="col-11 mx-auto">
       <div className=" pb-4">
         <h2>Liste des utilisateurs</h2>
         <button
@@ -76,7 +76,7 @@ const Users = () => {
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        <div className="table-responsive">
+        <div className="table-responsive rounded">
           <table className=" table table-hover align-middle table-borderless table-striped">
             <thead className="table-light position-sticky text-center">
               <tr>

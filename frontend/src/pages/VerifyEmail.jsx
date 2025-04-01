@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { verifyEmail } from "../redux/auth/authSlice";
 import Notifications from "../components/Notifications";
-import image from "../assets/verifyEmail.jpg";
+import Lottie from "lottie-react";
+import VerifyLottie from "../assets/verify.json";
 
 const VerifyEmail = () => {
   const dispatch = useDispatch();
@@ -77,8 +78,12 @@ const VerifyEmail = () => {
       <div className="text-center">
         <h1>Verifier votre E-mail</h1>
       </div>
-      <div className="col-12 text-center">
-        <img src={image} alt="..." style={{ width: "40%" }} />
+      <div className=" col-12 d-flex justify-content-center">
+        <Lottie
+          animationData={VerifyLottie}
+          loop={true}
+          style={{ width: "40%" }}
+        />
       </div>
       <div className="col-10 my-2 mx-auto text-center">
         <p>Entrez le code à 6 chiffres envoyé à votre adresse e-mail.</p>

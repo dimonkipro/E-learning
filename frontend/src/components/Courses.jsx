@@ -4,6 +4,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { fetchCourses } from "../redux/auth/courseSlice";
 import AddCourseForm from "./AddCourseForm";
 import Pagination from "./Pagination";
+import { LinkToolTip } from "../pages/learner/CourseDetails";
 
 const Courses = () => {
   const dispatch = useDispatch();
@@ -13,15 +14,16 @@ const Courses = () => {
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showMyCourses, setShowMyCourses] = useState(false);
   const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const [sortOrder, setSortOrder] = useState("asc"); // or "desc"
 
   const [searchParams, setSearchParams] = useSearchParams();
 
   const currentPage = parseInt(searchParams.get("page")) || 1;
 
-  // Get unique categories from courses
   const categoryMap = {};
-  
+
   courses.forEach((course) => {
     const cat = course.category;
     categoryMap[cat._id] = cat;
@@ -34,11 +36,24 @@ const Courses = () => {
     ? courses.filter((course) => course.category._id === selectedCategory)
     : courses;
 
-  const coursesPerPage = 6;
-  const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
+  let finalFilteredCourses = filteredCourses;
+
+  if (user?.role === "instructor" && showMyCourses) {
+    finalFilteredCourses = filteredCourses.filter(
+      (course) => course?.instructor?._id === user?._id
+    );
+  }
+
+  // Sort courses by price
+  finalFilteredCourses = [...finalFilteredCourses].sort((a, b) => {
+    return sortOrder === "asc" ? a.price - b.price : b.price - a.price;
+  });
+
+  const coursesPerPage = 4;
+  const totalPages = Math.ceil(finalFilteredCourses.length / coursesPerPage);
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-  const currentcourses = filteredCourses.slice(
+  const currentcourses = finalFilteredCourses.slice(
     indexOfFirstCourse,
     indexOfLastCourse
   );
@@ -73,190 +88,183 @@ const Courses = () => {
   };
 
   return (
-    <div className="row col-12 mx-auto">
-      {/* Categories Column */}
-      <div className="d-none d-lg-block col-lg-2 mb-4">
-        <h4 className="mb-3">Categories</h4>
-        <div className="list-group shadow">
-          <Link
-            onClick={() => setSelectedCategory(null)}
-            className={`list-group-item list-group-item-warning d-flex justify-content-between align-items-center text-break ${
-              !selectedCategory ? "active" : ""
-            }`}
-          >
-            All Categories{" "}
-            <span className="badge bg-secondary rounded-pill ms-1">
-              {courses.length}
-            </span>
-          </Link>
-          {categories.map((category) => (
-            <Link
-              key={category._id}
-              onClick={() => handleCategoryChange(category._id)}
-              className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center text-break${
-                selectedCategory === category._id ? "active" : ""
-              }`}
-            >
-              {category.name}
-              <span className="badge bg-secondary rounded-pill ms-1">
-                {courses.filter((c) => c.category._id === category._id).length}
-              </span>
-            </Link>
-          ))}
-        </div>
-
-        {/* Button to open AddCourse modal */}
-        {user?.role === "admin" ? (
-          <>
-            <div className="m-3">
-              <Link
-                className="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
-                onClick={() => setShowModal(true)}
-              >
-                Ajouter une formation
-              </Link>
-            </div>
-          </>
-        ) : null}
-      </div>
-
-      {/* Modal for Adding a Course */}
-      <div
-        className={`modal ${showModal ? "show" : ""}`}
-        style={{ display: showModal ? "block" : "none" }}
-        aria-labelledby="courseModal"
-        aria-hidden={!showModal}
-      >
-        <div className="modal-dialog modal-lg modal-fullscreen-lg-down mx-auto">
-          <div className="modal-content">
-            <div className="modal-header col-11">
-              <h5 className="modal-title" id="courseModal">
-                Ajouter une nouvelle formation
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                onClick={() => setShowModal(false)}
-              ></button>
-            </div>
-            <div className="modal-body col-11">
-              <AddCourseForm />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Courses Column */}
-      <div className="col-12 col-lg-10">
-        <div className="d-flex justify-content-between flex-wrap">
-          <h3 className="mb-4">
+    <div className="col-11 mx-auto">
+      {/* Text / Upper Pagination */}
+      <div className="d-flex justify-content-between align-items-center flex-wrap mb-4">
+        <div className="d-flex align-items-center gap-4 col-8  flex-wrap">
+          <h2 className="">
             {selectedCategory
               ? categories.find((c) => c._id === selectedCategory)?.name
               : "Tout les Formations"}
-          </h3>
+          </h2>
 
-          {/* Mobile-only toggle button */}
-          <button
-            className="d-lg-none btn btn-warning mb-3"
+          {/* Ctegories toggle button */}
+          <LinkToolTip
+            title={"Categories / Prix"}
+            placement={"bottom"}
             onClick={() => setShowOffcanvas(true)}
+            className={
+              "link-primary fs-5 animate link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover me-4"
+            }
           >
-            Afficher categories
-          </button>
+            {" "}
+            Trier <i className="bi bi-funnel"></i>
+          </LinkToolTip>
 
-          {/* Mobile Offcanvas */}
-          <div
-            className={`offcanvas offcanvas-start ${
-              showOffcanvas ? "show" : ""
-            }`}
-            tabIndex="-1"
-            id="offcanvasCategories"
-            aria-labelledby="offcanvasCategoriesLabel"
-            data-bs-backdrop="true"
-            style={{ visibility: showOffcanvas ? "visible" : "hidden" }}
-          >
-            <div className="offcanvas-header">
-              <h5 className="offcanvas-title" id="offcanvasCategoriesLabel">
-                Categories
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                onClick={() => setShowOffcanvas(false)}
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="offcanvas-body">
-              <div className="list-group shadow">
-                <Link
-                  onClick={() => {
-                    setSelectedCategory(null);
-                    setShowOffcanvas(false);
-                  }}
-                  className={`list-group-item list-group-item-warning d-flex justify-content-between align-items-center text-break ${
-                    !selectedCategory ? "active" : ""
-                  }`}
-                >
-                  All Categories
-                  <span className="badge bg-secondary rounded-pill">
-                    {courses.length}
-                  </span>
-                </Link>
-                {categories.map((category) => (
-                  <Link
-                    key={category._id}
-                    onClick={() => {
-                      setSelectedCategory(category._id);
-                      setShowOffcanvas(false);
-                    }}
-                    className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center text-break${
-                      selectedCategory === category._id ? "active" : ""
-                    }`}
-                  >
-                    {category.name}
-                    <span className="badge bg-secondary rounded-pill">
-                      {
-                        courses.filter((c) => c.category._id === category._id)
-                          .length
-                      }
-                    </span>
-                  </Link>
-                ))}
-              </div>
-              {user?.role === "admin" && (
-                <div className="mt-3">
-                  <Link
-                    className="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
-                    onClick={() => {
-                      setShowModal(true);
-                      setShowOffcanvas(false);
-                    }}
-                  >
-                    Ajouter une formation
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Upper Pagination */}
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+          {/* Add Course Button */}
+          {user?.role === "admin" && (
+            <LinkToolTip
+              title="Ajouter une formation"
+              placement={"bottom"}
+              className={
+                "link-primary fs-5 link-offset-2 animate link-underline-opacity-25 link-underline-opacity-100-hover me-4"
+              }
+              onClick={() => {
+                setShowModal(true);
+                setShowOffcanvas(false);
+              }}
+            >
+              Ajouter.. {">"}
+            </LinkToolTip>
+          )}
         </div>
 
-        {/* Cards */}
-        <div className="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-          {/* Card */}
-          {currentcourses.map((course) => (
+        {/* Categories Offcanvas  */}
+        <div
+          className={`offcanvas offcanvas-start ${showOffcanvas ? "show" : ""}`}
+          tabIndex="-1"
+          id="offcanvasCategories"
+          aria-labelledby="offcanvasCategoriesLabel"
+          data-bs-backdrop="true"
+          style={{
+            visibility: showOffcanvas ? "visible" : "hidden",
+            width: "18rem",
+          }}
+        >
+          <div className="offcanvas-header">
+            <div className="d-flex align-items-center gap-2">
+              <h3 className="offcanvas-title" id="offcanvasCategoriesLabel">
+                Filtre
+              </h3>
+              <i className="bi bi-funnel h3 mb-0"></i>
+            </div>
+            <button
+              type="button"
+              className="btn-close"
+              onClick={() => setShowOffcanvas(false)}
+              aria-label="Close"
+            ></button>
+          </div>
+
+          {/* Filter */}
+          <div className="offcanvas-body">
+            {/* Instructor Filter */}
+            {user?.role === "instructor" && (
+              <div className="mb-3">
+                <LinkToolTip
+                  title="Trier"
+                  placement={"bottom"}
+                  onClick={() => {
+                    setShowMyCourses(!showMyCourses);
+                    setShowOffcanvas(false);
+                  }}
+                  className={
+                    "link-primary fs-5 link-offset-2 bounce-hover link-underline-opacity-25 link-underline-opacity-100-hover me-4"
+                  }
+                >
+                  {showMyCourses ? "Afficher tout" : "Cours attribués"} {">"}
+                </LinkToolTip>
+              </div>
+            )}
+            {/* Category Filter */}
+            <h5 className="mb-3">Trier par categorie</h5>
+            <div className="list-group shadow mb-4">
+              <Link
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setShowOffcanvas(false);
+                }}
+                className={`list-group-item list-group-item-warning d-flex justify-content-between align-items-center text-break ${
+                  !selectedCategory ? "active" : ""
+                }`}
+              >
+                All Categories
+                <span className="badge bg-secondary rounded-pill">
+                  {courses.length}
+                </span>
+              </Link>
+              {categories.map((category) => (
+                <Link
+                  key={category._id}
+                  onClick={() => {
+                    handleCategoryChange(category._id);
+                    setShowOffcanvas(false);
+                  }}
+                  className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center text-break${
+                    selectedCategory === category._id ? "active" : ""
+                  }`}
+                >
+                  {category.name}
+                  <span className="badge bg-secondary rounded-pill">
+                    {
+                      courses.filter((c) => c.category._id === category._id)
+                        .length
+                    }
+                  </span>
+                </Link>
+              ))}
+            </div>
+
+            {/* Price Filter */}
+            <h5 className="mb-3">Trier par prix</h5>
+            <div className=" shadow rounded p-3">
+              <div
+                className="d-flex justify-content-between"
+                onClick={() => {
+                  setSortOrder("asc");
+                  setShowOffcanvas(false);
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                Croissant
+                <i className="bi bi-sort-numeric-up-alt h4 mx-3"></i>
+              </div>
+              <div
+                className="d-flex justify-content-between"
+                onClick={() => {
+                  setSortOrder("desc");
+                  setShowOffcanvas(false);
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                Décroissant
+                <i className="bi bi-sort-numeric-down-alt h4 mx-3"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Upper Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
+
+      {/* Cards */}
+      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-3">
+        {/* Card */}
+        {currentcourses.length > 0 ? (
+          currentcourses.map((course) => (
             <div className="col" key={course._id}>
-              <div className="card h-100 text-center shadow">
+              <div className="card  text-center shadow bounce-hover">
                 {/* <div className="card h-100 text-center shadow"> */}
                 <Link
                   to={`/courses/${course._id}`}
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
+                  {/* Card Header */}
                   <div
                     className="d-flex position-relative"
                     // style={{ height: "12.5rem " }}
@@ -267,13 +275,15 @@ const Courses = () => {
                     >
                       {course.category.name}
                     </span>
+
                     <img
                       src={`http://localhost:5000/${course?.image.replaceAll(
                         "\\",
                         "/"
                       )}`}
-                      className="card-img-top w-100 h-100 object-fit-cover"
+                      className="card-img-top object-fit-contain"
                       alt="..."
+                      // style={{ height: "11.5rem " }}
                     />
 
                     <span
@@ -292,7 +302,7 @@ const Courses = () => {
                     {course.price} TND
                   </p>
                 </div>
-                {user?.role == "admin" && (
+                {user?.role == "admin" ? (
                   <div className="card-footer">
                     <div className="d-flex justify-content-end">
                       <Link
@@ -303,18 +313,59 @@ const Courses = () => {
                       </Link>
                     </div>
                   </div>
+                ) : (
+                  course?.instructor?._id === user?._id && (
+                    <div className="card-footer">
+                      <div className="d-flex justify-content-end">
+                        <Link
+                          to={`/instructor/course/${course._id}`}
+                          className="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                        >
+                          Modifier
+                        </Link>
+                      </div>
+                    </div>
+                  )
                 )}
               </div>
             </div>
-          ))}
-        </div>
+          ))
+        ) : (
+          <p>Rien á afficher.</p>
+        )}
+      </div>
 
-        {/* Lower Pagination */}
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+      {/* Lower Pagination */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
+
+      {/* Modal for Adding a Course */}
+      <div
+        className={`modal ${showModal ? "show" : ""}`}
+        style={{ display: showModal ? "block" : "none" }}
+        aria-labelledby="courseModal"
+        aria-hidden={!showModal}
+      >
+        <div className="modal-dialog modal-lg modal-fullscreen-lg-down mx-auto">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="courseModal">
+                Ajouter une nouvelle formation
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setShowModal(false)}
+              ></button>
+            </div>
+            <div className="modal-body col-12 col-lg-12 col-md-11 col-sm-11  mx-auto">
+              <AddCourseForm />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

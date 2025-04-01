@@ -69,8 +69,6 @@ export const verifyUser = createAsyncThunk(
   "users/verifyUser",
   async (id, { rejectWithValue }) => {
     try {
-      
-      
       if (!token) throw new Error("No authentication token found");
 
       const response = await axios.put(

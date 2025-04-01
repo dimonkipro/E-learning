@@ -37,16 +37,21 @@ const VideoPlayer = ({ video }) => {
   }, [watchedTime, video.duration, userId, videoId]);
 
   return (
-    <div>
-      <h1>{video.title}</h1>
-      <video controls width="100%" onTimeUpdate={handleTimeUpdate} className="rounded-4">
+    <div className="mb-5">
+      <h1 className="mb-4 text-center">{video.title}</h1>
+      <video
+        controls
+        width="100%"
+        onTimeUpdate={handleTimeUpdate}
+        className="rounded-4"
+      >
         <source
           src={`http://localhost:5000/${video.video_url.replace(/\\/g, "/")}`}
           type="video/mp4"
         />
         Your browser does not support the video tag.
       </video>
-      
+
       {isCompleted && <p className="text-success">✅ Vidéo terminée!</p>}
     </div>
   );

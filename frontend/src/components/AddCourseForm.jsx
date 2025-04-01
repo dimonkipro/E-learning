@@ -148,9 +148,10 @@ const AddCourseForm = () => {
               <select
                 name="category"
                 onChange={handleInputChange}
+                defaultValue=""
                 className="form-select mb-2 focus-ring focus-ring-warning border"
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   Selectionner Categorie
                 </option>
                 {categories.map((cat) => (
@@ -167,9 +168,10 @@ const AddCourseForm = () => {
                 name="level"
                 onChange={handleInputChange}
                 className="form-select form-select-secondary mb-2 focus-ring focus-ring-warning border"
+                defaultValue=""
                 required
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   Selectionner niveau
                 </option>
 
@@ -186,9 +188,10 @@ const AddCourseForm = () => {
                 name="instructor"
                 onChange={handleInputChange}
                 className="form-select mb-2 focus-ring focus-ring-warning border"
+                defaultValue=""
                 required
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   Selectionner formateur
                 </option>
                 {users
@@ -299,9 +302,9 @@ const AddCourseForm = () => {
         </div>
 
         {/* SubmitButton */}
-        <div className="d-grid col-8 mx-auto my-4">
+        <div className="d-grid col-6 mx-auto my-4">
           <button className="btn btn-warning" type="submit">
-            Ajouter une nouvelle formation
+            Ajouter la formation
           </button>
         </div>
       </form>

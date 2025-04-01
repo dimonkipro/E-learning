@@ -1,13 +1,15 @@
 /* eslint-disable react/prop-types */
 
-const ErrorPage = ({text}) => {
+import { Link } from "react-router-dom";
+
+const ErrorPage = ({ text, emojis, to }) => {
   return (
-    <div>
-      <p className="container display-1 text-center fw-bold position-absolute top-50 start-50 translate-middle ">
-        (❁´⁔`❁) <br /> {text}
-      </p>
+    <div className="container text-center my-5">
+      <p className="display-2 fw-bold">{emojis}</p>
+      <p className="display-2">{text}</p>
+      <Link to={to ? to : "/"}>Retour</Link>
     </div>
   );
-}
+};
 
-export default ErrorPage
+export default ErrorPage;

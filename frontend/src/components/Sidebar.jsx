@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Button, Nav, Offcanvas } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import DarkModeToggle from "./DarkModeToggle";
-import logo from "../assets/logo.png";
+// import DarkModeToggle from "./DarkModeToggle";
+import logo from "../assets/logoGm.png";
 import { logoutUser } from "../redux/auth/authSlice";
 import { fetchUserInscriptions } from "../redux/auth/enrollmentSlice";
 
@@ -17,7 +17,7 @@ const Sidebar = () => {
   const { userEnrollments } = useSelector((state) => state.enrollments);
 
   useEffect(() => {
-    if (user?.role === "learner" ) {
+    if (user?.role === "learner") {
       dispatch(fetchUserInscriptions());
     }
   }, [dispatch, user]);
@@ -25,7 +25,6 @@ const Sidebar = () => {
   const isLearner = userEnrollments?.length > 0;
   const showSidebar =
     user?.role === "admin" || user?.role === "instructor" || isLearner;
-
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -42,7 +41,7 @@ const Sidebar = () => {
         onHide={handleClose}
         placement="end"
         className={theme === "light" ? "bg-dark" : "bg-light"}
-        style={{ width: "300px" }}
+        style={{ width: "300px", transition: "all 0.7s ease" }}
       >
         <Offcanvas.Header
           closeButton
@@ -80,16 +79,6 @@ const Sidebar = () => {
                     Dashboard <i className="bi bi-speedometer2 ms-2"></i>
                   </Nav.Link>
 
-                  {/* Users Management */}
-                  <Nav.Link
-                    as={Link}
-                    to="/admin/users"
-                    onClick={handleClose}
-                    className={theme === "light" ? "text-white" : "text-dark"}
-                  >
-                    Users <i className="bi bi-people ms-2"></i>
-                  </Nav.Link>
-
                   {/* Courses Management */}
                   <Nav.Link
                     as={Link}
@@ -97,7 +86,17 @@ const Sidebar = () => {
                     onClick={handleClose}
                     className={theme === "light" ? "text-white" : "text-dark"}
                   >
-                    Courses <i className="bi bi-box-seam ms-2"></i>
+                    Formations <i className="bi bi-box-seam ms-2"></i>
+                  </Nav.Link>
+
+                  {/* Users Management */}
+                  <Nav.Link
+                    as={Link}
+                    to="/admin/users"
+                    onClick={handleClose}
+                    className={theme === "light" ? "text-white" : "text-dark"}
+                  >
+                    Utilisateurs <i className="bi bi-people ms-2"></i>
                   </Nav.Link>
 
                   {/* Inscriptions */}
@@ -131,7 +130,7 @@ const Sidebar = () => {
                     onClick={handleClose}
                     className={theme === "light" ? "text-white" : "text-dark"}
                   >
-                    Courses <i className="bi bi-box-seam ms-2"></i>
+                    Formations <i className="bi bi-box-seam ms-2"></i>
                   </Nav.Link>
                 </>
               )}
@@ -153,7 +152,7 @@ const Sidebar = () => {
                     onClick={handleClose}
                     className={theme === "light" ? "text-white" : "text-dark"}
                   >
-                    Courses <i className="bi bi-book ms-2"></i>
+                    Formations <i className="bi bi-book ms-2"></i>
                   </Nav.Link>
                   <Nav.Link
                     as={Link}
@@ -161,7 +160,7 @@ const Sidebar = () => {
                     onClick={handleClose}
                     className={theme === "light" ? "text-white" : "text-dark"}
                   >
-                    My Courses <i className="bi bi-journal-check"></i>
+                    Mes Inscriptions <i className="bi bi-journal-check"></i>
                   </Nav.Link>
                 </>
               )}
@@ -174,7 +173,7 @@ const Sidebar = () => {
                 data-bs-toggle="modal"
                 data-bs-target="#logoutModal"
               >
-                Logout <i className="bi bi-box-arrow-right ms-2"></i>
+                Déconnecter <i className="bi bi-box-arrow-right ms-2"></i>
               </Nav.Link>
             </Nav.Item>
           </Nav>
@@ -182,11 +181,11 @@ const Sidebar = () => {
       </Offcanvas>
 
       {/* Header */}
-      <div className="navbar py-0 px-5 bg-body-tertiary mb-4">
+      <div className="navbar py-0 px-5 mb-4">
         {/* Dark Mode Button */}
-        <div className="rounded-pill bg-body-secondary p-2">
+        {/* <div className="rounded-pill bg-body-secondary p-2">
           <DarkModeToggle drop={"bottom-centered"} />
-        </div>
+        </div> */}
 
         {/* Logo */}
         <Nav.Item>
@@ -195,7 +194,7 @@ const Sidebar = () => {
               src={logo}
               alt="Logo"
               className="logo"
-              style={{ width: "80%" }}
+              style={{ width: "190px", height: "auto" }}
             />
           </Nav.Link>
         </Nav.Item>
@@ -219,7 +218,7 @@ const Sidebar = () => {
           <div className="modal-content">
             <div className="modal-header d-flex justify-content-between">
               <h5 className="modal-title" id="exampleModalLabel">
-                Ready to leave?
+                Prêt à partir?
               </h5>
               <button
                 className="btn-close"
@@ -229,7 +228,8 @@ const Sidebar = () => {
               ></button>
             </div>
             <div className="modal-body">
-              Click below to log out of your current session.
+              Cliquez ci-dessous pour vous déconnecter de votre session
+              actuelle.
             </div>
             <div className="modal-footer">
               <button
@@ -237,14 +237,14 @@ const Sidebar = () => {
                 type="button"
                 data-bs-dismiss="modal"
               >
-                Cancel
+                Annuler
               </button>
               <button
                 className="btn btn-danger"
                 onClick={handleLogout}
                 data-bs-dismiss="modal"
               >
-                Logout
+                Déconnecter
               </button>
             </div>
           </div>

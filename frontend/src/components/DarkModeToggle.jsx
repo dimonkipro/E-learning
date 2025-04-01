@@ -20,7 +20,7 @@ const DarkModeToggle = ({ drop }) => {
           <i className="bi bi-sun-fill"></i>
         )
       }
-      drop= {drop}
+      drop={drop}
       className="mx-2"
     >
       <NavDropdown.Item onClick={() => handleThemeChange("dark")}>

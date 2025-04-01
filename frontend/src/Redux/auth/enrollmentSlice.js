@@ -77,7 +77,6 @@ export const fetchUserInscriptions = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data.inscriptions;
-      
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.msg || "Failed to fetch your applications"

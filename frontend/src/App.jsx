@@ -31,6 +31,7 @@ import EditCourseModelPage from "./pages/instructor/EditCourseModelPage";
 import CourseDetails from "./pages/learner/CourseDetails";
 import CourseContent from "./pages/learner/CourseContent";
 import ErrorPage from "./components/ErrorPage";
+import Footer from "./components/Footer";
 
 function App() {
   const dispatch = useDispatch();
@@ -113,6 +114,11 @@ function App() {
             <Route index element={<InstructorDashboard />} />
             <Route path="dashboard" element={<InstructorDashboard />} />
             <Route path="courses" element={<Courses />} />
+            <Route path="course/:courseId" element={<CourseDetails />} />
+            <Route
+              path="course/content/:courseId"
+              element={<CourseContent />}
+            />
             <Route
               path="edit-course/:courseId"
               element={<EditCourseModelPage />}
@@ -136,12 +142,25 @@ function App() {
               path="course/content/:courseId/:enrollementId"
               element={<CourseContent />}
             />
+            <Route
+              path="enrollment/success"
+              element={
+                <ErrorPage
+                  text={"L'inscriptions au cours envoyée avec succée"}
+                  emojis={"(●'◡'●)"}
+                />
+              }
+            />
           </Route>
         </Route>
         {/* ------------------ErrorRoute---------------------------- */}
 
-        <Route path="*" element={<ErrorPage text={"404 Page Not Found"} />} />
+        <Route
+          path="*"
+          element={<ErrorPage text={"404 Page Not Found"} emojis={"(❁´⁔`❁)"} />}
+        />
       </Routes>
+      <Footer />
     </>
   );
 }

@@ -1,25 +1,28 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { clearCurrentCourse, fetchCourseById } from "../../redux/auth/courseSlice";
+import {
+  clearCurrentCourse,
+  fetchCourseById,
+} from "../../redux/auth/courseSlice";
 
 const EditCoursePage = () => {
-    const { courseId } = useParams();
-    const dispatch = useDispatch();
-    const { currentCourse, loading, error } = useSelector(
-      (state) => state.courses
-    );
+  const { courseId } = useParams();
+  const dispatch = useDispatch();
+  const { currentCourse, loading, error } = useSelector(
+    (state) => state.courses
+  );
 
-    useEffect(() => {
-      dispatch(fetchCourseById(courseId));
+  useEffect(() => {
+    dispatch(fetchCourseById(courseId));
 
-      return () => {
-        dispatch(clearCurrentCourse());
-      };
-    }, [courseId, dispatch]);
+    return () => {
+      dispatch(clearCurrentCourse());
+    };
+  }, [courseId, dispatch]);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
   return (
     <div>
       <h1>Edit course</h1>
@@ -55,6 +58,6 @@ const EditCoursePage = () => {
       </div>
     </div>
   );
-}
+};
 
-export default EditCoursePage
+export default EditCoursePage;

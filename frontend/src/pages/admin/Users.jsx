@@ -8,6 +8,7 @@ import {
 } from "../../redux/auth/userSlice";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { LinkToolTip } from "../learner/CourseDetails";
 
 const Users = () => {
   const dispatch = useDispatch();
@@ -62,21 +63,25 @@ const Users = () => {
     : users;
 
   return (
-    <div className="container">
-      <div className=" pb-4">
+    <div className="col-11 mx-auto">
+      <div className=" pb-4 d-flex justify-content-between align-items-center">
         <h2>Liste des utilisateurs</h2>
-        <button
-          className="btn btn-secondary rounded-5 p-2"
+        <LinkToolTip
+          title={showUnverified ? "Afficher tout" : "Utilisateurs non verifié"}
+          placement={"bottom"}
+          className={
+            "link-primary fs-5 link-offset-2 animate link-underline-opacity-25 link-underline-opacity-100-hover me-4"
+          }
           onClick={() => setshowUnverified(!showUnverified)}
         >
-          {showUnverified ? "Afficher tout" : "Utilisateurs non verifié"}
-        </button>
+          Filtrer <i className="bi bi-funnel"></i>
+        </LinkToolTip>
       </div>
 
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        <div className="table-responsive">
+        <div className="table-responsive rounded">
           <table className=" table table-hover align-middle table-borderless table-striped">
             <thead className="table-light position-sticky text-center">
               <tr>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { createInscription } from "../redux/auth/enrollmentSlice";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { clearCurrentCourse, fetchCourseById } from "../redux/auth/courseSlice";
 
 const ApplyEnrollment = () => {
@@ -58,7 +58,7 @@ const ApplyEnrollment = () => {
         return "bg-secondary";
     }
   };
-
+if (!user?.isEmailVerified) return <Navigate to={"/verify-email"} />;
   return (
     <div className="col-12">
       {/* Hero */}

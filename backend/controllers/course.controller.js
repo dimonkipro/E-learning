@@ -106,7 +106,7 @@ export const addCourse = async (req, res) => {
 export const getAllCourses = async (req, res) => {
   try {
     const courses = await Course.find()
-      .sort({ title: 1 })
+      .sort({ createdAt: -1 })
       .populate("category", "name")
       .populate("instructor", "name");
     res.send(courses);

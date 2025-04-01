@@ -2,9 +2,9 @@ import { useState } from "react";
 import { loginUser } from "../redux/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import loginImage from "../assets/login.jpg";
+import LoginLottie from "../assets/login.json";
 import { toast } from "react-toastify";
-
+import Lottie, {  } from "lottie-react";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,8 +23,12 @@ const Login = () => {
   return (
     <div className="container col-8 rounded-4 my-5 py-4  shadow">
       <h2 className="text-center">Se connecter</h2>
-      <div className="col-12 text-center">
-        <img src={loginImage} alt="..." style={{ width: "40%" }} />
+      <div className="col-12 d-flex justify-content-center">
+          <Lottie
+            animationData={LoginLottie}
+            loop={true}
+            style={{ width: "40%" }}
+          />
       </div>
       <div className=" container col-10 text-center my-4">
         <form onSubmit={handleSubmit}>

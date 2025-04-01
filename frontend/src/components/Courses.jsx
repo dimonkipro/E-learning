@@ -16,7 +16,7 @@ const Courses = () => {
   const [showModal, setShowModal] = useState(false);
   const [showMyCourses, setShowMyCourses] = useState(false);
   const [showOffcanvas, setShowOffcanvas] = useState(false);
-  const [sortOrder, setSortOrder] = useState("asc"); // or "desc"
+  const [sortOrder, setSortOrder] = useState("all"); // or "desc"
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -46,7 +46,11 @@ const Courses = () => {
 
   // Sort courses by price
   finalFilteredCourses = [...finalFilteredCourses].sort((a, b) => {
-    return sortOrder === "asc" ? a.price - b.price : b.price - a.price;
+    return sortOrder === "asc"
+      ? a.price - b.price
+      : sortOrder === "desc"
+      ? b.price - a.price
+      : filteredCourses;
   });
 
   const coursesPerPage = 4;

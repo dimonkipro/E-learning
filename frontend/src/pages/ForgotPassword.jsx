@@ -1,9 +1,11 @@
 import { useState } from "react";
-import forgotImage from "../assets/forgotPassword.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import Notifications from "../components/Notifications";
 import { Link, useNavigate } from "react-router-dom";
 import { forgotPassword } from "../redux/auth/authSlice";
+import Lottie from "lottie-react";
+import ForgotLottie from "../assets/forgot.json";
+
 
 const ForgotPassword = () => {
   const dispatch = useDispatch();
@@ -35,8 +37,12 @@ const ForgotPassword = () => {
           </p>
         </div>
         <div>
-          <div className="col-12 text-center">
-            <img src={forgotImage} alt="..." style={{ width: "50%" }} />
+          <div className=" col-12 d-flex justify-content-center">
+            <Lottie
+              animationData={ForgotLottie}
+              loop={true}
+              style={{ width: "40%" }}
+            />
           </div>
           <div className="col-10 mx-auto text-center my-4">
             <form onSubmit={handleSubmit}>

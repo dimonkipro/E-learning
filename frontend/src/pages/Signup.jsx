@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { signupUser } from "../redux/auth/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import Notifications from "../components/Notifications";
-import registerImage from "../assets/register.jpg";
+import RegisterLottie from "../assets/register.json";
+import Lottie from "lottie-react";
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -61,8 +62,12 @@ const Signup = () => {
       <div className="row text-center">
         <h2>Créer un compte </h2>
         <p className="m-0">C&apos;est simple et rapide.</p>
-        <div className=" col-12 text-center">
-          <img src={registerImage} alt="..." style={{ width: "40%" }} />
+        <div className=" col-12 d-flex justify-content-center">
+          <Lottie
+            animationData={RegisterLottie}
+            loop={true}
+            style={{ width: "40%" }}
+          />
         </div>
         <div className="col-11 mx-auto text-center my-4">
           <form onSubmit={handleSubmit}>

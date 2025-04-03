@@ -13,7 +13,7 @@ import ModuleContentSideBar from "../../components/ModuleContentSideBar";
 
 const CourseContent = () => {
   const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const { courseId, enrollementId } = useParams();
 
@@ -31,13 +31,15 @@ const CourseContent = () => {
     (state) => state.courses
   );
 
-  const isEnrolled = userEnrollments?.some(
-    (enrollment) =>
-      enrollment?._id === enrollementId &&
-      enrollment?.userId === user?._id &&
-      enrollment?.courseId?._id === courseId &&
-      enrollment?.status === "approved"
-  );
+  const isEnrolled =
+    user?.role === "admin" ||
+    userEnrollments?.some(
+      (enrollment) =>
+        enrollment?._id === enrollementId &&
+        enrollment?.userId === user?._id &&
+        enrollment?.courseId?._id === courseId &&
+        enrollment?.status === "approved"
+    );
   const isInstructor = currentCourse?.instructor?._id === user?._id;
 
   // Fetch Course Details By Id
@@ -142,7 +144,7 @@ const CourseContent = () => {
               onClick={() => navigate(-1)}
               className="btn btn-outline-secondary"
             >
-              Back →
+              Revenir en arrière →
             </button>
           </div>
           {/* Module Content */}

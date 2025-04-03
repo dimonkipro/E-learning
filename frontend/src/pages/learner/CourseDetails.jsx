@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   clearCurrentCourse,
   fetchCourseDetailsById,
 } from "../../redux/auth/courseSlice";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
 import ErrorPage from "../../components/ErrorPage";
 import { addModule, addVideo } from "../../redux/auth/moduleSlice";
 import AddTestForm from "../../components/AddTestForm";
@@ -14,6 +14,7 @@ import AddTestForm from "../../components/AddTestForm";
 const CourseDetails = () => {
   const dispatch = useDispatch();
   const { courseId, enrollementId } = useParams();
+  const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
@@ -44,29 +45,24 @@ const CourseDetails = () => {
   const { currentCourse, courseModules, loading, error } = useSelector(
     (state) => state.courses
   );
+  const testCount = courseModules?.filter(
+    (module) => module.test !== null
+  ).length;
 
   const { user } = useSelector((state) => state.auth);
 
   const { userEnrollments } = useSelector((state) => state.enrollments);
 
-  const isEnrolled = userEnrollments?.some(
-    (enrollment) =>
-      enrollment?._id === enrollementId &&
-      enrollment?.userId === user?._id &&
-      enrollment?.courseId?._id === courseId &&
-      (enrollment?.status === "approved" || enrollment?.status === "pending")
-  );
-  const isInstructor = currentCourse?.instructor?._id === user?._id;
-
-  if (!isEnrolled && !isInstructor) {
-    return (
-      <ErrorPage
-        text={"Vous n'avez pas accès à cette page"}
-        emojis={"(❁´⁔`❁)"}
-        to={user?.role === "instructor" ? "/instructor/courses" : "/"}
-      />
+  const isEnrolled =
+    user?.role === "admin" ||
+    userEnrollments?.some(
+      (enrollment) =>
+        enrollment?._id === enrollementId &&
+        enrollment?.userId === user?._id &&
+        enrollment?.courseId?._id === courseId &&
+        (enrollment?.status === "approved" || enrollment?.status === "pending")
     );
-  }
+  const isInstructor = currentCourse?.instructor?._id === user?._id;
 
   const getLevelBadgeClass = (level) => {
     switch (level?.toLowerCase()) {
@@ -142,51 +138,97 @@ const CourseDetails = () => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-
+  if (!isEnrolled && !isInstructor) {
+    return (
+      <ErrorPage
+        text={"Vous n'avez pas accès à cette page"}
+        emojis={"(❁´⁔`❁)"}
+        to={user?.role === "instructor" ? "/instructor/courses" : "/"}
+      />
+    );
+  }
   return (
     <div className="col-12">
       {/* Hero */}
       {/* <div className="col-12 text-white shadow"> */}
-      <div className="col-11 mx-auto text-white shadow rounded-5">
-        <div className="col-xl-7 mb-5 mb-xl-0">
-          <div className="p-3">
-            <span className="d-inline-block bg-light small rounded-3 px-3 py-2 text-dark">
-              Certificat obtenue à la fin de la formation 🤩
-            </span>
+      <div className="col-11 mx-auto d-flex flex-wrap text-white shadow rounded-5 p-2">
+        {/* <div className="col-12 p-3"> */}
+        <div className="col-12 col-sm-9 p-3">
+          <span className="d-inline-block bg-light small rounded-3 px-3 py-2 text-dark">
+            Certificat obtenue à la fin de la formation 🤩
+          </span>
 
-            <p className="m-3 lh-base display-2" style={{ fontWeight: "300" }}>
-              {currentCourse?.title}
-            </p>
-            <h4 className=" m-5 fw-light">{currentCourse?.description}</h4>
-            <div className="d-flex flex-wrap d-block d-md-none mt-4">
-              <span
-                className={`badge ${getLevelBadgeClass(
-                  currentCourse?.level
-                )} rounded-pill p-2 me-2 mt-3`}
-              >
-                Niveau: {currentCourse?.level}
-              </span>
-              <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
-                Formateur: {currentCourse?.instructor?.name}
-              </span>
-              <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
-                Categorie: {currentCourse?.category?.name}
-              </span>
-              <span
-                className="badge rounded-pill p-2 mt-3"
-                style={{ backgroundColor: "#28c76f" }}
-              >
-                Prix: {currentCourse?.price} TND
-              </span>
+          <p
+            className="m-3 lh-base display-2 text-center"
+            style={{ fontWeight: "300" }}
+          >
+            {currentCourse?.title}
+          </p>
+          <h4 className=" m-5 fw-light">{currentCourse?.description}</h4>
+
+          {/* Count And Progress */}
+          <div className="col-10 col-md-5">
+            <span className="badge bg-secondary p-2 me-2">
+              {courseModules?.length} Module(s)
+            </span>
+            <span className="badge bg-secondary p-2 mt-2">
+              {testCount} Test(s)
+            </span>
+            <div className="mt-2">
+              <label>Progrès</label>
+              <ProgressBar
+                striped
+                variant="info"
+                now={60}
+                label={`${60}%`}
+                animated
+              />
             </div>
           </div>
+          {/* Course Details */}
+          <div className="d-flex flex-wrap mt-2">
+            <span
+              className={`badge ${getLevelBadgeClass(
+                currentCourse?.level
+              )} rounded-pill p-2 me-2 mt-3`}
+            >
+              Niveau: {currentCourse?.level}
+            </span>
+            <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
+              Formateur: {currentCourse?.instructor?.name}
+            </span>
+            <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
+              Categorie: {currentCourse?.category?.name}
+            </span>
+          </div>
+        </div>
+
+        {/* Image */}
+        <div className="col-8 col-sm-3 col-lg-3 mx-auto d-flex flex-column justify-content-center d-none d-sm-flex">
+          <img
+            src={`http://localhost:5000/${currentCourse?.image.replaceAll(
+              "\\",
+              "/"
+            )}`}
+            alt=""
+            className="col-12 mx-auto rounded-start-pill"
+          />
         </div>
       </div>
 
+      {/* Back Button */}
+      <div className="col-11 mx-auto text-end mt-5 position-sticky top-0">
+        <button
+          onClick={() => navigate(-1)}
+          className="btn btn-outline-secondary"
+        >
+          Revenir en arrière →
+        </button>
+      </div>
       {/* Module Details */}
-      <div className="col-8 mx-auto mt-5">
+      <div className="col-7 mx-auto">
         {/* Link To Course Content */}
-        <div className="d-flex mb-5 justify-content-center bounce bounce-hover p-4 ">
+        <div className="d-flex mb-5 col-10 mx-auto justify-content-center bounce bounce-hover p-4 ">
           <LinkToolTip
             title="Voir Plus..."
             placement={"right"}
@@ -195,6 +237,8 @@ const CourseDetails = () => {
                 ? `/learner/course/content/${courseId}/${enrollementId}`
                 : user?.role === "instructor"
                 ? `/instructor/course/content/${courseId}`
+                : user?.role === "admin"
+                ? `/admin/course/content/${courseId}`
                 : null
             }
             className={
@@ -251,11 +295,17 @@ const CourseDetails = () => {
         style={{ display: showModal ? "block" : "none" }}
         aria-labelledby="courseModal"
         aria-hidden={!showModal}
+        onClick={(e) => {
+          if (e.target.classList.contains("modal")) {
+            setShowModal(false);
+            console.log(e.target.classList);
+          }
+        }}
       >
         <form onSubmit={handleAddModule}>
-          <div className="modal-dialog modal-lg modal-fullscreen-lg-down mx-auto">
+          <div className="modal-dialog">
             <div className="modal-content">
-              <div className="modal-header col-12 col-lg-12 col-md-11 col-sm-11 p-4">
+              <div className="modal-header p-4">
                 <h6 className="modal-title" id="courseModal">
                   Ajouter un nouveau module
                 </h6>
@@ -309,11 +359,16 @@ const CourseDetails = () => {
         style={{ display: showVideoModal ? "block" : "none" }}
         aria-labelledby="videoModal"
         aria-hidden={!showVideoModal}
+        onClick={(e) => {
+          if (e.target.classList.contains("modal")) {
+            setShowVideoModal(false);
+          }
+        }}
       >
         <form onSubmit={handleAddVideo}>
-          <div className="modal-dialog modal-lg modal-fullscreen-lg-down mx-auto">
+          <div className="modal-dialog">
             <div className="modal-content">
-              <div className="modal-header col-12 col-lg-12 col-md-11 col-sm-11 p-4">
+              <div className="modal-header p-4">
                 <h6 className="modal-title" id="videoModal">
                   Ajouter un nouveau vidéo
                 </h6>

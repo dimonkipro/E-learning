@@ -61,7 +61,7 @@ const TestContainer = ({
   };
 
   return (
-    <div className="custom-card hover rounded-4 shadow px-5 py-3 my-5">
+    <div className="custom-card rounded-4 shadow px-5 py-3 my-5">
       <div className="d-flex justify-content-between gap-2 align-items-center mb-4">
         <button className="btn btn-outline-secondary" onClick={clearTest}>
           <i className="bi bi-caret-left-fill">Retour</i>

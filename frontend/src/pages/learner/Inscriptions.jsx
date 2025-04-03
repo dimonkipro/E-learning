@@ -62,7 +62,7 @@ const Inscriptions = () => {
           {/* Upper Pagination */}
           <div className="d-flex justify-content-between align-items-center flex-wrap mb-4">
             <div className="d-flex justify-content-between align-items-center gap-4 flex-wrap">
-              <h2>Mes formations</h2>
+              <h2>Mes inscriptions</h2>
 
               <select
                 className="form-select form-select-sm col"

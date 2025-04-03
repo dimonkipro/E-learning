@@ -265,7 +265,7 @@ const Courses = () => {
           {/* Card */}
           {currentcourses.length > 0 ? (
             currentcourses.map((course) => (
-              <div className="col" key={course._id}>
+              <div className="col mb-2" key={course._id}>
                 <div className="card  text-center shadow bounce-hover">
                   {/* <div className="card h-100 text-center shadow"> */}
                   <Link
@@ -303,16 +303,25 @@ const Courses = () => {
                       </span>
                     </div>
                   </Link>
+                  {/* Card Body */}
                   <div className="card-body d-flex flex-column justify-content-evenly">
                     <p className="card-title fw-bold">{course.title}</p>
 
-                    <p className="card-text bg-body-secondary rounded-4 p-1 col-8 mx-auto">
+                    <p className="card-text bg-secondary-subtle rounded-4 p-1 col-6 mx-auto">
                       {course.price} TND
                     </p>
                   </div>
+                  {/* Admin Button */}
                   {user?.role == "admin" ? (
                     <div className="card-footer">
-                      <div className="d-flex justify-content-end">
+                      <div className="d-flex justify-content-between">
+                        <Link
+                          to={`/admin/course/${course._id}`}
+                          className="link-success link-offset-2 link-underline-opacity-25 
+                        link-underline-opacity-100-hover"
+                        >
+                          Consulter
+                        </Link>
                         <Link
                           to={`/admin/edit-course/${course._id}`}
                           className="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
@@ -322,6 +331,7 @@ const Courses = () => {
                       </div>
                     </div>
                   ) : (
+                    // Instructor Button
                     course?.instructor?._id === user?._id && (
                       <div className="card-footer">
                         <div className="d-flex justify-content-end">
@@ -356,6 +366,11 @@ const Courses = () => {
           style={{ display: showModal ? "block" : "none" }}
           aria-labelledby="courseModal"
           aria-hidden={!showModal}
+          onClick={(e) => {
+            if (e.target.classList.contains("modal")) {
+              setShowModal(false);
+            }
+          }}
         >
           <div className="modal-dialog modal-lg modal-fullscreen-lg-down mx-auto">
             <div className="modal-content">

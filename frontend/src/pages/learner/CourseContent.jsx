@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import VideoPlayer from "../../components/VideoPlayer";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   clearCurrentCourse,
@@ -13,6 +13,8 @@ import ModuleContentSideBar from "../../components/ModuleContentSideBar";
 
 const CourseContent = () => {
   const dispatch = useDispatch();
+    const navigate = useNavigate();
+
   const { courseId, enrollementId } = useParams();
 
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -135,7 +137,14 @@ const CourseContent = () => {
               animated
             />
           </div>
-
+          <div className=" text-end mb-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="btn btn-outline-secondary"
+            >
+              Back →
+            </button>
+          </div>
           {/* Module Content */}
           {courseModules?.map((module) => (
             <ModuleContentSideBar

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../redux/auth/authSlice";
 import { useState } from "react";
 import Notifications from "../components/Notifications";
+import Footer from "../components/Footer"
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -24,27 +25,30 @@ const Profile = () => {
     }
   };
   return (
-    <div className="container">
-      <h1>Profile Page</h1>
-      <button onClick={handleLogout}>Logout</button>
-      {user !== null && (
-        <div className="container m-4">
-          <p>{user.name}</p>
-          <p>{user.role}</p>
-          <p>{!user.isVerified ? "User not verified" : "User verified"}</p>
-          <p>
-            {!user.isEmailVerified ? "Email not verified" : "Email verified"}
-          </p>
-        </div>
-      )}
-
-      {/* Render the notification component when set */}
-      {notification && (
-        <Notifications
-          type={notification.type}
-          message={notification.message}
-        />
-      )}
+    <div className="col-12">
+      <div className="container">
+        <h1>Profile Page</h1>
+        <button onClick={handleLogout}>Logout</button>
+        {user !== null && (
+          <div className="container m-4">
+            <p>{user.name}</p>
+            <p>{user.role}</p>
+            <p>{!user.isVerified ? "User not verified" : "User verified"}</p>
+            <p>
+              {!user.isEmailVerified ? "Email not verified" : "Email verified"}
+            </p>
+          </div>
+        )}
+  
+        {/* Render the notification component when set */}
+        {notification && (
+          <Notifications
+            type={notification.type}
+            message={notification.message}
+          />
+        )}
+      </div>
+      <Footer />
     </div>
   );
 };

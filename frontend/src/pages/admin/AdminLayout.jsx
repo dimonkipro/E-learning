@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import Footer from "../../components/Footer";
 
 const AdminLayout = () => {
   return (
@@ -7,6 +8,7 @@ const AdminLayout = () => {
       <div className="d-flex col-12">
         <Outlet />
       </div>
+      <Footer/>
     </>
   );
 };

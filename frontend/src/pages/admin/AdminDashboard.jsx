@@ -1,8 +1,15 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ExampleComponent from "../../components/ExampleComponent";
+import { useEffect } from "react";
+import { fetchInscriptions } from "../../redux/auth/enrollmentSlice";
 
 const AdminDashboard = () => {
+  const dispatch = useDispatch()
   const { user } = useSelector((state) => state.auth);
+  const { enrollments } = useSelector((state) => state.enrollments);
+  useEffect(() => {
+    dispatch(fetchInscriptions());
+  }, [dispatch]);
 
   return (
     <div className="container">
@@ -13,54 +20,10 @@ const AdminDashboard = () => {
         <p>Role: {user?.role}</p>
       </div>
 
-      <ul>
-        <li className="nav-item dropdown no-arrow mx-1">
-          <button
-            type="button"
-            className="btn btn-primary position-relative"
-            id="alertsDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            <i className="bi bi-bell"></i>
-            <span className="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle"></span>
-          </button>
-
-          {/* Alert Modal */}
-          <div
-            className="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-            aria-labelledby="alertsDropdown"
-          >
-            <h6 className="dropdown-header">Alerts Center</h6>
-            <a className="dropdown-item d-flex align-items-center" href="#">
-              <div className="mr-3">
-                <div className="icon-circle bg-primary">
-                  <i className="fas fa-file-alt text-white"></i>
-                </div>
-              </div>
-              <div>
-                <div className="small text-gray-500">December 12, 2019</div>
-                <span className="font-weight-bold">
-                  A new monthly report is ready to download!
-                </span>
-              </div>
-            </a>
-            <a
-              className="dropdown-item text-center small text-gray-500"
-              href="#"
-            >
-              Show All Alerts
-            </a>
-          </div>
-        </li>
-      </ul>
-
-      {/* Earning card */}
-      <div className="col-xl-3 col-md-6 mb-4">
+      {/* Courses / learner cards */}
+      <div className="d-flex gap-4 mb-5 flex-wrap">
         <div
-          className="card shadow h-100 py-2"
+          className="col-md card shadow h-100 py-2"
           style={{ borderLeft: " .25rem solid #4e73df" }}
         >
           <div className="card-body">
@@ -70,17 +33,65 @@ const AdminDashboard = () => {
                   Earnings (Annual)
                 </div>
                 <div className="h5 mb-0 font-weight-bold text-gray-800">
-                  $215,000
+                  215,000
                 </div>
               </div>
               <div className="col-auto">
-                <i className="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                <i className="bi bi-currency-dollar h1"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="col-md card shadow h-100 py-2"
+          style={{ borderLeft: " .25rem solid #4e73df" }}
+        >
+          <div className="card-body">
+            <div className="row no-gutters align-items-center">
+              <div className="col mr-2">
+                <div className="text-xs font-weight-bold text-success text-uppercase mb-1">
+                  Inscriptions
+                </div>
+                <div className="h5 mb-0 font-weight-bold text-gray-800">
+                  {enrollments?.length}
+                </div>
+              </div>
+              <div className="col-auto">
+                <i className="bi bi-collection h1"></i>
               </div>
             </div>
           </div>
         </div>
       </div>
-
+      {/* Charts */}
+      <div className="d-flex gap-4 flex-wrap">
+        <div className="col-md card shadow mb-4">
+          <div className="card-header py-3">
+            <h6 className="m-0 font-weight-bold text-primary">Area Chart</h6>
+          </div>
+          <div className="card-body">
+            <div className="chart-area">
+              <canvas id="myAreaChart"></canvas>
+            </div>
+            <hr />
+            Styling for the area chart can be found in the
+            <code>/js/demo/chart-area-demo.js</code> file.
+          </div>
+        </div>
+        <div className="col-md card shadow mb-4">
+          <div className="card-header py-3">
+            <h6 className="m-0 font-weight-bold text-primary">Pie Chart</h6>
+          </div>
+          <div className="card-body">
+            <div className="chart-area">
+              <canvas id="myAreaChart"></canvas>
+            </div>
+            <hr />
+            Styling for the area chart can be found in the
+            <code>/js/demo/chart-area-demo.js</code> file.
+          </div>
+        </div>
+      </div>
       {/* Collapsed Card */}
       <div className="col-6">
         <button

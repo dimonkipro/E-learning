@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import userImage from "../../assets/user.png";
 
 const LearnerDashboard = () => {
   const [formData, setFormData] = useState({
@@ -33,59 +34,67 @@ const LearnerDashboard = () => {
       .length || 0;
 
   return (
-    <div className="container">
+    <div className="col-12">
       <h2 className="mb-5 text-center">Bienvenue, {user?.name} ^_^</h2>
-      <div className="col-12 col-md-6 mb-4">
-        <h2 className="text-center text-decoration-underline text-white fw-light">
-          Coordonnées
-        </h2>
-        <h3 className="text-secondary mb-0">E-mail</h3>
-        <h4 className="text-center  fw-light">{user?.email}</h4>
+      <div className="col-12 mb-4 d-flex">
+        <div className="col-6 d-flex align-items-center flex-column">
+          <img src={userImage} alt="" className="col-6" />
+          <button className="btn btn-outline-secondary">
+            <i className="bi bi-upload"> Changer</i>
+          </button>
+        </div>
+        <div className="col-6">
+          <h2 className="text-center text-decoration-underline text-white fw-light">
+            Coordonnées
+          </h2>
+          <h3 className="text-secondary">E-mail</h3>
+          <h4 className="text-center  fw-light">{user?.email}</h4>
 
-        <form>
-          <div className="col mx-auto my-3">
-            <div className="row g-2 mb-3">
-              <div className="col-md">
-                <label htmlFor="Tel" className="form-label">
-                  Numéro de téléphone
-                </label>
-                <input
-                  type="text"
-                  className="form-control rounded-4"
-                  id="Tel"
-                  name="tel"
-                  value={user?.tel}
-                  onChange={handleChange}
-                  required
-                />
+          <form>
+            <div className="col mx-auto my-3">
+              <div className="row col-12 mb-3">
+                <div className="col-md">
+                  <label htmlFor="Tel" className="form-label">
+                    Numéro de téléphone
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control rounded-4"
+                    id="Tel"
+                    name="tel"
+                    value={user?.tel}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="col-md">
+                  <label htmlFor="Password" className="form-label">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    className="form-control rounded-4"
+                    id="Password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </div>
-              <div className="col-md">
-                <label htmlFor="Password" className="form-label">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  className="form-control rounded-4"
-                  id="Password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
+              <div className="d-grid col-8 mx-auto my-4">
+                <button
+                  type="submit"
+                  className="btn btn-primary rounded p-2"
+                  // disabled={isLoading}
+                >
+                  Confirmer
+                  {/* {isLoading ? "Connexion en cours..." : "Se connecter"} */}
+                </button>
               </div>
             </div>
-            <div className="d-grid col-8 mx-auto my-4">
-              <button
-                type="submit"
-                className="btn btn-primary rounded p-2"
-                // disabled={isLoading}
-              >
-                Confirmer
-                {/* {isLoading ? "Connexion en cours..." : "Se connecter"} */}
-              </button>
-            </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
 
       {/* Enrollments Cards */}

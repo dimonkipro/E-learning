@@ -59,7 +59,7 @@ const ApplyEnrollment = () => {
         return "bg-secondary";
     }
   };
-if (!user?.isEmailVerified) return <Navigate to={"/verify-email"} />;
+  if (!user?.isEmailVerified) return <Navigate to={"/verify-email"} />;
   return (
     <div className="col-12">
       {/* Hero */}
@@ -188,6 +188,7 @@ if (!user?.isEmailVerified) return <Navigate to={"/verify-email"} />;
                   setFormData({ ...formData, motivation: e.target.value })
                 }
                 className="form-control  border rounded focus-ring focus-ring-warning border"
+                autoFocus
               />
               <label htmlFor="motivation" className="form-label">
                 Lettre de motivation
@@ -252,7 +253,7 @@ if (!user?.isEmailVerified) return <Navigate to={"/verify-email"} />;
           </div>
         </div>
       </div>
-    <Footer />
+      <Footer />
     </div>
   );
 };

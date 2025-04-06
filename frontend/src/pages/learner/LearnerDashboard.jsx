@@ -34,7 +34,7 @@ const LearnerDashboard = () => {
       .length || 0;
 
   return (
-    <div className="col-12">
+    <div className="col-11 mx-auto">
       <h2 className="mb-5 text-center">Bienvenue, {user?.name} ^_^</h2>
       <div className="col-12 mb-4 d-flex">
         <div className="col-6 d-flex align-items-center flex-column">

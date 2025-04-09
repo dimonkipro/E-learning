@@ -205,53 +205,11 @@ const Sidebar = () => {
             />
           </Nav.Link>
         </Nav.Item>
-        <div className="d-flex gap-">
-          {/* Notification Button */}
-          <div className="btn-group dropstart">
-            <button
-              type="button"
-              className="btn btn-warning position-relative mx-4"
-              id="alertsDropdown"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <i className="bi bi-bell"></i>
-              <span className="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle"></span>
-            </button>
 
-            <ul className="dropdown-menu py-0">
-              <h6 className="dropdown-header bg-primary text-white rounded-top">
-                Notifications
-              </h6>
-              <a
-                className="dropdown-item d-flex align-items-center"
-                href="#"
-              >
-                <div className="mr-3">
-                  <div className="icon-circle bg-warning rounded me-2">
-                    <i className="bi bi-info text-white h4"></i>
-                  </div>
-                </div>
-                <div>
-                  <div className="small text-secondary">December 12, 2019</div>
-                  <span className="fw-bold">
-                    A new monthly report is ready to download!
-                  </span>
-                </div>
-              </a>
-              <a className="dropdown-item text-center small rounded-bottom" href="#">
-                Show All Alerts
-              </a>
-            </ul>
-          </div>
-
-          {/* SideBar Button */}
-          <Button variant="warning" onClick={handleShow}>
-            <i className="bi bi-list h3"></i>
-          </Button>
-        </div>
+        {/* SideBar Button */}
+        <Button variant="warning" onClick={handleShow}>
+          <i className="bi bi-list h3"></i>
+        </Button>
       </div>
 
       {/* Logout Modal */}

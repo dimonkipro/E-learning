@@ -366,11 +366,6 @@ const Courses = () => {
           style={{ display: showModal ? "block" : "none" }}
           aria-labelledby="courseModal"
           aria-hidden={!showModal}
-          onClick={(e) => {
-            if (e.target.classList.contains("modal")) {
-              setShowModal(false);
-            }
-          }}
         >
           <div className="modal-dialog modal-lg modal-fullscreen-lg-down mx-auto">
             <div className="modal-content">

@@ -5,7 +5,7 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   return (
     <>
-      <div className="px-4 mb-4">
+      <div className="px-4 mb-2">
         <button
           onClick={() => navigate(-1)}
           className="btn btn-outline-secondary  "

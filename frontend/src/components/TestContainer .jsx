@@ -62,7 +62,7 @@ const TestContainer = ({
 
   return (
     <div className="custom-card rounded-4 shadow px-5 py-3 my-5">
-      <div className="d-flex justify-content-between gap-2 align-items-center mb-4">
+      <div className="d-flex justify-content-between gap-2 flex-wrap align-items-center mb-4">
         <button className="btn btn-outline-secondary" onClick={clearTest}>
           <i className="bi bi-caret-left-fill">Retour</i>
         </button>
@@ -93,7 +93,7 @@ const TestContainer = ({
                   (option, index) => (
                     <div
                       key={index}
-                      className="form-check mb-2 border-top border-end rounded-3 p-2"
+                      className="form-check mb-3 border-bottom border-secondary rounded-3 p-1 animate"
                     >
                       <input
                         type="radio"
@@ -113,8 +113,9 @@ const TestContainer = ({
                         }
                       />
                       <label
-                        className="form-check-label"
+                        className="form-check-label d-flex ms-2"
                         htmlFor={`option-${index}-${selectedTest.questions[currentQuestionIndex]._id}`}
+                        style={{ cursor: "pointer" }}
                       >
                         {option}
                       </label>

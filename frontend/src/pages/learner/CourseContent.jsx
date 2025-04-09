@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import VideoPlayer from "../../components/VideoPlayer";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   clearCurrentCourse,
@@ -13,7 +13,6 @@ import ModuleContentSideBar from "../../components/ModuleContentSideBar";
 
 const CourseContent = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const { courseId, enrollementId } = useParams();
 
@@ -84,8 +83,23 @@ const CourseContent = () => {
   }
 
   return (
-    <div className="container">
-      <div className="col-12 col-lg-9 mx-auto">
+    <div className="col-12 mx-auto">
+      {/* Button trigger Offcanvas */}
+      <div
+        className="d-flex justify-content-end position-sticky top me-1"
+        style={{ top: "50px" }}
+      >
+        <i
+          className="bi bi-chevron-compact-left fs-4 cursor-pointer p-2 rounded-start-pill bg-secondary"
+          style={{
+            cursor: "pointer",
+            zIndex: 1000,
+            transition: "all 0.3s ease",
+          }}
+          onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+        />
+      </div>
+      <div className="container col-10 col-lg-8 mx-auto">
         {/* Test Container */}
         {selectedTest ? (
           <TestContainer
@@ -96,24 +110,18 @@ const CourseContent = () => {
           />
         ) : // Video Container
         selectedVideo ? (
-          <VideoPlayer key={selectedVideo._id} video={selectedVideo} />
+          <VideoPlayer
+            key={selectedVideo._id}
+            video={selectedVideo}
+            setSelectedVideo={setSelectedVideo}
+            videoList={courseModules
+              .flatMap((m) => m.videos)
+              .filter((v) => !!v)}
+          />
         ) : (
           <ErrorPage text={"Select a video or test to start"} />
         )}
       </div>
-
-      {/* Button trigger Offcanvas */}
-      <i
-        className="bi bi-chevron-compact-left position-absolute fs-4 cursor-pointer p-2 rounded-start-pill bg-secondary"
-        style={{
-          right: !isSidebarVisible ? "5px" : "25px",
-          top: "100px",
-          cursor: "pointer",
-          zIndex: 1000,
-          transition: "all 0.3s ease",
-        }}
-        onClick={() => setIsSidebarVisible(!isSidebarVisible)}
-      />
 
       {/* Offcanvas Modules Sidebar */}
       <Offcanvas
@@ -129,7 +137,7 @@ const CourseContent = () => {
           <Offcanvas.Title>{currentCourse?.title}</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          <div className="my-4">
+          <div className="mb-5 mt-3">
             <ProgressBar
               striped
               variant="warning"
@@ -139,14 +147,7 @@ const CourseContent = () => {
               animated
             />
           </div>
-          <div className=" text-end mb-4">
-            <button
-              onClick={() => navigate(-1)}
-              className="btn btn-outline-secondary"
-            >
-              Revenir en arrière →
-            </button>
-          </div>
+
           {/* Module Content */}
           {courseModules?.map((module) => (
             <ModuleContentSideBar

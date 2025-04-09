@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   clearCurrentCourse,
   fetchCourseDetailsById,
@@ -10,11 +10,11 @@ import { OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
 import ErrorPage from "../../components/ErrorPage";
 import { addModule, addVideo } from "../../redux/auth/moduleSlice";
 import AddTestForm from "../../components/AddTestForm";
+import ModuleContent from "../../components/ModuleContent";
 
 const CourseDetails = () => {
   const dispatch = useDispatch();
   const { courseId, enrollementId } = useParams();
-  const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
@@ -185,6 +185,7 @@ const CourseDetails = () => {
               />
             </div>
           </div>
+
           {/* Course Details */}
           <div className="d-flex flex-wrap mt-2">
             <span
@@ -216,17 +217,8 @@ const CourseDetails = () => {
         </div>
       </div>
 
-      {/* Back Button */}
-      <div className="col-11 mx-auto text-end mt-5 position-sticky top-0">
-        <button
-          onClick={() => navigate(-1)}
-          className="btn btn-outline-secondary"
-        >
-          Revenir en arrière →
-        </button>
-      </div>
       {/* Module Details */}
-      <div className="col-7 mx-auto">
+      <div className="col-7 mx-auto mt-5">
         {/* Link To Course Content */}
         <div className="d-flex mb-5 col-10 mx-auto justify-content-center bounce bounce-hover p-4 ">
           <LinkToolTip
@@ -294,7 +286,7 @@ const CourseDetails = () => {
         className={`modal ${showModal ? "show" : ""}`}
         style={{ display: showModal ? "block" : "none" }}
         aria-labelledby="courseModal"
-        aria-hidden={!showModal}
+        // aria-hidden={!showModal}
         onClick={(e) => {
           if (e.target.classList.contains("modal")) {
             setShowModal(false);
@@ -462,76 +454,4 @@ export const LinkToolTip = ({
   </OverlayTrigger>
 );
 
-const ModuleContent = ({ module, onAddVideo, isInstructor, onAddTest }) => (
-  <div className="p-2 mb-4 shadow border-bottom border-end border-secondary rounded-4 animate">
-    {/* Collapsible Module Title */}
-    <div className="d-flex align-items-center">
-      <button
-        className="btn w-100 p-2 rounded text-start d-flex align-items-end"
-        data-bs-toggle="collapse"
-        data-bs-target={`#${module?._id}`}
-        style={{ border: "0px" }}
-      >
-        <i className="bi bi-check-circle p-2 h5 mb-0"></i>
-        <h6 className="fw-bold text-capitalize">{module?.title}</h6>
-      </button>
-      <i className="bi bi-chevron-down me-2 h4"></i>
-    </div>
-
-    {/* Collapsible Content */}
-    <div id={module?._id} className="col-10 mx-auto collapse show mt-2">
-      {/* Video Title */}
-      {module?.videos.map((video) => (
-        <div
-          key={video?._id}
-          className="d-flex justify-content-between align-items-center p-2 border-bottom border-secondary rounded mb-2 flex-wrap"
-        >
-          <p className="mb-0 me-3 text-capitalize">{video?.title}</p>
-          <i className="bi bi-camera-video h5 mb-0"></i>
-        </div>
-      ))}
-      {/* Test */}
-      {module?.test ? (
-        <div className="d-flex justify-content-between align-items-center p-2 border-bottom border-secondary rounded-3 mb-3">
-          <h6 className="mb-0">Test</h6>
-          <i className="bi bi-file-earmark-text h5 mb-0"></i>
-        </div>
-      ) : (
-        <p>Pas de test pour ce module</p>
-      )}
-
-      {/* Instructor Buttons */}
-      {isInstructor && (
-        <div className="d-flex rounded-3 mb-2 col-11 mx-auto gap-4 flex-wrap">
-          <div className="text-success col rounded-3 border-bottom border-secondary animate">
-            <button
-              className="btn w-100 p-2 flex-wrap d-flex justify-content-around align-items-center"
-              onClick={onAddVideo}
-              style={{ border: "0px" }}
-            >
-              <h6 className="mb-0 me-3">Ajouter un vidéo</h6>
-              <i className="bi bi-patch-plus-fill h4 mb-0 text-success"></i>
-            </button>
-          </div>
-          <div
-            className={`text-success col rounded-3 border-bottom border-secondary ${
-              !module?.test && " animate"
-            }`}
-          >
-            <button
-              className={`btn w-100 p-2 flex-wrap d-flex justify-content-around align-items-center ${
-                module?.test && "disabled"
-              }`}
-              onClick={onAddTest}
-              style={{ border: "0px" }}
-            >
-              <h6 className="mb-0 me-3">Ajouter un test</h6>
-              <i className="bi bi-clipboard2-plus-fill h4 mb-0 text-success"></i>
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  </div>
-);
 export default CourseDetails;

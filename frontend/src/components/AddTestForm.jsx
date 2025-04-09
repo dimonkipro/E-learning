@@ -95,7 +95,6 @@ const AddTestForm = ({
       onClick={(e) => {
         if (e.target.classList.contains("modal")) {
           setShowTestModal(false);
-          console.log(e.target.classList);
         }
       }}
     >

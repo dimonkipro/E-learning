@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { createInscription } from "../redux/auth/enrollmentSlice";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { clearCurrentCourse, fetchCourseById } from "../redux/auth/courseSlice";
+import Footer from "../components/Footer";
 
 const ApplyEnrollment = () => {
   const dispatch = useDispatch();
@@ -58,7 +59,7 @@ const ApplyEnrollment = () => {
         return "bg-secondary";
     }
   };
-if (!user?.isEmailVerified) return <Navigate to={"/verify-email"} />;
+  if (!user?.isEmailVerified) return <Navigate to={"/verify-email"} />;
   return (
     <div className="col-12">
       {/* Hero */}
@@ -98,7 +99,7 @@ if (!user?.isEmailVerified) return <Navigate to={"/verify-email"} />;
         </div>
       </div>
 
-      <div className="row container mx-auto">
+      <div className="row container mx-auto mb-5">
         {/* Apply Form */}
         <div className="container col-10 col-md-8">
           <h1 className=" text-center">Demande d&apos;inscription</h1>
@@ -187,6 +188,7 @@ if (!user?.isEmailVerified) return <Navigate to={"/verify-email"} />;
                   setFormData({ ...formData, motivation: e.target.value })
                 }
                 className="form-control  border rounded focus-ring focus-ring-warning border"
+                autoFocus
               />
               <label htmlFor="motivation" className="form-label">
                 Lettre de motivation
@@ -251,6 +253,7 @@ if (!user?.isEmailVerified) return <Navigate to={"/verify-email"} />;
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

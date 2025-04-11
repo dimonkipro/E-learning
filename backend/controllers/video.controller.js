@@ -1,9 +1,16 @@
 import Progress from "../models/Progress.js";
 
-
 export const updateVideoProgress = async (req, res) => {
   const { userId, videoId, watchedTime, videoDuration } = req.body;
-
+if (
+  !userId ||
+  !videoId ||
+  typeof watchedTime !== "number" ||
+  typeof videoDuration !== "number" ||
+  videoDuration <= 0
+) {
+  return res.status(400).json({ error: "Invalid input data." });
+}
   try {
     let progress = await Progress.findOne({ user: userId, video: videoId });
 
@@ -22,6 +29,7 @@ export const updateVideoProgress = async (req, res) => {
     await progress.save();
     res.json({ message: "Progress updated successfully", progress });
   } catch (error) {
+    console.error("Error updating progress:", error);
     res.status(500).json({ error: "Failed to update progress" });
   }
 };
@@ -41,4 +49,3 @@ export const getVideoProgress = async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve progress" });
   }
 };
- 

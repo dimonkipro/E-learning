@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCourseById, clearCurrentCourse } from "../redux/auth/courseSlice";
 import { toast } from "react-toastify";
+import Footer from "../components/Footer";
 
 const CoursePage = () => {
   // const theme = localStorage.getItem("theme");
@@ -42,13 +43,13 @@ const CoursePage = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="mb-5">
+    <div className="col-12">
       {currentCourse && (
         <>
           {/* Hero */}
           {/* <div className="col-12 text-white shadow"> */}
           <div className="col-11 mx-auto text-white shadow rounded-5">
-            <div className="col-xl-9 col-md-9">
+            <div className="col-10 mb-5">
               <div className="p-3">
                 <span className="d-inline-block bg-light small rounded-3 px-3 py-2 text-dark">
                   Certificat obtenue à la fin de la formation 🤩
@@ -56,11 +57,11 @@ const CoursePage = () => {
 
                 <p
                   className="m-3 lh-base display-2"
-                  style={{ fontWeight: "400" }}
+                  style={{ fontWeight: "300" }}
                 >
                   {currentCourse?.title}
                 </p>
-                <h4 className=" mx-5 fw-light">{currentCourse?.description}</h4>
+                <h4 className=" m-5 fw-light">{currentCourse?.description}</h4>
                 <div className="d-flex flex-wrap d-block d-md-none mt-4">
                   <span
                     className={`badge ${getLevelBadgeClass(
@@ -87,7 +88,7 @@ const CoursePage = () => {
           </div>
 
           {/* Left Side Container */}
-          <div className="container position-relative">
+          <div className="container position-relative mb-5">
             <div className="row">
               {/* Details Card */}
               <div className="col-12 col-md-7 mx-auto mt-5">
@@ -185,8 +186,8 @@ const CoursePage = () => {
                 >
                   <div className="d-flex position-relative">
                     <span
-                      className="position-absolute top-0 start-0 badge rounded-pill 
-                        text-bg-secondary m-2 shadow opacity-75 p-2"
+                      className="position-absolute top-0 start-0 badge 
+                        text-bg-secondary m-2 shadow opacity-75"
                     >
                       {currentCourse.category.name}
                     </span>
@@ -254,7 +255,14 @@ const CoursePage = () => {
                   </div>
                   {user?.role == "admin" ? (
                     <div className="card-footer">
-                      <div className="d-flex justify-content-end">
+                      <div className="d-flex justify-content-between">
+                        <Link
+                          to={`/admin/course/${currentCourse._id}`}
+                          className="link-success link-offset-2 link-underline-opacity-25 
+                        link-underline-opacity-100-hover"
+                        >
+                          Consulter
+                        </Link>
                         <Link
                           to={`/admin/edit-course/${currentCourse._id}`}
                           className="link-secondary link-offset-2 link-underline-opacity-25 
@@ -285,7 +293,7 @@ const CoursePage = () => {
 
               {/* Enrollment Card */}
               <div
-                className="col-10 col-md-9 mx-auto mt-5 p-4 rounded-4 shadow text-white text-center"
+                className="col-10 col-md-7 mx-auto mt-5 p-4 rounded-4 shadow text-white text-center"
                 style={{ display: `${user?.role === "admin" ? "none" : ""}` }}
               >
                 {isInstructor ? (
@@ -340,6 +348,7 @@ const CoursePage = () => {
           </div>
         </>
       )}
+      <Footer />
     </div>
   );
 };

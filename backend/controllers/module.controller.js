@@ -6,6 +6,8 @@ import Question from "../models/Question.model.js";
 import { Course } from "../models/Course.model.js";
 import fs from "fs";
 import path from "path";
+import TestResult from "../models/TestResult.model.js";
+import Progress from "../models/Progress.js";
 
 // ------------------Modules----------------------------
 
@@ -262,7 +264,7 @@ export const getAllCourseDetails = async (req, res) => {
         const test = await Test.findOne({ module_id: module._id }).populate(
           "module_id",
           "title"
-        );;
+        );
         let questions = [];
 
         if (test) {
@@ -281,5 +283,203 @@ export const getAllCourseDetails = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Server error" });
+  }
+};
+
+export const submitTest = async (req, res) => {
+  try {
+    const { testId } = req.params;
+    const { answers } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(testId)) {
+      return res.status(400).json({ msg: "ID du test invalide." });
+    }
+
+    const test = await Test.findById(testId);
+    if (!test) {
+      return res.status(404).json({ msg: "Test introuvable." });
+    }
+
+    const questions = await Question.find({ test_id: testId });
+    if (!questions.length) {
+      return res
+        .status(404)
+        .json({ msg: "Aucune question trouvée pour ce test." });
+    }
+
+    const learner = req.user._id;
+    let correctCount = 0;
+
+    const detailedResults = questions.map((question) => {
+      const questionId = question._id.toString();
+      const userAnswer = answers[questionId];
+      const isCorrect = userAnswer === question.correct_answer;
+      if (isCorrect) correctCount++;
+
+      return {
+        question: question.question,
+        options: question.options,
+        correctAnswer: question.correct_answer,
+        userAnswer,
+        isCorrect,
+      };
+    });
+
+    const score = Math.round((correctCount / questions.length) * 100);
+    const passed = score >= test.minimum_score;
+
+    // Verify Existing Test Result
+    let testResult = await TestResult.findOne({ test: testId, learner });
+
+    if (testResult) {
+      if (testResult.passed) {
+        return res.status(200).json({
+          msg: "Vous avez déjà réussi ce test. Cette tentative ne sera pas enregistrée.",
+          score,
+          passed,
+          totalQuestions: questions.length,
+          correctCount,
+          results: detailedResults,
+          attempts: testResult.attempts,
+        });
+      }
+
+      // Update only if scor higher
+      if (score > testResult.score) {
+        testResult.score = score;
+        testResult.passed = passed;
+        testResult.totalQuestions = questions.length;
+        testResult.correctCount = correctCount;
+        testResult.results = detailedResults;
+      }
+
+      // Increment of attempts if not successful
+      testResult.attempts = (testResult.attempts || 1) + 1;
+
+      await testResult.save();
+
+      return res.status(200).json({
+        msg: testResult.passed
+          ? "Test réussi ! Résultat mis à jour."
+          : "Tentative enregistrée. Le test n'est pas encore réussi.",
+        score,
+        passed,
+        totalQuestions: questions.length,
+        correctCount,
+        results: detailedResults,
+        attempts: testResult.attempts,
+        testResultId: testResult._id,
+      });
+    }
+
+    // create a new result if First attempt
+    testResult = new TestResult({
+      learner,
+      test: testId,
+      score,
+      passed,
+      totalQuestions: questions.length,
+      correctCount,
+      results: detailedResults,
+      attempts: 1,
+    });
+
+    await testResult.save();
+
+    res.status(200).json({
+      msg: passed
+        ? "Test réussi dès la première tentative !"
+        : "Test soumis. Vous pouvez réessayer si nécessaire.",
+      score,
+      passed,
+      totalQuestions: questions.length,
+      correctCount,
+      results: detailedResults,
+      attempts: 1,
+      testResultId: testResult._id,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Erreur du serveur", error: error.message });
+  }
+};
+
+export const getLearnerCourseProgress = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
+      return res.status(400).json({ msg: "Invalid course ID." });
+    }
+
+    // 1. Get all modules for the given course.
+    const modules = await Module.find({ course_id: courseId });
+
+    // 2. Calculate tests progress.
+    let totalTests = 0;
+    let passedTests = 0;
+    for (const module of modules) {
+      // Look for test
+      const test = await Test.findOne({ module_id: module._id });
+      if (test) {
+        totalTests++;
+        // Look for the learner's test result for this test.
+        const testResult = await TestResult.findOne({
+          test: test._id,
+          learner: req.user._id,
+        });
+        if (testResult && testResult.passed) {
+          passedTests++;
+        }
+      }
+    }
+    const testPercentage =
+      totalTests > 0 ? (passedTests / totalTests) * 100 : null;
+
+    // 3. Calculate video progress.
+    // Get all videos across the modules.
+    const moduleIds = modules.map((module) => module._id);
+    const videos = await Video.find({ module_id: { $in: moduleIds } });
+    const totalVideos = videos.length;
+
+    // Get the learner's progress for these videos
+    const videoIds = videos.map((video) => video._id);
+    const videoProgressDocs = await Progress.find({
+      video: { $in: videoIds },
+      user: req.user._id,
+    });
+
+    // Count videos marked as completed.
+    const completedVideos = videoProgressDocs.filter(
+      (doc) => doc.isCompleted
+    ).length;
+    const videoPercentage =
+      totalVideos > 0 ? (completedVideos / totalVideos) * 100 : null;
+
+    // 4. Compute overall progress.
+    let overallProgress;
+    if (testPercentage !== null && videoPercentage !== null) {
+      overallProgress = Math.round((testPercentage + videoPercentage) / 2);
+    } else if (testPercentage !== null) {
+      overallProgress = Math.round(testPercentage);
+    } else if (videoPercentage !== null) {
+      overallProgress = Math.round(videoPercentage);
+    } else {
+      overallProgress = 0;
+    }
+
+    res.status(200).json({
+      totalTests,
+      passedTests,
+      testPercentage: testPercentage !== null ? Math.round(testPercentage) : 0,
+      totalVideos,
+      completedVideos,
+      videoPercentage:
+        videoPercentage !== null ? Math.round(videoPercentage) : 0,
+      overallProgress,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Server error", error: error.message });
   }
 };

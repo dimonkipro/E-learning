@@ -9,9 +9,9 @@ import { fetchUserInscriptions } from "../redux/auth/enrollmentSlice";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
-  const theme = localStorage.getItem("theme");
+  // const theme = localStorage.getItem("theme");
 
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
 
   const { user } = useSelector((state) => state.auth);
   const { userEnrollments } = useSelector((state) => state.enrollments);
@@ -40,29 +40,27 @@ const Sidebar = () => {
         show={show}
         onHide={handleClose}
         placement="end"
-        className={theme === "light" ? "bg-dark" : "bg-light"}
+        className="bg-dark"
         style={{ width: "300px", transition: "all 0.7s ease" }}
       >
         <Offcanvas.Header
           closeButton
-          closeVariant={theme === "light" ? "white" : undefined}
-          className="bg-dark"
+          // closeVariant="white"
+          className="bg-light rounded-bottom pb-4 mb-3"
         >
           <Offcanvas.Title>
-            <p className="text-warning mx-5">{user?.role} Panel</p>
+            <p className="text-warning mx-5 mb-0">{user?.role} Panel</p>
           </Offcanvas.Title>
         </Offcanvas.Header>
-
+        <p className="text-white text-center pt-2">
+          Logged in as : {user?.name}
+        </p>
         <Offcanvas.Body className="p-0 text-end">
           <Nav
-            className={`flex-column p-3 ${
-              theme === "light" ? "bg-dark" : "bg-light"
-            }`}
-            style={{ width: "250px", minHeight: "87vh" }}
+            className="flex-column p-2"
+            style={{ width: "250px", minHeight: "73vh" }}
           >
-            <p className={theme === "light" ? "text-white" : "text-dark"}>
-              Logged in as: {user?.name}
-            </p>
+            {/* <p className="text-white">Logged in as: {user?.name}</p> */}
 
             {/* Links */}
             <Nav.Item>
@@ -73,7 +71,8 @@ const Sidebar = () => {
                   <Nav.Link
                     as={Link}
                     to="/admin/dashboard"
-                    className={theme === "light" ? "text-white" : "text-dark"}
+                    // className={theme === "light" ? "text-white" : "text-dark"}
+                    className="link-secondary"
                     onClick={handleClose}
                   >
                     Dashboard <i className="bi bi-speedometer2 ms-2"></i>
@@ -84,7 +83,8 @@ const Sidebar = () => {
                     as={Link}
                     to="/admin/courses"
                     onClick={handleClose}
-                    className={theme === "light" ? "text-white" : "text-dark"}
+                    // className={theme === "light" ? "text-white" : "text-dark"}
+                    className="link-secondary"
                   >
                     Formations <i className="bi bi-box-seam ms-2"></i>
                   </Nav.Link>
@@ -94,7 +94,8 @@ const Sidebar = () => {
                     as={Link}
                     to="/admin/users"
                     onClick={handleClose}
-                    className={theme === "light" ? "text-white" : "text-dark"}
+                    // className={theme === "light" ? "text-white" : "text-dark"}
+                    className="link-secondary"
                   >
                     Utilisateurs <i className="bi bi-people ms-2"></i>
                   </Nav.Link>
@@ -104,7 +105,8 @@ const Sidebar = () => {
                     as={Link}
                     to="/admin/enrollments"
                     onClick={handleClose}
-                    className={theme === "light" ? "text-white" : "text-dark"}
+                    // className={theme === "light" ? "text-white" : "text-dark"}
+                    className="link-secondary"
                   >
                     Inscriptions <i className="bi bi-list-check ms-2"></i>
                   </Nav.Link>
@@ -117,7 +119,8 @@ const Sidebar = () => {
                   <Nav.Link
                     as={Link}
                     to="/instructor/dashboard"
-                    className={theme === "light" ? "text-white" : "text-dark"}
+                    // className={theme === "light" ? "text-white" : "text-dark"}
+                    className="link-secondary"
                     onClick={handleClose}
                   >
                     Dashboard <i className="bi bi-speedometer2 ms-2"></i>
@@ -128,7 +131,8 @@ const Sidebar = () => {
                     as={Link}
                     to="/instructor/courses"
                     onClick={handleClose}
-                    className={theme === "light" ? "text-white" : "text-dark"}
+                    // className={theme === "light" ? "text-white" : "text-dark"}
+                    className="link-secondary"
                   >
                     Formations <i className="bi bi-box-seam ms-2"></i>
                   </Nav.Link>
@@ -142,7 +146,8 @@ const Sidebar = () => {
                     as={Link}
                     to="/learner/dashboard"
                     onClick={handleClose}
-                    className={theme === "light" ? "text-white" : "text-dark"}
+                    // className={theme === "light" ? "text-white" : "text-dark"}
+                    className="link-secondary"
                   >
                     Dashboard <i className="bi bi-speedometer2 ms-2"></i>
                   </Nav.Link>
@@ -150,7 +155,8 @@ const Sidebar = () => {
                     as={Link}
                     to="/learner/courses"
                     onClick={handleClose}
-                    className={theme === "light" ? "text-white" : "text-dark"}
+                    // className={theme === "light" ? "text-white" : "text-dark"}
+                    className="link-secondary"
                   >
                     Formations <i className="bi bi-book ms-2"></i>
                   </Nav.Link>
@@ -158,7 +164,8 @@ const Sidebar = () => {
                     as={Link}
                     to="/learner/my-courses"
                     onClick={handleClose}
-                    className={theme === "light" ? "text-white" : "text-dark"}
+                    // className={theme === "light" ? "text-white" : "text-dark"}
+                    className="link-secondary"
                   >
                     Mes Inscriptions <i className="bi bi-journal-check"></i>
                   </Nav.Link>
@@ -169,7 +176,7 @@ const Sidebar = () => {
             {/* Logout */}
             <Nav.Item className="mt-auto">
               <Nav.Link
-                className="text-danger"
+                className="link-danger"
                 data-bs-toggle="modal"
                 data-bs-target="#logoutModal"
               >
@@ -194,7 +201,7 @@ const Sidebar = () => {
               src={logo}
               alt="Logo"
               className="logo"
-              style={{ width: "190px", height: "auto" }}
+              style={{ width: "10rem", height: "auto" }}
             />
           </Nav.Link>
         </Nav.Item>

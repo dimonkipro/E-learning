@@ -80,6 +80,9 @@ body {
     transform: translateY(-5px) scale(1.02);
 }
 
+.blurry{
+    filter: blur(4px);
+}
 @keyframes Bounce {
     from {
         top: -8px;

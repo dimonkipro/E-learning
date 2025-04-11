@@ -5,14 +5,17 @@ import { useEffect, useState } from "react";
 import {
   clearCurrentCourse,
   fetchCourseDetailsById,
+  fetchTestResults,
 } from "../../redux/auth/courseSlice";
 import { Offcanvas, ProgressBar } from "react-bootstrap";
 import ErrorPage from "../../components/ErrorPage";
 import TestContainer from "../../components/TestContainer ";
 import ModuleContentSideBar from "../../components/ModuleContentSideBar";
+import { fetchProgress } from "../../redux/auth/moduleSlice";
 
 const CourseContent = () => {
   const dispatch = useDispatch();
+
   const { courseId, enrollementId } = useParams();
 
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -28,14 +31,19 @@ const CourseContent = () => {
   const { currentCourse, courseModules, loading, error } = useSelector(
     (state) => state.courses
   );
-
-  const isEnrolled = userEnrollments?.some(
-    (enrollment) =>
-      enrollment?._id === enrollementId &&
-      enrollment?.userId === user?._id &&
-      enrollment?.courseId?._id === courseId &&
-      enrollment?.status === "approved"
+  const { progress, loading: isLoading } = useSelector(
+    (state) => state.progress
   );
+  const { testProgress } = useSelector((state) => state.courses);
+  const isEnrolled =
+    user?.role === "admin" ||
+    userEnrollments?.some(
+      (enrollment) =>
+        enrollment?._id === enrollementId &&
+        enrollment?.userId === user?._id &&
+        enrollment?.courseId?._id === courseId &&
+        enrollment?.status === "approved"
+    );
   const isInstructor = currentCourse?.instructor?._id === user?._id;
 
   // Fetch Course Details By Id
@@ -48,19 +56,44 @@ const CourseContent = () => {
     };
   }, [courseId, dispatch]);
 
-  // Show video Or test
-  useEffect(() => {
-    if (!loading && courseModules?.length > 0 && !selectedVideo) {
-      const firstModuleWithVideos = courseModules.find(
-        (m) => m?.videos?.length > 0
-      );
-      if (firstModuleWithVideos && !selectedTest) {
-        setSelectedVideo(firstModuleWithVideos.videos[0]);
-      }
-    }
-  }, [loading, courseModules, selectedVideo, selectedTest]);
+  const userId = user?._id;
 
-  // Test Select handler
+  // Fetch progress for each video in every module
+  useEffect(() => {
+    if (user?.role === "learner" && userId && courseModules?.length > 0) {
+      courseModules.forEach((module) => {
+        module?.videos.forEach((video) => {
+          dispatch(fetchProgress({ userId, videoId: video?._id }));
+        });
+      });
+    }
+  }, [userId, dispatch, courseModules, selectedVideo, user?.role]);
+
+  useEffect(() => {
+    if (user?.role === "learner" && courseId) {
+      dispatch(fetchTestResults(courseId));
+    }
+
+    return () => {
+      dispatch(clearCurrentCourse());
+    };
+  }, [courseId, dispatch, user?.role]);
+
+  // Determine the initial video to display based on progress:
+  useEffect(() => {
+    if (!loading && !isLoading && courseModules?.length > 0 && !selectedVideo) {
+      const allVideos = courseModules
+        .flatMap((module) => module.videos)
+        .filter((v) => !!v);
+
+      const firstUnseenVideo = allVideos.find(
+        (video) => progress[video._id] !== true
+      );
+      setSelectedVideo(firstUnseenVideo || allVideos[0]);
+    }
+  }, [loading, courseModules, selectedVideo, progress, isLoading]);
+
+  // Test selection handler
   const handleTestSelect = (test) => {
     setSelectedTest(test);
     setSelectedVideo(null);
@@ -80,8 +113,23 @@ const CourseContent = () => {
   }
 
   return (
-    <div className="container">
-      <div className="col-12 col-lg-9 mx-auto">
+    <div className="col-12 mx-auto">
+      {/* Button trigger Offcanvas */}
+      <div
+        className="d-flex justify-content-end position-sticky top me-1"
+        style={{ top: "50px" }}
+      >
+        <i
+          className="bi bi-chevron-compact-left fs-4 cursor-pointer p-2 rounded-start-pill bg-secondary"
+          style={{
+            cursor: "pointer",
+            zIndex: 1000,
+            transition: "all 0.3s ease",
+          }}
+          onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+        />
+      </div>
+      <div className="container col-10 col-lg-8 mx-auto">
         {/* Test Container */}
         {selectedTest ? (
           <TestContainer
@@ -90,26 +138,19 @@ const CourseContent = () => {
             setCurrentQuestionIndex={setCurrentQuestionIndex}
             clearTest={() => setSelectedTest(null)}
           />
-        ) : // Video Container
-        selectedVideo ? (
-          <VideoPlayer key={selectedVideo._id} video={selectedVideo} />
+        ) : selectedVideo ? (
+          <VideoPlayer
+            key={selectedVideo._id}
+            video={selectedVideo}
+            setSelectedVideo={setSelectedVideo}
+            videoList={courseModules
+              .flatMap((m) => m.videos)
+              .filter((v) => !!v)}
+          />
         ) : (
           <ErrorPage text={"Select a video or test to start"} />
         )}
       </div>
-
-      {/* Button trigger Offcanvas */}
-      <i
-        className="bi bi-chevron-compact-left position-absolute fs-4 cursor-pointer p-2 rounded-start-pill bg-secondary"
-        style={{
-          right: !isSidebarVisible ? "5px" : "25px",
-          top: "100px",
-          cursor: "pointer",
-          zIndex: 1000,
-          transition: "all 0.3s ease",
-        }}
-        onClick={() => setIsSidebarVisible(!isSidebarVisible)}
-      />
 
       {/* Offcanvas Modules Sidebar */}
       <Offcanvas
@@ -125,16 +166,21 @@ const CourseContent = () => {
           <Offcanvas.Title>{currentCourse?.title}</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          <div className="my-4">
-            <ProgressBar
-              striped
-              variant="warning"
-              now={60}
-              label={`${60}%`}
-              style={{ direction: "rtl" }}
-              animated
-            />
-          </div>
+          {user?.role === "learner" && (
+            <div className="mb-5 mt-3" style={{ direction: "rtl" }}>
+              <div className="d-flex gap-3">
+                {testProgress?.overallProgress === 0 && <p>0%</p>}
+                <label>Progrès</label>
+              </div>
+              <ProgressBar
+                striped
+                variant="info"
+                now={testProgress?.overallProgress}
+                label={`${testProgress?.overallProgress}%`}
+                animated
+              />
+            </div>
+          )}
 
           {/* Module Content */}
           {courseModules?.map((module) => (

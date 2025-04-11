@@ -21,17 +21,17 @@ const Footer = () => {
 
         {/* Numbers */}
         <div className="col-12 mx-auto d-flex flex-wrap gap-4">
-          <div className="flex-fill d-flex flex-column text-center rounded-4 p-3 custom-card">
+          <div className="flex-fill d-flex flex-column text-center rounded-4 p-3 animate">
             <i className="bi bi-people-fill h3 d-flex flex-column" />
             Apprenants
             <p className="mb-0 fs-2 fw-bold">+50</p>
           </div>
-          <div className="flex-fill d-flex flex-column text-center rounded-4 p-3 custom-card">
+          <div className="flex-fill d-flex flex-column text-center rounded-4 p-3 animate">
             <i className="bi bi-collection  h3 d-flex flex-column" />
             Formations
             <p className="mb-0 fs-2 fw-bold">+20</p>
           </div>
-          <div className="flex-fill d-flex flex-column text-center rounded-4 p-3 custom-card">
+          <div className="flex-fill d-flex flex-column text-center rounded-4 p-3 animate">
             <i className="bi bi-person-hearts h3 d-flex flex-column" />
             Partenaires
             <p className="mb-0 fs-2 fw-bold">+15</p>

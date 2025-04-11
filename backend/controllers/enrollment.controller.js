@@ -45,7 +45,7 @@ export const getAllInscriptions = async (req, res) => {
 
     const inscriptions = await Inscription.find(filter)
       .populate("userId", "name email")
-      .populate("courseId", "title");
+      .populate("courseId", ["title", "price"]);
 
     res.json({ success: true, data: inscriptions });
   } catch (error) {

@@ -25,7 +25,7 @@ import {
   getVideoProgress,
   updateVideoProgress,
 } from "../controllers/video.controller.js";
-import { getAllCourseDetails } from "../controllers/module.controller.js";
+import { getAllCourseDetails, getLearnerCourseProgress, submitTest } from "../controllers/module.controller.js";
 
 const router = express.Router();
 
@@ -46,12 +46,7 @@ router.get("/courses/:courseId", getCourseById);
 router.get("/courses/category/:categoryId", getCoursesByCategory);
 router.get("/category/all", getAllCategories);
 
-router.get(
-  "/course/:id/details",
-  verifyToken,
-  isVerified,
-  getAllCourseDetails
-);
+router.get("/course/:id/details", verifyToken, isVerified, getAllCourseDetails);
 
 router.get(
   "/inscriptions/me",
@@ -69,6 +64,38 @@ router.post(
   createInscription
 );
 
-router.post("/progress", updateVideoProgress);
-router.get("/progress/:userId/:videoId", getVideoProgress);
+// ------------------ProgressRoutes----------------------------
+
+router.post(
+  "/progress",
+  verifyToken,
+  isVerified,
+  isLearner,
+  updateVideoProgress
+);
+router.get(
+  "/progress/:userId/:videoId",
+  verifyToken,
+  isVerified,
+  isLearner,
+  getVideoProgress
+);
+
+// ------------------TestRoutes----------------------------
+
+router.post(
+  "/learner/test/:testId/submit",
+  verifyToken,
+  isVerified,
+  isLearner,
+  submitTest
+);
+
+router.get(
+  "/learner/course/:courseId/testResults",
+  verifyToken,
+  isVerified,
+  isLearner,
+  getLearnerCourseProgress
+);
 export default router;

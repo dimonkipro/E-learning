@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
+import { submitTest } from "../redux/auth/moduleSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const TestContainer = ({
   selectedTest,
@@ -7,10 +9,13 @@ const TestContainer = ({
   setCurrentQuestionIndex,
   clearTest,
 }) => {
+  const dispatch = useDispatch();
+
   const [testResults, setTestResults] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [selectedAnswers, setSelectedAnswers] = useState({});
-
+  const { user } = useSelector((state) => state.auth);
+  console.log(selectedTest);
   const handleNextQuestion = () => {
     if (currentQuestionIndex < selectedTest.questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
@@ -23,36 +28,25 @@ const TestContainer = ({
     }
   };
 
-  // Add submission handler
+  // Return detailed results.
   const handleSubmitTest = () => {
-    let correctCount = 0;
-    const results = selectedTest.questions.map((question) => {
-      const isCorrect =
-        selectedAnswers[question._id] === question.correct_answer;
-      if (isCorrect) correctCount++;
-      return {
-        ...question,
-        userAnswer: selectedAnswers[question._id],
-        isCorrect,
-      };
-    });
+    dispatch(
+      submitTest({ testId: selectedTest._id, userAnswers: selectedAnswers })
+    )
+      .unwrap()
+      .then((res) => {
+        // The backend returns:
+        // { msg, score, passed, totalQuestions, correctCount, results, testResultId }
+        setTestResults(res);
+        console.log("res", res);
 
-    const score = Math.round(
-      (correctCount / selectedTest.questions.length) * 100
-    );
-    const passed = score >= selectedTest.minimum_score;
-
-    setTestResults({
-      score,
-      passed,
-      totalQuestions: selectedTest.questions.length,
-      correctCount,
-      results,
-    });
-    setIsSubmitted(true);
+        setIsSubmitted(true);
+      })
+      .catch((error) => {
+        console.error("Error submitting test:", error);
+      });
   };
-
-  // Answer selection handler
+  // Handler for when a user selects an answer option.
   const handleAnswerSelect = (questionId, selectedOption) => {
     setSelectedAnswers((prev) => ({
       ...prev,
@@ -61,8 +55,8 @@ const TestContainer = ({
   };
 
   return (
-    <div className="custom-card hover rounded-4 shadow px-5 py-3 my-5">
-      <div className="d-flex justify-content-between gap-2 align-items-center mb-4">
+    <div className="custom-card rounded-4 shadow px-5 py-3 my-5">
+      <div className="d-flex justify-content-between gap-2 flex-wrap align-items-center mb-4">
         <button className="btn btn-outline-secondary" onClick={clearTest}>
           <i className="bi bi-caret-left-fill">Retour</i>
         </button>
@@ -93,7 +87,7 @@ const TestContainer = ({
                   (option, index) => (
                     <div
                       key={index}
-                      className="form-check mb-2 border-top border-end rounded-3 p-2"
+                      className="form-check mb-3 border-bottom border-secondary rounded-3 p-1 animate"
                     >
                       <input
                         type="radio"
@@ -111,16 +105,27 @@ const TestContainer = ({
                             selectedTest.questions[currentQuestionIndex]._id
                           ] === option
                         }
+                        disabled={
+                          user?.role === "instructor" || user?.role === "admin"
+                        }
                       />
                       <label
-                        className="form-check-label"
+                        className="form-check-label d-flex ms-2"
                         htmlFor={`option-${index}-${selectedTest.questions[currentQuestionIndex]._id}`}
+                        style={{ cursor: "pointer" }}
                       >
                         {option}
                       </label>
                     </div>
                   )
                 )}
+                {user?.role === "instructor" ||
+                  (user?.role === "admin" && (
+                    <p className="text-center text-success fw-bold">
+                      {`✓ ${selectedTest.questions[currentQuestionIndex].correct_answer}
+                     ✓`}
+                    </p>
+                  ))}
               </div>
               <div className="d-flex justify-content-between mt-4">
                 <button
@@ -136,7 +141,9 @@ const TestContainer = ({
                     onClick={handleSubmitTest}
                     disabled={
                       Object.keys(selectedAnswers).length <
-                      selectedTest.questions.length
+                        selectedTest.questions.length ||
+                      user?.role === "admin" ||
+                      user?.role === "instructor"
                     }
                   >
                     Vérifier la résultat
@@ -169,7 +176,7 @@ const TestContainer = ({
             <p>Score minimum requis: {selectedTest.minimum_score}%</p>
           </div>
           {testResults.results.map((result, index) => (
-            <div key={result._id} className="card mb-3">
+            <div key={index} className="card mb-3">
               <div
                 className={`card-header ${
                   result.isCorrect
@@ -182,37 +189,40 @@ const TestContainer = ({
               <div className="card-body">
                 <h5>{result.question}</h5>
                 <div className="ms-3">
-                  {result.options.map((option, optIndex) => (
-                    <div
-                      key={optIndex}
-                      className={`form-check ${
-                        option === result.correct_answer
-                          ? "text-success fw-bold"
-                          : ""
-                      } ${
-                        option === result.userAnswer && !result.isCorrect
-                          ? "text-danger"
-                          : ""
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        className="form-check-input"
-                        checked={
-                          option === result.userAnswer ||
-                          option === result.correct_answer
-                        }
-                        disabled
-                      />
-                      <label className="form-check-label">
-                        {option}
-                        {option === result.correct_answer && " ✓"}
-                        {option === result.userAnswer &&
-                          !result.isCorrect &&
-                          " ✗"}
-                      </label>
-                    </div>
-                  ))}
+                  {result.options.map((option, optIndex) => {
+                    const isUserAnswer = option === result.userAnswer;
+                    const isCorrectAnswer = option === result.correctAnswer;
+                    const showCorrect =
+                      testResults.attempts >= 5 ||
+                      result.correctAnswer === result.userAnswer;
+
+                    return (
+                      <div
+                        key={optIndex}
+                        className={`form-check ${
+                          showCorrect && isCorrectAnswer
+                            ? "text-success fw-bold"
+                            : ""
+                        } ${
+                          isUserAnswer && !result.isCorrect ? "text-danger" : ""
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          className="form-check-input"
+                          checked={
+                            isUserAnswer || (showCorrect && isCorrectAnswer)
+                          }
+                          disabled
+                        />
+                        <label className="form-check-label">
+                          {option}
+                          {showCorrect && isCorrectAnswer && " ✓"}
+                          {isUserAnswer && !result.isCorrect && " ✗"}
+                        </label>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>

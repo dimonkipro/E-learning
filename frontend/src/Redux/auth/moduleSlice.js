@@ -26,6 +26,7 @@ export const addModule = createAsyncThunk(
     }
   }
 );
+
 export const addVideo = createAsyncThunk(
   "video/add",
   async ({ formData, moduleId }, { rejectWithValue }) => {
@@ -72,12 +73,82 @@ export const addTest = createAsyncThunk(
   }
 );
 
+export const fetchProgress = createAsyncThunk(
+  "progress/fetch",
+  async ({ userId, videoId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/progress/${userId}/${videoId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return { videoId, isCompleted: response.data.isCompleted };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const saveVideoProgress = createAsyncThunk(
+  "progress/save",
+  async (
+    { userId, videoId, watchedTime, videoDuration },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/progress`,
+        { userId, videoId, watchedTime, videoDuration },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return { videoId, progress: response.data };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const submitTest = createAsyncThunk(
+  "test/submit",
+  async ({ testId, userAnswers }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/learner/test/${testId}/submit`,
+        { answers: userAnswers },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      toast.success(response.data.msg);
+      return response.data; // expected structure from controller: { msg, score, passed, totalQuestions, correctCount, results }
+    } catch (error) {
+      toast.error(error.response?.data?.msg);
+      return rejectWithValue(error.response?.data?.msg || error.message);
+    }
+  }
+);
+
 const moduleSlice = createSlice({
   name: "modules",
   initialState: {
     modules: [],
     videos: [],
     tests: [],
+    videoProgress: {},
+    progress: {},
+    testResults: null,
+    isTestSubmitted: false,
     loading: false,
     error: null,
   },
@@ -98,7 +169,7 @@ const moduleSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     });
-    // New test reducers
+    // Test reducers
     builder.addCase(addTest.pending, (state) => {
       state.loading = true;
       state.error = null;
@@ -112,6 +183,50 @@ const moduleSlice = createSlice({
     builder.addCase(addTest.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    });
+
+    // Save VideoProgress
+    builder.addCase(saveVideoProgress.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(saveVideoProgress.fulfilled, (state, action) => {
+      state.loading = false;
+      // You can store or update the progress result for the video
+      state.videoProgress[action.payload.videoId] = action.payload.progress;
+    });
+    builder.addCase(saveVideoProgress.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+
+    // fetchVideoProgress reducers
+    builder.addCase(fetchProgress.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchProgress.fulfilled, (state, action) => {
+      state.loading = false;
+      state.progress[action.payload.videoId] = action.payload.isCompleted;
+    });
+    builder.addCase(fetchProgress.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+
+    // Test submission reducers
+    builder.addCase(submitTest.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(submitTest.fulfilled, (state, action) => {
+      state.loading = false;
+      state.testResults = action.payload;
+      state.isTestSubmitted = true;
+    });
+    builder.addCase(submitTest.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+      state.isTestSubmitted = false;
     });
   },
 });

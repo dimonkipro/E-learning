@@ -80,7 +80,12 @@ const AddCourseForm = () => {
         style={{ display: showModal ? "block" : "none" }}
         tabIndex="-1"
         aria-labelledby="categoryModalLabel"
-        aria-hidden={!showModal}
+        // aria-hidden={!showModal}
+        onClick={(e) => {
+          if (e.target.classList.contains("modal")) {
+            setShowModal(false);
+          }
+        }}
       >
         <div className="modal-dialog">
           <div className="modal-content">

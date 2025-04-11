@@ -1,9 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { saveVideoProgress } from "../redux/auth/moduleSlice";
 
-const VideoPlayer = ({ video }) => {
+const VideoPlayer = ({ video, setSelectedVideo, videoList }) => {
+
+  const dispatch = useDispatch();
+
   const [watchedTime, setWatchedTime] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -22,19 +25,32 @@ const VideoPlayer = ({ video }) => {
   };
 
   // Send watched time to backend every 5 sec
-  useEffect(() => {
-    if (watchedTime > 0 && watchedTime % 5 === 0) {
-      axios
-        .post("http://localhost:5000/api/progress", {
-          userId,
-          videoId,
-          watchedTime,
-          videoDuration: video.duration,
-        })
-        .then((response) => console.log("Progress saved:", response.data))
-        .catch((error) => console.error("Error saving progress:", error));
+useEffect(() => {
+  if (watchedTime > 0 && watchedTime % 5 === 0) {
+    dispatch(
+      saveVideoProgress({
+        userId,
+        videoId,
+        watchedTime,
+        videoDuration: video.duration,
+      })
+    );
+  }
+}, [watchedTime, video.duration, userId, videoId, dispatch]);
+
+  const currentIndex = videoList.findIndex((v) => v._id === videoId);
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setSelectedVideo(videoList[currentIndex - 1]);
     }
-  }, [watchedTime, video.duration, userId, videoId]);
+  };
+
+  const handleNext = () => {
+    if (currentIndex < videoList.length - 1) {
+      setSelectedVideo(videoList[currentIndex + 1]);
+    }
+  };
 
   return (
     <div className="mb-5">
@@ -51,8 +67,25 @@ const VideoPlayer = ({ video }) => {
         />
         Your browser does not support the video tag.
       </video>
-
-      {isCompleted && <p className="text-success">✅ Vidéo terminée!</p>}
+      <div>
+        {isCompleted && <p className="text-success mb-0">✅ Vidéo terminée!</p>}
+      </div>
+      <div className="d-flex justify-content-between mt-3">
+        <button
+          className="btn btn-outline-secondary"
+          onClick={handlePrev}
+          disabled={currentIndex === 0}
+        >
+          <i className="bi bi-caret-left"></i>Précédent
+        </button>
+        <button
+          className="btn btn-outline-primary"
+          onClick={handleNext}
+          disabled={currentIndex === videoList.length - 1 || !isCompleted}
+        >
+          Suivant <i className="bi bi-caret-right"></i>
+        </button>
+      </div>
     </div>
   );
 };

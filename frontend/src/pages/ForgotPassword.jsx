@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { forgotPassword } from "../redux/auth/authSlice";
 import Lottie from "lottie-react";
 import ForgotLottie from "../assets/forgot.json";
-
+import Footer from "../components/Footer";
 
 const ForgotPassword = () => {
   const dispatch = useDispatch();
@@ -26,7 +26,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div>
+    <div className="col-12">
       <div className="container text-center col-8 rounded-4 my-5 py-4 shadow">
         <div className="col-8 mx-auto text-center">
           <h1>Mot de passe oublié ?</h1>
@@ -87,6 +87,7 @@ const ForgotPassword = () => {
           message={notification.message}
         />
       )}
+      <Footer />
     </div>
   );
 };

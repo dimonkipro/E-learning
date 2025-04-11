@@ -5,11 +5,17 @@ import { Link, useParams } from "react-router-dom";
 import {
   clearCurrentCourse,
   fetchCourseDetailsById,
+  fetchTestResults,
 } from "../../redux/auth/courseSlice";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
 import ErrorPage from "../../components/ErrorPage";
-import { addModule, addVideo } from "../../redux/auth/moduleSlice";
+import {
+  addModule,
+  addVideo,
+  fetchProgress,
+} from "../../redux/auth/moduleSlice";
 import AddTestForm from "../../components/AddTestForm";
+import ModuleContent from "../../components/ModuleContent";
 
 const CourseDetails = () => {
   const dispatch = useDispatch();
@@ -24,6 +30,20 @@ const CourseDetails = () => {
   const [title, setTitle] = useState("");
   const [order, setOrder] = useState("");
   const [showTestModal, setShowTestModal] = useState(false);
+  const { user } = useSelector((state) => state.auth);
+  const {
+    currentCourse,
+    courseModules,
+    loading,
+    error,
+    tests,
+    videos,
+    testProgress,
+  } = useSelector((state) => state.courses);
+
+  const isInstructor = currentCourse?.instructor?._id === user?._id;
+
+  const userId = user?._id;
 
   const [formData, setFormData] = useState({
     videoTitle: "",
@@ -31,6 +51,7 @@ const CourseDetails = () => {
     videoDuration: "",
     video: null,
   });
+  // Fetch Course Details By Id
   useEffect(() => {
     if (courseId) {
       dispatch(fetchCourseDetailsById(courseId));
@@ -41,32 +62,39 @@ const CourseDetails = () => {
     };
   }, [courseId, dispatch]);
 
-  const { currentCourse, courseModules, loading, error } = useSelector(
-    (state) => state.courses
-  );
+// Fetch Test Results
+  useEffect(() => {
+    if (user?.role === "learner" && courseId) {
+      dispatch(fetchTestResults(courseId));
+    }
 
-  const { user } = useSelector((state) => state.auth);
+    return () => {
+      dispatch(clearCurrentCourse());
+    };
+  }, [courseId, dispatch, user?.role]);
+
+  // Fetch progress for each video in every module
+  useEffect(() => {
+    if (user?.role === "learner" && userId && courseModules?.length > 0) {
+      courseModules.forEach((module) => {
+        module.videos.forEach((video) => {
+          dispatch(fetchProgress({ userId, videoId: video._id }));
+        });
+      });
+    }
+  }, [userId, dispatch, courseModules, user?.role]);
 
   const { userEnrollments } = useSelector((state) => state.enrollments);
 
-  const isEnrolled = userEnrollments?.some(
-    (enrollment) =>
-      enrollment?._id === enrollementId &&
-      enrollment?.userId === user?._id &&
-      enrollment?.courseId?._id === courseId &&
-      (enrollment?.status === "approved" || enrollment?.status === "pending")
-  );
-  const isInstructor = currentCourse?.instructor?._id === user?._id;
-
-  if (!isEnrolled && !isInstructor) {
-    return (
-      <ErrorPage
-        text={"Vous n'avez pas accès à cette page"}
-        emojis={"(❁´⁔`❁)"}
-        to={user?.role === "instructor" ? "/instructor/courses" : "/"}
-      />
+  const isEnrolled =
+    user?.role === "admin" ||
+    userEnrollments?.some(
+      (enrollment) =>
+        enrollment?._id === enrollementId &&
+        enrollment?.userId === user?._id &&
+        enrollment?.courseId?._id === courseId &&
+        (enrollment?.status === "approved" || enrollment?.status === "pending")
     );
-  }
 
   const getLevelBadgeClass = (level) => {
     switch (level?.toLowerCase()) {
@@ -142,51 +170,99 @@ const CourseDetails = () => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-
+  if (!isEnrolled && !isInstructor) {
+    return (
+      <ErrorPage
+        text={"Vous n'avez pas accès à cette page"}
+        emojis={"(❁´⁔`❁)"}
+        to={user?.role === "instructor" ? "/instructor/courses" : "/"}
+      />
+    );
+  }
+  console.log("testProgress", testProgress);
+  
   return (
     <div className="col-12">
       {/* Hero */}
       {/* <div className="col-12 text-white shadow"> */}
-      <div className="col-11 mx-auto text-white shadow rounded-5">
-        <div className="col-xl-7 mb-5 mb-xl-0">
-          <div className="p-3">
-            <span className="d-inline-block bg-light small rounded-3 px-3 py-2 text-dark">
-              Certificat obtenue à la fin de la formation 🤩
-            </span>
+      <div className="col-11 mx-auto d-flex flex-wrap text-white shadow rounded-5 p-2">
+        {/* <div className="col-12 p-3"> */}
+        <div className="col-12 col-sm-9 p-3">
+          <span className="d-inline-block bg-light small rounded-3 px-3 py-2 text-dark">
+            Certificat obtenue à la fin de la formation 🤩
+          </span>
 
-            <p className="m-3 lh-base display-2" style={{ fontWeight: "300" }}>
-              {currentCourse?.title}
-            </p>
-            <h4 className=" m-5 fw-light">{currentCourse?.description}</h4>
-            <div className="d-flex flex-wrap d-block d-md-none mt-4">
-              <span
-                className={`badge ${getLevelBadgeClass(
-                  currentCourse?.level
-                )} rounded-pill p-2 me-2 mt-3`}
-              >
-                Niveau: {currentCourse?.level}
-              </span>
-              <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
-                Formateur: {currentCourse?.instructor?.name}
-              </span>
-              <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
-                Categorie: {currentCourse?.category?.name}
-              </span>
-              <span
-                className="badge rounded-pill p-2 mt-3"
-                style={{ backgroundColor: "#28c76f" }}
-              >
-                Prix: {currentCourse?.price} TND
-              </span>
-            </div>
+          <p
+            className="m-3 lh-base display-2 text-center"
+            style={{ fontWeight: "300" }}
+          >
+            {currentCourse?.title}
+          </p>
+          <h4 className=" m-5 fw-light">{currentCourse?.description}</h4>
+
+          {/* Count And Progress */}
+          <div className="col-10 col-md-5">
+            <span className="badge bg-secondary p-2">
+              {courseModules?.length} Module(s)
+            </span>
+            <span className="badge bg-secondary p-2 mt-2 mx-2">
+              {videos?.length} vidéo(s)
+            </span>
+            <span className="badge bg-secondary p-2 mt-2">
+              {tests?.length} Test(s)
+            </span>
+            {user?.role === "learner" && (
+              <div className="mt-2">
+                <div className="d-flex gap-3">
+                  <label>Progrès</label>
+                  {testProgress?.overallProgress === 0 && <p>0%</p>}
+                </div>
+                <ProgressBar
+                  striped
+                  variant="info"
+                  now={testProgress?.overallProgress}
+                  label={`${testProgress?.overallProgress}%`}
+                  animated
+                />
+              </div>
+            )}
           </div>
+
+          {/* Course Details */}
+          <div className="d-flex flex-wrap mt-2">
+            <span
+              className={`badge ${getLevelBadgeClass(
+                currentCourse?.level
+              )} rounded-pill p-2 me-2 mt-3`}
+            >
+              Niveau: {currentCourse?.level}
+            </span>
+            <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
+              Formateur: {currentCourse?.instructor?.name}
+            </span>
+            <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
+              Categorie: {currentCourse?.category?.name}
+            </span>
+          </div>
+        </div>
+
+        {/* Image */}
+        <div className="col-8 col-sm-3 col-lg-3 mx-auto d-flex flex-column justify-content-center d-none d-sm-flex">
+          <img
+            src={`http://localhost:5000/${currentCourse?.image.replaceAll(
+              "\\",
+              "/"
+            )}`}
+            alt=""
+            className="col-12 mx-auto rounded-start-pill"
+          />
         </div>
       </div>
 
       {/* Module Details */}
-      <div className="col-8 mx-auto mt-5">
+      <div className="col-10 col-md-7 mx-auto mt-5">
         {/* Link To Course Content */}
-        <div className="d-flex mb-5 justify-content-center bounce bounce-hover p-4 ">
+        <div className="d-flex mb-5 col-10 mx-auto justify-content-center bounce bounce-hover p-4 ">
           <LinkToolTip
             title="Voir Plus..."
             placement={"right"}
@@ -195,6 +271,8 @@ const CourseDetails = () => {
                 ? `/learner/course/content/${courseId}/${enrollementId}`
                 : user?.role === "instructor"
                 ? `/instructor/course/content/${courseId}`
+                : user?.role === "admin"
+                ? `/admin/course/content/${courseId}`
                 : null
             }
             className={
@@ -250,12 +328,18 @@ const CourseDetails = () => {
         className={`modal ${showModal ? "show" : ""}`}
         style={{ display: showModal ? "block" : "none" }}
         aria-labelledby="courseModal"
-        aria-hidden={!showModal}
+        // aria-hidden={!showModal}
+        onClick={(e) => {
+          if (e.target.classList.contains("modal")) {
+            setShowModal(false);
+            console.log(e.target.classList);
+          }
+        }}
       >
         <form onSubmit={handleAddModule}>
-          <div className="modal-dialog modal-lg modal-fullscreen-lg-down mx-auto">
+          <div className="modal-dialog">
             <div className="modal-content">
-              <div className="modal-header col-12 col-lg-12 col-md-11 col-sm-11 p-4">
+              <div className="modal-header p-4">
                 <h6 className="modal-title" id="courseModal">
                   Ajouter un nouveau module
                 </h6>
@@ -309,11 +393,16 @@ const CourseDetails = () => {
         style={{ display: showVideoModal ? "block" : "none" }}
         aria-labelledby="videoModal"
         aria-hidden={!showVideoModal}
+        onClick={(e) => {
+          if (e.target.classList.contains("modal")) {
+            setShowVideoModal(false);
+          }
+        }}
       >
         <form onSubmit={handleAddVideo}>
-          <div className="modal-dialog modal-lg modal-fullscreen-lg-down mx-auto">
+          <div className="modal-dialog">
             <div className="modal-content">
-              <div className="modal-header col-12 col-lg-12 col-md-11 col-sm-11 p-4">
+              <div className="modal-header p-4">
                 <h6 className="modal-title" id="videoModal">
                   Ajouter un nouveau vidéo
                 </h6>
@@ -407,76 +496,4 @@ export const LinkToolTip = ({
   </OverlayTrigger>
 );
 
-const ModuleContent = ({ module, onAddVideo, isInstructor, onAddTest }) => (
-  <div className="p-2 mb-4 shadow border-bottom border-end border-secondary rounded-4 animate">
-    {/* Collapsible Module Title */}
-    <div className="d-flex align-items-center">
-      <button
-        className="btn w-100 p-2 rounded text-start d-flex align-items-end"
-        data-bs-toggle="collapse"
-        data-bs-target={`#${module?._id}`}
-        style={{ border: "0px" }}
-      >
-        <i className="bi bi-check-circle p-2 h5 mb-0"></i>
-        <h6 className="fw-bold text-capitalize">{module?.title}</h6>
-      </button>
-      <i className="bi bi-chevron-down me-2 h4"></i>
-    </div>
-
-    {/* Collapsible Content */}
-    <div id={module?._id} className="col-10 mx-auto collapse show mt-2">
-      {/* Video Title */}
-      {module?.videos.map((video) => (
-        <div
-          key={video?._id}
-          className="d-flex justify-content-between align-items-center p-2 border-bottom border-secondary rounded mb-2 flex-wrap"
-        >
-          <p className="mb-0 me-3 text-capitalize">{video?.title}</p>
-          <i className="bi bi-camera-video h5 mb-0"></i>
-        </div>
-      ))}
-      {/* Test */}
-      {module?.test ? (
-        <div className="d-flex justify-content-between align-items-center p-2 border-bottom border-secondary rounded-3 mb-3">
-          <h6 className="mb-0">Test</h6>
-          <i className="bi bi-file-earmark-text h5 mb-0"></i>
-        </div>
-      ) : (
-        <p>Pas de test pour ce module</p>
-      )}
-
-      {/* Instructor Buttons */}
-      {isInstructor && (
-        <div className="d-flex rounded-3 mb-2 col-11 mx-auto gap-4 flex-wrap">
-          <div className="text-success col rounded-3 border-bottom border-secondary animate">
-            <button
-              className="btn w-100 p-2 flex-wrap d-flex justify-content-around align-items-center"
-              onClick={onAddVideo}
-              style={{ border: "0px" }}
-            >
-              <h6 className="mb-0 me-3">Ajouter un vidéo</h6>
-              <i className="bi bi-patch-plus-fill h4 mb-0 text-success"></i>
-            </button>
-          </div>
-          <div
-            className={`text-success col rounded-3 border-bottom border-secondary ${
-              !module?.test && " animate"
-            }`}
-          >
-            <button
-              className={`btn w-100 p-2 flex-wrap d-flex justify-content-around align-items-center ${
-                module?.test && "disabled"
-              }`}
-              onClick={onAddTest}
-              style={{ border: "0px" }}
-            >
-              <h6 className="mb-0 me-3">Ajouter un test</h6>
-              <i className="bi bi-clipboard2-plus-fill h4 mb-0 text-success"></i>
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  </div>
-);
 export default CourseDetails;

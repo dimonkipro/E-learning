@@ -5,6 +5,7 @@ import { verifyEmail } from "../redux/auth/authSlice";
 import Notifications from "../components/Notifications";
 import Lottie from "lottie-react";
 import VerifyLottie from "../assets/verify.json";
+import Footer from "../components/Footer";
 
 const VerifyEmail = () => {
   const dispatch = useDispatch();
@@ -74,52 +75,55 @@ const VerifyEmail = () => {
   }, [code]);
 
   return (
-    <div className="container col-8 my-5 py-4 rounded-4 shadow">
-      <div className="text-center">
-        <h1>Verifier votre E-mail</h1>
-      </div>
-      <div className=" col-12 d-flex justify-content-center">
-        <Lottie
-          animationData={VerifyLottie}
-          loop={true}
-          style={{ width: "40%" }}
-        />
-      </div>
-      <div className="col-10 my-2 mx-auto text-center">
-        <p>Entrez le code à 6 chiffres envoyé à votre adresse e-mail.</p>
+    <div>
+      <div className="container col-8 my-5 py-4 rounded-4 shadow">
+        <div className="text-center">
+          <h1>Verifier votre E-mail</h1>
+        </div>
+        <div className=" col-12 d-flex justify-content-center">
+          <Lottie
+            animationData={VerifyLottie}
+            loop={true}
+            style={{ width: "40%" }}
+          />
+        </div>
+        <div className="col-10 my-2 mx-auto text-center">
+          <p>Entrez le code à 6 chiffres envoyé à votre adresse e-mail.</p>
 
-        <form onSubmit={handleSubmit}>
-          <div className="input-group  mb-4">
-            {code.map((digit, index) => (
-              <input
-                key={index}
-                ref={(el) => (inputRefs.current[index] = el)}
-                type="text"
-                maxLength="6"
-                className="form-control text-center rounded-pill mb-2 mx-1 focus-ring focus-ring-warning border"
-                value={digit}
-                onChange={(e) => handleChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-              />
-            ))}
-          </div>
-          <div className="d-grid col-8 mx-auto">
-            <button
-              className="btn btn-warning rounded-5 p-2"
-              type="submit"
-              disabled={isLoading || code.some((digit) => !digit)}
-            >
-              {isLoading ? "En train de verifier..." : "Verifier E-mail"}
-            </button>
-          </div>
-        </form>
+          <form onSubmit={handleSubmit}>
+            <div className="input-group  mb-4">
+              {code.map((digit, index) => (
+                <input
+                  key={index}
+                  ref={(el) => (inputRefs.current[index] = el)}
+                  type="text"
+                  maxLength="6"
+                  className="form-control text-center rounded-pill mb-2 mx-1 focus-ring focus-ring-warning border"
+                  value={digit}
+                  onChange={(e) => handleChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                />
+              ))}
+            </div>
+            <div className="d-grid col-8 mx-auto">
+              <button
+                className="btn btn-warning rounded-5 p-2"
+                type="submit"
+                disabled={isLoading || code.some((digit) => !digit)}
+              >
+                {isLoading ? "En train de verifier..." : "Verifier E-mail"}
+              </button>
+            </div>
+          </form>
+        </div>
+        {notification && (
+          <Notifications
+            type={notification.type}
+            message={notification.message}
+          />
+        )}
       </div>
-      {notification && (
-        <Notifications
-          type={notification.type}
-          message={notification.message}
-        />
-      )}
+      <Footer />
     </div>
   );
 };

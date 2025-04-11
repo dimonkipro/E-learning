@@ -31,7 +31,6 @@ import EditCourseModelPage from "./pages/instructor/EditCourseModelPage";
 import CourseDetails from "./pages/learner/CourseDetails";
 import CourseContent from "./pages/learner/CourseContent";
 import ErrorPage from "./components/ErrorPage";
-import Footer from "./components/Footer";
 
 function App() {
   const dispatch = useDispatch();
@@ -104,6 +103,11 @@ function App() {
             <Route path="courses" element={<Courses />} />
             <Route path="edit-course/:courseId" element={<EditCoursePage />} />
             <Route path="enrollments" element={<EnrollmentList />} />
+            <Route path="course/:courseId" element={<CourseDetails />} />
+            <Route
+              path="course/content/:courseId"
+              element={<CourseContent />}
+            />
           </Route>
         </Route>
 
@@ -160,7 +164,6 @@ function App() {
           element={<ErrorPage text={"404 Page Not Found"} emojis={"(❁´⁔`❁)"} />}
         />
       </Routes>
-      <Footer />
     </>
   );
 }

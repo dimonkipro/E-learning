@@ -1,5 +1,9 @@
 /* eslint-disable react/prop-types */
 
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchProgress } from "../redux/auth/moduleSlice";
+
 const ModuleContentSideBar = ({
   module,
   onVideoSelect,
@@ -8,9 +12,27 @@ const ModuleContentSideBar = ({
   test,
   selectedTest,
 }) => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const { progress } = useSelector((state) => state.progress);
+  const userId = user?._id;
+
+  // Fetch progress for each video in the module
+  useEffect(() => {
+    if (user?.role === "learner" && userId && module?.videos?.length) {
+      module.videos.forEach((video) => {
+        dispatch(fetchProgress({ userId, videoId: video._id }));
+      });
+    }
+  }, [userId, module, dispatch, user?.role]);
+
+  const allVideosCompleted =
+    module?.videos?.length &&
+    module.videos.every((video) => progress[video._id]);
+
   return (
     <div
-      className={` p-2 mb-4 shadow border-bottom rounded-4 ${
+      className={`p-2 mb-4 shadow border-bottom rounded-4 ${
         module._id === selectedVideo?.module_id ||
         module._id === selectedTest?.module_id?._id
           ? "bg-secondary-subtle"
@@ -19,7 +41,11 @@ const ModuleContentSideBar = ({
     >
       {/* Collapsible Module Title */}
       <div className="d-flex align-items-center">
-        <i className="bi bi-check-circle p-2 h4 mb-0"></i>
+        <i
+          className={`bi ${
+            allVideosCompleted ? "bi-check-circle-fill" : "bi-check-circle"
+          } p-2 h4 mb-0`}
+        ></i>
         <button
           className="btn w-100 p-2 rounded text-end"
           data-bs-toggle="collapse"
@@ -33,19 +59,26 @@ const ModuleContentSideBar = ({
       {/* Collapsible Content */}
       <div id={module?._id} className="col-10 mx-auto collapse mt-2">
         {/* Video title */}
-        {module?.videos.map((video) => (
-          <div
-            key={video?._id}
-            className={`d-flex justify-content-between align-items-center p-2 border-bottom rounded mb-2 ${
-              video._id === selectedVideo?._id ? "bg-light" : ""
-            }`}
-            onClick={() => onVideoSelect(video)}
-            style={{ cursor: "pointer" }}
-          >
-            <i className="bi bi-camera-video h5 mb-0"></i>
-            <span className="me-2">{video?.title}</span>
-          </div>
-        ))}
+        {module?.videos.map((video) => {
+          const videoCompleted = progress[video._id];
+          return (
+            <div
+              key={video?._id}
+              className={`d-flex justify-content-between align-items-center p-2 border-bottom rounded mb-2 ${
+                video._id === selectedVideo?._id ? "bg-light" : ""
+              }`}
+              onClick={() => onVideoSelect(video)}
+              style={{ cursor: "pointer" }}
+            >
+              <i
+                className={`h5 mb-0 bi ${
+                  videoCompleted ? "bi-camera-video-fill" : "bi-camera-video"
+                }`}
+              ></i>
+              <span className="me-2">{video?.title}</span>
+            </div>
+          );
+        })}
 
         {/* Test Section */}
         {test && (

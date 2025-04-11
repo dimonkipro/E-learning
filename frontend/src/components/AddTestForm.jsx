@@ -91,12 +91,20 @@ const AddTestForm = ({
       className={`modal ${showTestModal ? "show" : ""}`}
       style={{ display: showTestModal ? "block" : "none" }}
       aria-labelledby="testModal"
+      aria-hidden={!showTestModal}
+      onClick={(e) => {
+        if (e.target.classList.contains("modal")) {
+          setShowTestModal(false);
+        }
+      }}
     >
       <form onSubmit={handleAddTest}>
-        <div className="modal-dialog modal-lg modal-fullscreen-lg-down mx-auto">
+        <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header p-4">
-              <h6 className="modal-title">Ajouter un nouveau test</h6>
+              <h6 className="modal-title" id="testModal">
+                Ajouter un nouveau test
+              </h6>
               <button
                 type="button"
                 className="btn-close"

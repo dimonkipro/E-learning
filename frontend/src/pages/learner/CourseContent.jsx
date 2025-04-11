@@ -35,6 +35,8 @@ const CourseContent = () => {
     (state) => state.progress
   );
   const { testProgress } = useSelector((state) => state.courses);
+
+  const passedTestsIdList = testProgress?.passedTestsId;
   const isEnrolled =
     user?.role === "admin" ||
     userEnrollments?.some(
@@ -93,11 +95,52 @@ const CourseContent = () => {
     }
   }, [loading, courseModules, selectedVideo, progress, isLoading]);
 
+  // Handle next (sent to videoContainer)
+  const handleNextContent = () => {
+    if (!selectedVideo) return;
+
+    // Find the module that contains the current video.
+    const currentModule = courseModules?.find(
+      (module) => module._id === selectedVideo.module_id
+    );
+
+    if (currentModule) {
+      // Get the list of videos for the curent module.
+      const videosInModule = currentModule.videos.filter((v) => !!v);
+      const currentIndex = videosInModule.findIndex(
+        (v) => v._id === selectedVideo._id
+      );
+
+      if (currentIndex < videosInModule.length - 1) {
+        setSelectedVideo(videosInModule[currentIndex + 1]);
+      } else if (currentModule?.test) {
+        // show the test instead.
+        setSelectedTest(currentModule.test);
+        setCurrentQuestionIndex(0);
+      } else {
+        setSelectedVideo(videosInModule[0]);
+      }
+    }
+  };
+
   // Test selection handler
   const handleTestSelect = (test) => {
     setSelectedTest(test);
     setSelectedVideo(null);
     setCurrentQuestionIndex(0);
+  };
+
+  const isModuleLocked = (index, courseModules, passedTestsIdList) => {
+    // The first module is never locked.
+    if (index === 0) return false;
+
+    const previousModule = courseModules[index - 1];
+    const previousTestId = previousModule?.test?._id;
+
+    // If there's a test in the previous module and it hasn't been passed, lock the module.
+    return previousTestId
+      ? !passedTestsIdList?.includes(previousTestId)
+      : false;
   };
 
   if (loading) return <div>Loading...</div>;
@@ -146,6 +189,7 @@ const CourseContent = () => {
             videoList={courseModules
               .flatMap((m) => m.videos)
               .filter((v) => !!v)}
+            onNext={handleNextContent}
           />
         ) : (
           <ErrorPage text={"Select a video or test to start"} />
@@ -183,7 +227,7 @@ const CourseContent = () => {
           )}
 
           {/* Module Content */}
-          {courseModules?.map((module) => (
+          {courseModules?.map((module, index) => (
             <ModuleContentSideBar
               key={module?._id}
               module={module}
@@ -195,6 +239,8 @@ const CourseContent = () => {
               selectedVideo={selectedVideo}
               onTestSelect={handleTestSelect}
               selectedTest={selectedTest}
+              passedTestsIdList={passedTestsIdList}
+              isLocked={isModuleLocked(index, courseModules, passedTestsIdList)}
             />
           ))}
         </Offcanvas.Body>

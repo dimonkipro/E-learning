@@ -3,8 +3,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { saveVideoProgress } from "../redux/auth/moduleSlice";
 
-const VideoPlayer = ({ video, setSelectedVideo, videoList }) => {
-
+const VideoPlayer = ({ video, setSelectedVideo, videoList, onNext }) => {
   const dispatch = useDispatch();
 
   const [watchedTime, setWatchedTime] = useState(0);
@@ -25,30 +24,24 @@ const VideoPlayer = ({ video, setSelectedVideo, videoList }) => {
   };
 
   // Send watched time to backend every 5 sec
-useEffect(() => {
-  if (watchedTime > 0 && watchedTime % 5 === 0) {
-    dispatch(
-      saveVideoProgress({
-        userId,
-        videoId,
-        watchedTime,
-        videoDuration: video.duration,
-      })
-    );
-  }
-}, [watchedTime, video.duration, userId, videoId, dispatch]);
+  useEffect(() => {
+    if (watchedTime > 0 && watchedTime % 5 === 0) {
+      dispatch(
+        saveVideoProgress({
+          userId,
+          videoId,
+          watchedTime,
+          videoDuration: video.duration,
+        })
+      );
+    }
+  }, [watchedTime, video.duration, userId, videoId, dispatch]);
 
   const currentIndex = videoList.findIndex((v) => v._id === videoId);
 
   const handlePrev = () => {
     if (currentIndex > 0) {
       setSelectedVideo(videoList[currentIndex - 1]);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentIndex < videoList.length - 1) {
-      setSelectedVideo(videoList[currentIndex + 1]);
     }
   };
 
@@ -80,7 +73,7 @@ useEffect(() => {
         </button>
         <button
           className="btn btn-outline-primary"
-          onClick={handleNext}
+          onClick={onNext}
           disabled={currentIndex === videoList.length - 1 || !isCompleted}
         >
           Suivant <i className="bi bi-caret-right"></i>

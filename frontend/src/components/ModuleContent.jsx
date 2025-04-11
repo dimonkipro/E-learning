@@ -3,25 +3,35 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProgress } from "../redux/auth/moduleSlice";
 
 /* eslint-disable react/prop-types */
-const ModuleContent = ({ module, onAddVideo, isInstructor, onAddTest }) => {
-
+const ModuleContent = ({
+  module,
+  onAddVideo,
+  isInstructor,
+  onAddTest,
+  passedTestsIdList,
+}) => {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.auth);
   const [completedVideos, setCompletedVideos] = useState({});
 
   const userId = user?._id;
-   const { progress } = useSelector((state) => state.progress);
+  const { progress } = useSelector((state) => state.progress);
 
-   // Fetch progress for each video in the module
-   useEffect(() => {
-     if (user?.role === "learner" &&userId && module?.videos?.length) {
-       module.videos.forEach((video) => {
-         dispatch(fetchProgress({ userId, videoId: video._id }));
-         setCompletedVideos(progress)
-       });
-     }
-   }, [userId, module, dispatch, progress, user?.role]);
+  const isTestPassed =
+    module?.test &&
+    passedTestsIdList &&
+    passedTestsIdList.includes(module.test._id);
+
+  // Fetch progress for each video in the module
+  useEffect(() => {
+    if (user?.role === "learner" && userId && module?.videos?.length) {
+      module.videos.forEach((video) => {
+        dispatch(fetchProgress({ userId, videoId: video._id }));
+        setCompletedVideos(progress);
+      });
+    }
+  }, [userId, module, dispatch, progress, user?.role]);
 
   const allVideosCompleted =
     module?.videos?.length &&
@@ -30,21 +40,25 @@ const ModuleContent = ({ module, onAddVideo, isInstructor, onAddTest }) => {
   return (
     <div className="p-2 mb-4 shadow border-bottom border-end border-secondary rounded-4 animate">
       {/* Collapsible Module Title */}
-      <div className="d-flex align-items-center">
+      <div className="">
         <button
-          className="btn w-100 p-2 rounded text-start d-flex align-items-end"
+          className="btn w-100 p-2 rounded d-flex justify-content-between align-items-center"
           data-bs-toggle="collapse"
           data-bs-target={`#${module?._id}`}
           style={{ border: "0px" }}
         >
-          <i
-            className={`bi ${
-              allVideosCompleted ? "bi-check-circle-fill" : "bi-check-circle"
-            } p-2 h5 mb-0`}
-          ></i>
-          <h6 className="fw-bold text-capitalize">{module?.title}</h6>
+          <div className="d-flex text-start d-flex align-items-end">
+            <i
+              className={`bi ${
+                allVideosCompleted && isTestPassed
+                  ? "bi-check-circle-fill"
+                  : "bi-check-circle"
+              } p-2 h5 mb-0`}
+            ></i>
+            <h6 className="fw-bold text-capitalize">{module?.title}</h6>
+          </div>
+          <i className="bi bi-chevron-down h4 mb-0"></i>
         </button>
-        <i className="bi bi-chevron-down me-2 h4"></i>
       </div>
 
       {/* Collapsible Content */}
@@ -70,7 +84,13 @@ const ModuleContent = ({ module, onAddVideo, isInstructor, onAddTest }) => {
         {module?.test ? (
           <div className="d-flex justify-content-between align-items-center p-2 border-bottom border-secondary rounded-3 mb-3">
             <h6 className="mb-0">Test</h6>
-            <i className="bi bi-file-earmark-text h5 mb-0"></i>
+            <i
+              className={`bi ${
+                isTestPassed
+                  ? "bi-file-earmark-text-fill"
+                  : "bi-file-earmark-text"
+              } h5 mb-0`}
+            ></i>
           </div>
         ) : (
           <p>Pas de test pour ce module</p>

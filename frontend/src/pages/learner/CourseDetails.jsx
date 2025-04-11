@@ -40,6 +40,8 @@ const CourseDetails = () => {
     videos,
     testProgress,
   } = useSelector((state) => state.courses);
+  
+  const { userEnrollments } = useSelector((state) => state.enrollments);
 
   const isInstructor = currentCourse?.instructor?._id === user?._id;
 
@@ -84,7 +86,6 @@ const CourseDetails = () => {
     }
   }, [userId, dispatch, courseModules, user?.role]);
 
-  const { userEnrollments } = useSelector((state) => state.enrollments);
 
   const isEnrolled =
     user?.role === "admin" ||
@@ -95,7 +96,7 @@ const CourseDetails = () => {
         enrollment?.courseId?._id === courseId &&
         (enrollment?.status === "approved" || enrollment?.status === "pending")
     );
-
+const passedTestsId = testProgress?.passedTestsId;
   const getLevelBadgeClass = (level) => {
     switch (level?.toLowerCase()) {
       case "beginner":
@@ -179,7 +180,6 @@ const CourseDetails = () => {
       />
     );
   }
-  console.log("testProgress", testProgress);
   
   return (
     <div className="col-12">
@@ -316,6 +316,7 @@ const CourseDetails = () => {
                 setSelectedModuleId(module._id);
                 setShowTestModal(true);
               }}
+              passedTestsIdList={passedTestsId}
             />
           ))
         ) : (

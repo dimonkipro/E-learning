@@ -119,13 +119,12 @@ const TestContainer = ({
                     </div>
                   )
                 )}
-                {user?.role === "instructor" ||
-                  (user?.role === "admin" && (
-                    <p className="text-center text-success fw-bold">
-                      {`✓ ${selectedTest.questions[currentQuestionIndex].correct_answer}
+                {(user?.role === "instructor" || user?.role === "admin") && (
+                  <p className="text-center text-success fw-bold">
+                    {`✓ ${selectedTest.questions[currentQuestionIndex].correct_answer}
                      ✓`}
-                    </p>
-                  ))}
+                  </p>
+                )}
               </div>
               <div className="d-flex justify-content-between mt-4">
                 <button

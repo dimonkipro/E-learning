@@ -418,6 +418,7 @@ export const getLearnerCourseProgress = async (req, res) => {
     // 2. Calculate tests progress.
     let totalTests = 0;
     let passedTests = 0;
+    let passedTestsId = [];
     for (const module of modules) {
       // Look for test
       const test = await Test.findOne({ module_id: module._id });
@@ -430,6 +431,7 @@ export const getLearnerCourseProgress = async (req, res) => {
         });
         if (testResult && testResult.passed) {
           passedTests++;
+          passedTestsId.push(test._id);
         }
       }
     }
@@ -477,6 +479,7 @@ export const getLearnerCourseProgress = async (req, res) => {
       videoPercentage:
         videoPercentage !== null ? Math.round(videoPercentage) : 0,
       overallProgress,
+      passedTestsId,
     });
   } catch (error) {
     console.error(error);

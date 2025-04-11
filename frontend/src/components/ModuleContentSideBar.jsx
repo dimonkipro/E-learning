@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchProgress } from "../redux/auth/moduleSlice";
 
 const ModuleContentSideBar = ({
   module,
@@ -12,34 +12,27 @@ const ModuleContentSideBar = ({
   test,
   selectedTest,
 }) => {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const [completedVideos, setCompletedVideos] = useState({});
-
+  const { progress } = useSelector((state) => state.progress);
   const userId = user?._id;
 
   // Fetch progress for each video in the module
   useEffect(() => {
-    if (userId && module?.videos?.length) {
+    if (user?.role === "learner" && userId && module?.videos?.length) {
       module.videos.forEach((video) => {
-        axios
-          .get(`http://localhost:5000/api/progress/${userId}/${video._id}`)
-          .then((response) => {
-            setCompletedVideos((prevState) => ({
-              ...prevState,
-              [video._id]: response.data.isCompleted,
-            }));
-          })
-          .catch((error) => console.error("Error fetching progress:", error));
+        dispatch(fetchProgress({ userId, videoId: video._id }));
       });
     }
-  }, [userId, module]);
+  }, [userId, module, dispatch, user?.role]);
+
   const allVideosCompleted =
     module?.videos?.length &&
-    module.videos.every((video) => completedVideos[video._id]);
+    module.videos.every((video) => progress[video._id]);
 
   return (
     <div
-      className={` p-2 mb-4 shadow border-bottom rounded-4 ${
+      className={`p-2 mb-4 shadow border-bottom rounded-4 ${
         module._id === selectedVideo?.module_id ||
         module._id === selectedTest?.module_id?._id
           ? "bg-secondary-subtle"
@@ -67,7 +60,7 @@ const ModuleContentSideBar = ({
       <div id={module?._id} className="col-10 mx-auto collapse mt-2">
         {/* Video title */}
         {module?.videos.map((video) => {
-          const videoCompleted = completedVideos[video._id];
+          const videoCompleted = progress[video._id];
           return (
             <div
               key={video?._id}

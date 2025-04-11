@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCourseById, clearCurrentCourse } from "../redux/auth/courseSlice";
 import { toast } from "react-toastify";
@@ -9,7 +9,6 @@ const CoursePage = () => {
   // const theme = localStorage.getItem("theme");
   const { courseId } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { currentCourse, loading, error } = useSelector(
     (state) => state.courses
@@ -92,14 +91,6 @@ const CoursePage = () => {
           <div className="container position-relative mb-5">
             <div className="row">
               {/* Details Card */}
-              <div className="text-end position-sticky top-0 z-3">
-                <button
-                  onClick={() => navigate(-1)}
-                  className="btn btn-outline-secondary"
-                >
-                  Revenir en arrière →
-                </button>
-              </div>
               <div className="col-12 col-md-7 mx-auto mt-5">
                 <div className="card-body">
                   {/* Nav Links */}

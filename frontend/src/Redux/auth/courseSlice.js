@@ -73,20 +73,42 @@ export const fetchCourseDetailsById = createAsyncThunk(
   }
 );
 
+export const fetchTestResults = createAsyncThunk(
+  "courses/fetchTestResults",
+  async (courseId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/learner/course/${courseId}/testResults`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.msg || error.message);
+    }
+  }
+);
+
 const courseSlice = createSlice({
   name: "courses",
   initialState: {
     courses: [],
     currentCourse: null,
     courseModules: null,
+    videos: [],
+    tests: [],
+    testProgress: null,
     loading: false,
     error: null,
   },
   reducers: {
-    // Add a reducer to clear current course when needed
+    // Clear current course when needed
     clearCurrentCourse: (state) => {
       state.currentCourse = null;
       state.courseModules = null;
+      state.tests = [];
+      state.testProgress = null;
     },
   },
   extraReducers: (builder) => {
@@ -127,8 +149,30 @@ const courseSlice = createSlice({
         state.loading = false;
         state.currentCourse = action.payload.course;
         state.courseModules = action.payload.modules;
+        state.tests = action.payload.modules.reduce((acc, module) => {
+          if (module.test) acc.push(module.test);
+          return acc;
+        }, []);
+        state.videos = Array.isArray(action.payload.modules)
+          ? action.payload.modules.flatMap((module) =>
+              Array.isArray(module.videos) ? module.videos : []
+            )
+          : [];
       })
       .addCase(fetchCourseDetailsById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Handle fetching test progress results
+      .addCase(fetchTestResults.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchTestResults.fulfilled, (state, action) => {
+        state.loading = false;
+        state.testProgress = action.payload; // { totalTests, passedTests, progressPercentage }
+      })
+      .addCase(fetchTestResults.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

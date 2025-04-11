@@ -1,33 +1,28 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProgress } from "../redux/auth/moduleSlice";
 
 /* eslint-disable react/prop-types */
 const ModuleContent = ({ module, onAddVideo, isInstructor, onAddTest }) => {
+
+  const dispatch = useDispatch();
+
   const { user } = useSelector((state) => state.auth);
   const [completedVideos, setCompletedVideos] = useState({});
 
   const userId = user?._id;
+   const { progress } = useSelector((state) => state.progress);
 
-  // Fetch progress for each video in the module after component mounts
-  useEffect(() => {
-    if (userId && module?.videos?.length) {
-      module.videos.forEach((video) => {
-        axios
-          .get(`http://localhost:5000/api/progress/${userId}/${video._id}`)
-          .then((response) => {
-            // Assume response.data.completed is true when the video is finished
-            console.log(response);
+   // Fetch progress for each video in the module
+   useEffect(() => {
+     if (user?.role === "learner" &&userId && module?.videos?.length) {
+       module.videos.forEach((video) => {
+         dispatch(fetchProgress({ userId, videoId: video._id }));
+         setCompletedVideos(progress)
+       });
+     }
+   }, [userId, module, dispatch, progress, user?.role]);
 
-            setCompletedVideos((prevState) => ({
-              ...prevState,
-              [video._id]: response.data.isCompleted,
-            }));
-          })
-          .catch((error) => console.error("Error fetching progress:", error));
-      });
-    }
-  }, [userId, module]);
   const allVideosCompleted =
     module?.videos?.length &&
     module.videos.every((video) => completedVideos[video._id]);

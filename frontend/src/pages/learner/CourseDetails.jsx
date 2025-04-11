@@ -5,10 +5,15 @@ import { Link, useParams } from "react-router-dom";
 import {
   clearCurrentCourse,
   fetchCourseDetailsById,
+  fetchTestResults,
 } from "../../redux/auth/courseSlice";
 import { OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
 import ErrorPage from "../../components/ErrorPage";
-import { addModule, addVideo } from "../../redux/auth/moduleSlice";
+import {
+  addModule,
+  addVideo,
+  fetchProgress,
+} from "../../redux/auth/moduleSlice";
 import AddTestForm from "../../components/AddTestForm";
 import ModuleContent from "../../components/ModuleContent";
 
@@ -25,6 +30,20 @@ const CourseDetails = () => {
   const [title, setTitle] = useState("");
   const [order, setOrder] = useState("");
   const [showTestModal, setShowTestModal] = useState(false);
+  const { user } = useSelector((state) => state.auth);
+  const {
+    currentCourse,
+    courseModules,
+    loading,
+    error,
+    tests,
+    videos,
+    testProgress,
+  } = useSelector((state) => state.courses);
+
+  const isInstructor = currentCourse?.instructor?._id === user?._id;
+
+  const userId = user?._id;
 
   const [formData, setFormData] = useState({
     videoTitle: "",
@@ -32,6 +51,7 @@ const CourseDetails = () => {
     videoDuration: "",
     video: null,
   });
+  // Fetch Course Details By Id
   useEffect(() => {
     if (courseId) {
       dispatch(fetchCourseDetailsById(courseId));
@@ -42,14 +62,27 @@ const CourseDetails = () => {
     };
   }, [courseId, dispatch]);
 
-  const { currentCourse, courseModules, loading, error } = useSelector(
-    (state) => state.courses
-  );
-  const testCount = courseModules?.filter(
-    (module) => module.test !== null
-  ).length;
+// Fetch Test Results
+  useEffect(() => {
+    if (user?.role === "learner" && courseId) {
+      dispatch(fetchTestResults(courseId));
+    }
 
-  const { user } = useSelector((state) => state.auth);
+    return () => {
+      dispatch(clearCurrentCourse());
+    };
+  }, [courseId, dispatch, user?.role]);
+
+  // Fetch progress for each video in every module
+  useEffect(() => {
+    if (user?.role === "learner" && userId && courseModules?.length > 0) {
+      courseModules.forEach((module) => {
+        module.videos.forEach((video) => {
+          dispatch(fetchProgress({ userId, videoId: video._id }));
+        });
+      });
+    }
+  }, [userId, dispatch, courseModules, user?.role]);
 
   const { userEnrollments } = useSelector((state) => state.enrollments);
 
@@ -62,7 +95,6 @@ const CourseDetails = () => {
         enrollment?.courseId?._id === courseId &&
         (enrollment?.status === "approved" || enrollment?.status === "pending")
     );
-  const isInstructor = currentCourse?.instructor?._id === user?._id;
 
   const getLevelBadgeClass = (level) => {
     switch (level?.toLowerCase()) {
@@ -147,6 +179,8 @@ const CourseDetails = () => {
       />
     );
   }
+  console.log("testProgress", testProgress);
+  
   return (
     <div className="col-12">
       {/* Hero */}
@@ -168,22 +202,30 @@ const CourseDetails = () => {
 
           {/* Count And Progress */}
           <div className="col-10 col-md-5">
-            <span className="badge bg-secondary p-2 me-2">
+            <span className="badge bg-secondary p-2">
               {courseModules?.length} Module(s)
             </span>
-            <span className="badge bg-secondary p-2 mt-2">
-              {testCount} Test(s)
+            <span className="badge bg-secondary p-2 mt-2 mx-2">
+              {videos?.length} vidéo(s)
             </span>
-            <div className="mt-2">
-              <label>Progrès</label>
-              <ProgressBar
-                striped
-                variant="info"
-                now={60}
-                label={`${60}%`}
-                animated
-              />
-            </div>
+            <span className="badge bg-secondary p-2 mt-2">
+              {tests?.length} Test(s)
+            </span>
+            {user?.role === "learner" && (
+              <div className="mt-2">
+                <div className="d-flex gap-3">
+                  <label>Progrès</label>
+                  {testProgress?.overallProgress === 0 && <p>0%</p>}
+                </div>
+                <ProgressBar
+                  striped
+                  variant="info"
+                  now={testProgress?.overallProgress}
+                  label={`${testProgress?.overallProgress}%`}
+                  animated
+                />
+              </div>
+            )}
           </div>
 
           {/* Course Details */}
@@ -218,7 +260,7 @@ const CourseDetails = () => {
       </div>
 
       {/* Module Details */}
-      <div className="col-7 mx-auto mt-5">
+      <div className="col-10 col-md-7 mx-auto mt-5">
         {/* Link To Course Content */}
         <div className="d-flex mb-5 col-10 mx-auto justify-content-center bounce bounce-hover p-4 ">
           <LinkToolTip

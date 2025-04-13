@@ -6,11 +6,12 @@ import AddCourseForm from "./AddCourseForm";
 import Pagination from "./Pagination";
 import { LinkToolTip } from "../pages/learner/CourseDetails";
 import Footer from "./Footer";
+import CustomSpinner from "./CustomSpinner";
 
 const Courses = () => {
   const dispatch = useDispatch();
 
-  const { courses } = useSelector((state) => state.courses);
+  const { courses, loading, error } = useSelector((state) => state.courses);
   const { user } = useSelector((state) => state.auth);
 
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -91,6 +92,9 @@ const Courses = () => {
   const handlePageChange = (pageNumber) => {
     setSearchParams({ page: pageNumber });
   };
+
+  if (loading) return <CustomSpinner />;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="col-12">

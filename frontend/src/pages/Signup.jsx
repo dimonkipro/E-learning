@@ -68,7 +68,6 @@ const Signup = () => {
             <Lottie
               animationData={RegisterLottie}
               loop={true}
-              // style={{ width: "40%" }}
             />
           </div>
           <div className="col-11 mx-auto text-center my-4">

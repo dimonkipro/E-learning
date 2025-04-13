@@ -9,10 +9,11 @@ import {
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { LinkToolTip } from "../learner/CourseDetails";
+import CustomSpinner from "../../components/CustomSpinner";
 
 const Users = () => {
   const dispatch = useDispatch();
-  const { list: users, isLoading } = useSelector((state) => state.users);
+  const { list: users, isLoading, error } = useSelector((state) => state.users);
   const [showUnverified, setshowUnverified] = useState(false);
 
   useEffect(() => {
@@ -61,6 +62,8 @@ const Users = () => {
   const filteredUsers = showUnverified
     ? users.filter((user) => !user.isVerified)
     : users;
+  if (isLoading) return <CustomSpinner />;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="col-11 mx-auto">

@@ -12,6 +12,7 @@ import ErrorPage from "../../components/ErrorPage";
 import TestContainer from "../../components/TestContainer ";
 import ModuleContentSideBar from "../../components/ModuleContentSideBar";
 import { fetchProgress } from "../../redux/auth/moduleSlice";
+import CustomSpinner from "../../components/CustomSpinner";
 
 const CourseContent = () => {
   const dispatch = useDispatch();
@@ -26,7 +27,9 @@ const CourseContent = () => {
 
   const { user } = useSelector((state) => state.auth);
 
-  const { userEnrollments } = useSelector((state) => state.enrollments);
+  const { userEnrollments, loading: isLoadiing } = useSelector(
+    (state) => state.enrollments
+  );
 
   const { currentCourse, courseModules, loading, error } = useSelector(
     (state) => state.courses
@@ -143,7 +146,7 @@ const CourseContent = () => {
       : false;
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading || isLoadiing) return <CustomSpinner />;
   if (error) return <div>Error: {error}</div>;
   if (!isEnrolled && !isInstructor) {
     return (

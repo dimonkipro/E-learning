@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCourseById, clearCurrentCourse } from "../redux/auth/courseSlice";
 import { toast } from "react-toastify";
 import Footer from "../components/Footer";
+import CustomSpinner from "../components/CustomSpinner";
 
 const CoursePage = () => {
   // const theme = localStorage.getItem("theme");
@@ -39,7 +40,7 @@ const CoursePage = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <CustomSpinner />;
   if (error) return <div>Error: {error}</div>;
 
   return (

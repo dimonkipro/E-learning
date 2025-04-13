@@ -3,12 +3,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const API_URL = "http://localhost:5000/api";
-const token = localStorage.getItem("token");
 
 export const addModule = createAsyncThunk(
   "module/add",
   async ({ title, order, courseId }, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.post(
         `${API_URL}/instructor/course/${courseId}/module/new`,
         { title, order },
@@ -31,6 +31,7 @@ export const addVideo = createAsyncThunk(
   "video/add",
   async ({ formData, moduleId }, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.post(
         `${API_URL}/instructor/module/${moduleId}/video/new`,
         formData,
@@ -54,6 +55,7 @@ export const addTest = createAsyncThunk(
   "test/add",
   async ({ testData, moduleId }, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.post(
         `${API_URL}/instructor/module/${moduleId}/test/new`,
         testData,
@@ -77,6 +79,7 @@ export const fetchProgress = createAsyncThunk(
   "progress/fetch",
   async ({ userId, videoId }, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(
         `${API_URL}/progress/${userId}/${videoId}`,
         {
@@ -100,6 +103,7 @@ export const saveVideoProgress = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.post(
         `${API_URL}/progress`,
         { userId, videoId, watchedTime, videoDuration },
@@ -120,6 +124,7 @@ export const submitTest = createAsyncThunk(
   "test/submit",
   async ({ testId, userAnswers }, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.post(
         `${API_URL}/learner/test/${testId}/submit`,
         { answers: userAnswers },

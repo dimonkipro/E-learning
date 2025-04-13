@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import LoginLottie from "../assets/login.json";
 import { toast } from "react-toastify";
-import Lottie, {  } from "lottie-react";
+import Lottie from "lottie-react";
 import Footer from "../components/Footer";
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -26,11 +26,10 @@ const Login = () => {
       <div className="container col-11 col-md-8 col-lg-6 rounded-4 my-5 py-4  shadow">
         <h2 className="text-center">Se connecter</h2>
         <div className="col-6 mx-auto d-flex justify-content-center">
-            <Lottie
-              animationData={LoginLottie}
-              loop={true}
-              // style={{ width: "60%" }}
-            />
+          <Lottie
+            animationData={LoginLottie}
+            loop={true}
+          />
         </div>
         <div className=" container col-10 col-sm-8 col-md-8 col-lg-8 text-center my-4">
           <form onSubmit={handleSubmit}>
@@ -46,12 +45,12 @@ const Login = () => {
                 required
                 autoFocus
               />
-  
+
               <label htmlFor="email" className="form-label">
                 E-mail
               </label>
             </div>
-  
+
             <div className="form-floating mb-3">
               <input
                 type="password"
@@ -63,7 +62,7 @@ const Login = () => {
                 placeholder="Password"
                 required
               />
-  
+
               <label htmlFor="password" className="form-label">
                 Mot de passe
               </label>

@@ -3,7 +3,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const API_URL = "http://localhost:5000/api";
-const token = localStorage.getItem("token");
 
 // Fetch all categories
 export const fetchCategories = createAsyncThunk(
@@ -23,6 +22,7 @@ export const addCategory = createAsyncThunk(
   "categories/add",
   async (name, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.post(
         `${API_URL}/admin/category/new`,
         { name },

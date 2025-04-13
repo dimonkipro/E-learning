@@ -3,7 +3,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const API_URL = "http://localhost:5000/api";
-const token = localStorage.getItem("token");
 // Fetch all courses
 export const fetchCourses = createAsyncThunk(
   "courses/fetchAll",
@@ -22,6 +21,7 @@ export const addCourse = createAsyncThunk(
   "courses/add",
   async (formData, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.post(
         `${API_URL}/admin/course/new`,
         formData,
@@ -56,6 +56,7 @@ export const fetchCourseDetailsById = createAsyncThunk(
   "courses/fetchById/details",
   async (courseId, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(
         `${API_URL}/course/${courseId}/details`,
         {
@@ -77,6 +78,7 @@ export const fetchTestResults = createAsyncThunk(
   "courses/fetchTestResults",
   async (courseId, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(
         `${API_URL}/learner/course/${courseId}/testResults`,
         {

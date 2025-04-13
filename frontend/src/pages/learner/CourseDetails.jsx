@@ -16,6 +16,7 @@ import {
 } from "../../redux/auth/moduleSlice";
 import AddTestForm from "../../components/AddTestForm";
 import ModuleContent from "../../components/ModuleContent";
+import CustomSpinner from "../../components/CustomSpinner";
 
 const CourseDetails = () => {
   const dispatch = useDispatch();
@@ -40,8 +41,10 @@ const CourseDetails = () => {
     videos,
     testProgress,
   } = useSelector((state) => state.courses);
-  
-  const { userEnrollments } = useSelector((state) => state.enrollments);
+
+  const { userEnrollments, loading: isLoading } = useSelector(
+    (state) => state.enrollments
+  );
 
   const isInstructor = currentCourse?.instructor?._id === user?._id;
 
@@ -64,7 +67,7 @@ const CourseDetails = () => {
     };
   }, [courseId, dispatch]);
 
-// Fetch Test Results
+  // Fetch Test Results
   useEffect(() => {
     if (user?.role === "learner" && courseId) {
       dispatch(fetchTestResults(courseId));
@@ -86,7 +89,6 @@ const CourseDetails = () => {
     }
   }, [userId, dispatch, courseModules, user?.role]);
 
-
   const isEnrolled =
     user?.role === "admin" ||
     userEnrollments?.some(
@@ -96,7 +98,7 @@ const CourseDetails = () => {
         enrollment?.courseId?._id === courseId &&
         (enrollment?.status === "approved" || enrollment?.status === "pending")
     );
-const passedTestsId = testProgress?.passedTestsId;
+  const passedTestsId = testProgress?.passedTestsId;
   const getLevelBadgeClass = (level) => {
     switch (level?.toLowerCase()) {
       case "beginner":
@@ -169,7 +171,7 @@ const passedTestsId = testProgress?.passedTestsId;
       .catch((error) => console.error(error));
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading || isLoading) return <CustomSpinner animation="border" />;
   if (error) return <div>Error: {error}</div>;
   if (!isEnrolled && !isInstructor) {
     return (
@@ -180,7 +182,7 @@ const passedTestsId = testProgress?.passedTestsId;
       />
     );
   }
-  
+
   return (
     <div className="col-12">
       {/* Hero */}

@@ -25,7 +25,7 @@ const VideoPlayer = ({ video, setSelectedVideo, videoList, onNext }) => {
 
   // Send watched time to backend every 5 sec
   useEffect(() => {
-    if (watchedTime > 0 && watchedTime % 5 === 0) {
+    if (user?.role === "learner" && watchedTime > 0 && watchedTime % 5 === 0) {
       dispatch(
         saveVideoProgress({
           userId,
@@ -35,9 +35,9 @@ const VideoPlayer = ({ video, setSelectedVideo, videoList, onNext }) => {
         })
       );
     }
-  }, [watchedTime, video.duration, userId, videoId, dispatch]);
+  }, [watchedTime, video.duration, userId, videoId, dispatch, user?.role]);
 
-  const currentIndex = videoList.findIndex((v) => v._id === videoId);
+  const currentIndex = videoList?.findIndex((v) => v._id === videoId);
 
   const handlePrev = () => {
     if (currentIndex > 0) {
@@ -74,7 +74,7 @@ const VideoPlayer = ({ video, setSelectedVideo, videoList, onNext }) => {
         <button
           className="btn btn-outline-primary"
           onClick={onNext}
-          disabled={currentIndex === videoList.length - 1 || !isCompleted}
+          disabled={currentIndex === videoList?.length - 1 || !isCompleted}
         >
           Suivant <i className="bi bi-caret-right"></i>
         </button>

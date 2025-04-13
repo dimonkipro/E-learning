@@ -6,6 +6,7 @@ import Notifications from "../components/Notifications";
 import RegisterLottie from "../assets/register.json";
 import Lottie from "lottie-react";
 import Footer from "../components/Footer";
+import CustomSpinner from "../components/CustomSpinner";
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -57,18 +58,16 @@ const Signup = () => {
       });
     }
   };
+  if (isLoading) return <CustomSpinner />;
 
   return (
-   <div className="col-12">
+    <div className="col-12">
       <div className="container col-11 col-lg-8 rounded-4 p-4 my-5 shadow">
         <div className="row text-center">
           <h2>Créer un compte </h2>
           <p className="m-0">C&apos;est simple et rapide.</p>
           <div className=" col-6 mx-auto d-flex justify-content-center">
-            <Lottie
-              animationData={RegisterLottie}
-              loop={true}
-            />
+            <Lottie animationData={RegisterLottie} loop={true} />
           </div>
           <div className="col-11 mx-auto text-center my-4">
             <form onSubmit={handleSubmit}>
@@ -109,7 +108,7 @@ const Signup = () => {
                   </div>
                 </div>
               </div>
-  
+
               <div className="form-floating mb-3">
                 <input
                   type="email"
@@ -191,7 +190,7 @@ const Signup = () => {
               </div>
             </form>
             <hr className="col-8 mx-auto my-4" />
-  
+
             <Link className="small text-secondary" to="/login">
               Vous avez déjà un compte ?
             </Link>
@@ -206,7 +205,7 @@ const Signup = () => {
         )}
       </div>
       <Footer />
-   </div>
+    </div>
   );
 };
 

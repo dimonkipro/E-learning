@@ -11,7 +11,7 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   // const theme = localStorage.getItem("theme");
 
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
 
   const { user } = useSelector((state) => state.auth);
   const { userEnrollments } = useSelector((state) => state.enrollments);

@@ -6,6 +6,7 @@ import LoginLottie from "../assets/login.json";
 import { toast } from "react-toastify";
 import Lottie from "lottie-react";
 import Footer from "../components/Footer";
+import CustomSpinner from "../components/CustomSpinner";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,6 +22,8 @@ const Login = () => {
       toast.error(error);
     }
   };
+
+  if (isLoading) return <CustomSpinner />;
   return (
     <div className="col-12">
       <div className="container col-11 col-md-8 col-lg-6 rounded-4 my-5 py-4  shadow">

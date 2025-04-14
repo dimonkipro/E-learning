@@ -48,7 +48,9 @@ const ModuleContentSideBar = ({
     >
       {/* Collapsible Module Title */}
       <div
-        className={`d-flex align-items-center ${isLocked && "blurry disabled"}`}
+        className={`d-flex align-items-center ${
+          user?.role === "learner" && isLocked && "blurry disabled"
+        }`}
       >
         <i
           className={`bi ${
@@ -62,7 +64,7 @@ const ModuleContentSideBar = ({
           data-bs-toggle="collapse"
           data-bs-target={`#${module?._id}`}
           style={{ border: "0px" }}
-          disabled={isLocked}
+          disabled={user?.role === "learner" && isLocked}
         >
           <span>{module?.title}</span>
           <i className="bi bi-chevron-down ms-2 h5 mb-0"></i>

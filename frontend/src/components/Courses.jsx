@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useSearchParams } from "react-router-dom";
-import { fetchCourses } from "../redux/auth/courseSlice";
+import { fetchCourses, toggleCourseArchive } from "../redux/auth/courseSlice";
 import AddCourseForm from "./AddCourseForm";
 import Pagination from "./Pagination";
 import { LinkToolTip } from "../pages/learner/CourseDetails";
@@ -17,6 +17,7 @@ const Courses = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showMyCourses, setShowMyCourses] = useState(false);
+  const [showArchivedCourses, setShowArchivedCourses] = useState(false);
   const [showOffcanvas, setShowOffcanvas] = useState(false);
   const [sortOrder, setSortOrder] = useState("all"); // or "desc"
 
@@ -38,12 +39,18 @@ const Courses = () => {
     ? courses.filter((course) => course.category._id === selectedCategory)
     : courses;
 
-  let finalFilteredCourses = filteredCourses;
+  let finalFilteredCourses = filteredCourses.filter(
+    (course) => !course?.archived
+  );
 
   if (user?.role === "instructor" && showMyCourses) {
     finalFilteredCourses = filteredCourses.filter(
       (course) => course?.instructor?._id === user?._id
     );
+  }
+
+  if (user?.role === "admin" && showArchivedCourses) {
+    finalFilteredCourses = filteredCourses.filter((course) => course?.archived);
   }
 
   // Sort courses by price
@@ -92,14 +99,21 @@ const Courses = () => {
   const handlePageChange = (pageNumber) => {
     setSearchParams({ page: pageNumber });
   };
-
+  const handleArchiveToggle = (courseId) => {
+    dispatch(toggleCourseArchive(courseId))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchCourses());
+      })
+      .catch((error) => console.error(error));
+  };
   if (loading) return <CustomSpinner />;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="col-12">
       <div className="col-11 mx-auto">
-        {/* Text / Upper Pagination */}
+        {/* Filter / Text / Upper Pagination */}
         <div className="d-flex justify-content-between align-items-center flex-wrap mb-4">
           <div className="d-flex align-items-center gap-4 col-8  flex-wrap">
             <h2 className="">
@@ -108,7 +122,7 @@ const Courses = () => {
                 : "Tout les Formations"}
             </h2>
 
-            {/* Ctegories toggle button */}
+            {/* Filter toggle button */}
             <LinkToolTip
               title={"Categories / Prix"}
               placement={"bottom"}
@@ -185,6 +199,25 @@ const Courses = () => {
                     }
                   >
                     {showMyCourses ? "Afficher tout" : "Cours attribués"} {">"}
+                  </LinkToolTip>
+                </div>
+              )}
+              {/* Admin Filter */}
+              {user?.role === "admin" && (
+                <div className="mb-3">
+                  <LinkToolTip
+                    title="Trier"
+                    placement={"bottom"}
+                    onClick={() => {
+                      setShowArchivedCourses(!showArchivedCourses);
+                      setShowOffcanvas(false);
+                    }}
+                    className={
+                      "link-primary fs-5 link-offset-2 bounce-hover link-underline-opacity-25 link-underline-opacity-100-hover me-4"
+                    }
+                  >
+                    {showArchivedCourses ? "Afficher tout" : "Cours archivée"}{" "}
+                    {">"}
                   </LinkToolTip>
                 </div>
               )}
@@ -270,7 +303,7 @@ const Courses = () => {
           {currentcourses.length > 0 ? (
             currentcourses.map((course) => (
               <div className="col mb-2" key={course._id}>
-                <div className="card  text-center shadow bounce-hover">
+                <div className="card text-center shadow bounce-hover">
                   {/* <div className="card h-100 text-center shadow"> */}
                   <Link
                     to={`/courses/${course._id}`}
@@ -283,7 +316,7 @@ const Courses = () => {
                     >
                       <span
                         className="position-absolute top-0 start-0 badge  
-                      bg-secondary m-2 shadow opacity-75"
+                        bg-secondary m-2 shadow opacity-75"
                       >
                         {course.category.name}
                       </span>
@@ -318,14 +351,21 @@ const Courses = () => {
                   {/* Admin Button */}
                   {user?.role == "admin" ? (
                     <div className="card-footer">
-                      <div className="d-flex justify-content-between">
+                      <div className="d-flex justify-content-between align-items-center">
                         <Link
                           to={`/admin/course/${course._id}`}
                           className="link-success link-offset-2 link-underline-opacity-25 
-                        link-underline-opacity-100-hover"
+                          link-underline-opacity-100-hover"
                         >
                           Consulter
                         </Link>
+                        <button
+                          className="btn border-0 p-0"
+                          title={course.archived ? "Désarchiver" : "Archiver"}
+                          onClick={() => handleArchiveToggle(course._id)}
+                        >
+                          <i className="bi bi-archive"></i>
+                        </button>
                         <Link
                           to={`/admin/edit-course/${course._id}`}
                           className="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"

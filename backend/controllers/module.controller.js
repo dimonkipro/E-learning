@@ -114,7 +114,55 @@ export const updateModuleContent = async (req, res) => {
   }
 };
 
-// ------------------Videos----------------------------
+export const deleteModule = async (req, res) => {
+  try {
+    const moduleId = req.params.moduleId;
+
+    // Check if the module exists.
+    const module = await Module.findById(moduleId);
+    if (!module) {
+      return res.status(404).json({ msg: "Module not found" });
+    }
+
+    // Find all videos associated with the module.
+    const videos = await Video.find({ module_id: moduleId });
+    const __dirname = path.resolve();
+
+    // Loop through each video and delete the associated file
+    for (const video of videos) {
+      const filePath = path.join(__dirname, video.video_url);
+      try {
+        // Deletion of the file.
+        await fs.promises.unlink(filePath);
+      } catch (err) {
+        console.error("Failed to delete video file:", err);
+      }
+      // Remove the video from the database.
+      await Video.findByIdAndDelete(video._id);
+    }
+
+    // Delete the test.
+    const test = await Test.findOneAndDelete({ module_id: moduleId });
+
+    // If a test was deleted, remove its associated questions.
+    if (test) {
+      await Question.deleteMany({ test_id: test._id });
+    }
+
+    // Delete the module.
+    await Module.findByIdAndDelete(moduleId);
+
+    res.json({
+      msg: "Le module ainsi que ses vidéos, test et questions connexes ont été supprimés avec succès",
+    });
+  } catch (error) {
+    console.error(
+      "Erreur lors de la suppression du module et ses données connexes:",
+      error
+    );
+    res.status(500).json({ msg: "Server error" });
+  }
+};
 
 export const addVideo = async (req, res) => {
   try {
@@ -250,6 +298,9 @@ export const getAllCourseDetails = async (req, res) => {
       return res.status(404).json({ msg: "Course not found" });
     }
 
+    if (course.archived && (!req.user || req.user.role !== "admin")) {
+      return res.status(404).send({ msg: "Course not found or archived" });
+    }
     // Find all modules linked to the course
     const modules = await Module.find({ course_id: courseId }).sort({
       order: 1,
@@ -401,6 +452,29 @@ export const submitTest = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Erreur du serveur", error: error.message });
+  }
+};
+
+export const deleteTestById = async (req, res) => {
+  try {
+    const testId = req.params.testId;
+
+    // Check if the test exists
+    const test = await Test.findById(testId);
+    if (!test) {
+      return res.status(404).json({ msg: "Test introuvable" });
+    }
+
+    // Delete Questions
+    await Question.deleteMany({ test_id: testId });
+
+    // Delete the test by its ID
+    await Test.findByIdAndDelete(testId);
+
+    res.json({ msg: "Test supprimé avec succès" });
+  } catch (error) {
+    console.error("Error deleting test:", error);
+    res.status(500).json({ msg: "Server error" });
   }
 };
 

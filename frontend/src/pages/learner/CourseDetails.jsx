@@ -172,7 +172,19 @@ const CourseDetails = () => {
   };
 
   if (loading || isLoading) return <CustomSpinner animation="border" />;
-  if (error) return <div>Error: {error}</div>;
+  if (error) {
+    return (
+      <ErrorPage
+        emojis="😢🚫"
+        text={
+          error === "Course not found or archived"
+            ? "Cette formation est archivée ou n'existe pas."
+            : "Une erreur est survenue. Veuillez réessayer plus tard."
+        }
+        to="/courses"
+      />
+    );
+  }
   if (!isEnrolled && !isInstructor) {
     return (
       <ErrorPage
@@ -262,7 +274,7 @@ const CourseDetails = () => {
       </div>
 
       {/* Module Details */}
-      <div className="col-10 col-md-7 mx-auto mt-5">
+      <div className="col-10 col-md-8 mx-auto mt-5">
         {/* Link To Course Content */}
         <div className="d-flex mb-5 col-10 mx-auto justify-content-center bounce bounce-hover p-4 ">
           <LinkToolTip

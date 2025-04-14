@@ -123,8 +123,8 @@ export const getCourseById = async (req, res) => {
     const course = await Course.findById(req.params.courseId)
       .populate("category", "name")
       .populate("instructor", "name");
-    if (!course) {
-      return res.status(404).send({ msg: "Course not found" });
+    if (!course || course.archived) {
+      return res.status(404).send({ msg: "Course not found or archived" });
     }
     res.send({ course });
   } catch (error) {
@@ -150,5 +150,27 @@ export const getCoursesByCategory = async (req, res) => {
     if (!res.headersSent) {
       res.status(400).json({ msg: error.message });
     }
+  }
+};
+
+export const archiveCourse = async (req, res) => {
+  try {
+    const courseId = req.params.courseId;
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ msg: "Course not found" });
+    }
+
+    // Toggle the archived status
+    course.archived = !course.archived;
+    await course.save();
+
+    const statusText = course.archived ? "archived" : "unarchived";
+
+    res.json({ msg: `Course has been ${statusText} successfully.`, course });
+  } catch (error) {
+    console.error("Error toggling archive status:", error);
+    res.status(500).json({ msg: "Server error" });
   }
 };

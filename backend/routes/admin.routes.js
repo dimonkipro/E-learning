@@ -1,5 +1,9 @@
 import express from "express";
-import { addCategory, addCourse } from "../controllers/course.controller.js";
+import {
+  addCategory,
+  addCourse,
+  archiveCourse,
+} from "../controllers/course.controller.js";
 import { uploadImage } from "../utils/multerConfig.js";
 import {
   deleteUser,
@@ -22,6 +26,7 @@ router.post(
   addCourse
 );
 
+router.put("/courses/:courseId/toggle-archive", archiveCourse);
 // ------------------usersRoute----------------------------
 
 router.get("/users", getAllUsers);

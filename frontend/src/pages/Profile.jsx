@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../redux/auth/authSlice";
 import { useState } from "react";
 import Notifications from "../components/Notifications";
-import Footer from "../components/Footer"
+import Footer from "../components/Footer";
 import CustomSpinner from "../components/CustomSpinner";
 
 const Profile = () => {
@@ -26,8 +26,8 @@ const Profile = () => {
     }
   };
 
-    if (isLoading) return <CustomSpinner />;
-  
+  if (isLoading) return <CustomSpinner />;
+
   return (
     <div className="col-12">
       <div className="container">
@@ -43,7 +43,7 @@ const Profile = () => {
             </p>
           </div>
         )}
-  
+
         {/* Render the notification component when set */}
         {notification && (
           <Notifications

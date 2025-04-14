@@ -29,10 +29,7 @@ const Login = () => {
       <div className="container col-11 col-md-8 col-lg-6 rounded-4 my-5 py-4  shadow">
         <h2 className="text-center">Se connecter</h2>
         <div className="col-6 mx-auto d-flex justify-content-center">
-          <Lottie
-            animationData={LoginLottie}
-            loop={true}
-          />
+          <Lottie animationData={LoginLottie} loop={true} />
         </div>
         <div className=" container col-10 col-sm-8 col-md-8 col-lg-8 text-center my-4">
           <form onSubmit={handleSubmit}>

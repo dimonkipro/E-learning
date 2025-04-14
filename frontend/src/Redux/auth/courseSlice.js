@@ -47,7 +47,7 @@ export const fetchCourseById = createAsyncThunk(
       const response = await axios.get(`${API_URL}/courses/${courseId}`);
       return response.data.course;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || error.message);
+      return rejectWithValue(error.response?.data?.msg || error.message);
     }
   }
 );
@@ -69,7 +69,7 @@ export const fetchCourseDetailsById = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || error.message);
+      return rejectWithValue(error.response?.data?.msg || error.message);
     }
   }
 );
@@ -92,6 +92,29 @@ export const fetchTestResults = createAsyncThunk(
   }
 );
 
+export const toggleCourseArchive = createAsyncThunk(
+  "courses/toggleArchive",
+  async (courseId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        `${API_URL}/admin/courses/${courseId}/toggle-archive`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      toast.success(response.data.msg);
+      return response.data.course;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.msg || error.message);
+    }
+  }
+);
+
+
 const courseSlice = createSlice({
   name: "courses",
   initialState: {
@@ -111,6 +134,7 @@ const courseSlice = createSlice({
       state.courseModules = null;
       state.tests = [];
       state.testProgress = null;
+      state.error = null
     },
   },
   extraReducers: (builder) => {

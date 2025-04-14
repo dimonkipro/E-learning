@@ -147,7 +147,19 @@ const CourseContent = () => {
   };
 
   if (loading || isLoadiing) return <CustomSpinner />;
-  if (error) return <div>Error: {error}</div>;
+if (error) {
+  return (
+    <ErrorPage
+      emojis="😢🚫"
+      text={
+        error === "Course not found or archived"
+          ? "Cette formation est archivée ou n'existe pas."
+          : "Une erreur est survenue. Veuillez réessayer plus tard."
+      }
+      to="/courses"
+    />
+  );
+}
   if (!isEnrolled && !isInstructor) {
     return (
       <ErrorPage

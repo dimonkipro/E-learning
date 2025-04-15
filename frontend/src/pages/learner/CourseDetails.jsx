@@ -16,6 +16,7 @@ import {
 } from "../../redux/auth/moduleSlice";
 import AddTestForm from "../../components/AddTestForm";
 import ModuleContent from "../../components/ModuleContent";
+import CustomSpinner from "../../components/CustomSpinner";
 
 const CourseDetails = () => {
   const dispatch = useDispatch();
@@ -41,6 +42,10 @@ const CourseDetails = () => {
     testProgress,
   } = useSelector((state) => state.courses);
 
+  const { userEnrollments, loading: isLoading } = useSelector(
+    (state) => state.enrollments
+  );
+
   const isInstructor = currentCourse?.instructor?._id === user?._id;
 
   const userId = user?._id;
@@ -62,7 +67,7 @@ const CourseDetails = () => {
     };
   }, [courseId, dispatch]);
 
-// Fetch Test Results
+  // Fetch Test Results
   useEffect(() => {
     if (user?.role === "learner" && courseId) {
       dispatch(fetchTestResults(courseId));
@@ -84,8 +89,6 @@ const CourseDetails = () => {
     }
   }, [userId, dispatch, courseModules, user?.role]);
 
-  const { userEnrollments } = useSelector((state) => state.enrollments);
-
   const isEnrolled =
     user?.role === "admin" ||
     userEnrollments?.some(
@@ -95,7 +98,7 @@ const CourseDetails = () => {
         enrollment?.courseId?._id === courseId &&
         (enrollment?.status === "approved" || enrollment?.status === "pending")
     );
-
+  const passedTestsId = testProgress?.passedTestsId;
   const getLevelBadgeClass = (level) => {
     switch (level?.toLowerCase()) {
       case "beginner":
@@ -168,19 +171,28 @@ const CourseDetails = () => {
       .catch((error) => console.error(error));
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading || isLoading) return <CustomSpinner animation="border" />;
+  if (error) {
+    return (
+      <ErrorPage
+        emojis="😢🚫"
+        text={
+          error === "Course not found or archived"
+            ? "Cette formation est archivée ou n'existe pas."
+            : error
+        }
+      />
+    );
+  }
   if (!isEnrolled && !isInstructor) {
     return (
       <ErrorPage
         text={"Vous n'avez pas accès à cette page"}
         emojis={"(❁´⁔`❁)"}
-        to={user?.role === "instructor" ? "/instructor/courses" : "/"}
       />
     );
   }
-  console.log("testProgress", testProgress);
-  
+
   return (
     <div className="col-12">
       {/* Hero */}
@@ -260,7 +272,7 @@ const CourseDetails = () => {
       </div>
 
       {/* Module Details */}
-      <div className="col-10 col-md-7 mx-auto mt-5">
+      <div className="col-10 col-md-8 mx-auto mt-5">
         {/* Link To Course Content */}
         <div className="d-flex mb-5 col-10 mx-auto justify-content-center bounce bounce-hover p-4 ">
           <LinkToolTip
@@ -316,10 +328,11 @@ const CourseDetails = () => {
                 setSelectedModuleId(module._id);
                 setShowTestModal(true);
               }}
+              passedTestsIdList={passedTestsId}
             />
           ))
         ) : (
-          <p>No modules available.</p>
+          <p>Aucun module disponible.</p>
         )}
       </div>
 

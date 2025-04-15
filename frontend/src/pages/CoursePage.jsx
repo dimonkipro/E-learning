@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCourseById, clearCurrentCourse } from "../redux/auth/courseSlice";
 import { toast } from "react-toastify";
 import Footer from "../components/Footer";
+import CustomSpinner from "../components/CustomSpinner";
+import ErrorPage from "../components/ErrorPage";
 
 const CoursePage = () => {
   // const theme = localStorage.getItem("theme");
@@ -38,9 +40,20 @@ const CoursePage = () => {
         return "bg-secondary";
     }
   };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+console.log("Error value:", error);
+  if (loading) return <CustomSpinner />;
+  if (error) {
+    return (
+      <ErrorPage
+        emojis="😢🚫"
+        text={
+          error === "Course not found or archived"
+            ? "Cette formation est archivée ou n'existe pas."
+            : "Une erreur est survenue. Veuillez réessayer plus tard."
+        }
+      />
+    );
+  }
 
   return (
     <div className="col-12">

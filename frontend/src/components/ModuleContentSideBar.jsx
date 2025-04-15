@@ -11,11 +11,18 @@ const ModuleContentSideBar = ({
   onTestSelect,
   test,
   selectedTest,
+  passedTestsIdList,
+  isLocked,
 }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { progress } = useSelector((state) => state.progress);
+
   const userId = user?._id;
+  const isTestPassed =
+    module?.test &&
+    passedTestsIdList &&
+    passedTestsIdList.includes(module.test._id);
 
   // Fetch progress for each video in the module
   useEffect(() => {
@@ -40,16 +47,24 @@ const ModuleContentSideBar = ({
       }`}
     >
       {/* Collapsible Module Title */}
-      <div className="d-flex align-items-center">
+      <div
+        className={`d-flex align-items-center ${
+          user?.role === "learner" && isLocked && "blurry disabled"
+        }`}
+      >
         <i
           className={`bi ${
-            allVideosCompleted ? "bi-check-circle-fill" : "bi-check-circle"
+            allVideosCompleted && isTestPassed
+              ? "bi-check-circle-fill"
+              : "bi-check-circle"
           } p-2 h4 mb-0`}
         ></i>
         <button
           className="btn w-100 p-2 rounded text-end"
           data-bs-toggle="collapse"
           data-bs-target={`#${module?._id}`}
+          style={{ border: "0px" }}
+          disabled={user?.role === "learner" && isLocked}
         >
           <span>{module?.title}</span>
           <i className="bi bi-chevron-down ms-2 h5 mb-0"></i>
@@ -91,7 +106,13 @@ const ModuleContentSideBar = ({
             style={{ cursor: "pointer" }}
           >
             <div>
-              <i className="bi bi-file-earmark-text h5 mb-0 me-2"></i>
+              <i
+                className={`bi ${
+                  isTestPassed
+                    ? "bi-file-earmark-text-fill"
+                    : "bi-file-earmark-text"
+                } h5 mb-0 me-2`}
+              ></i>
               <span className="fs-5">{test?.title}</span>
             </div>
             <span className="badge bg-primary">

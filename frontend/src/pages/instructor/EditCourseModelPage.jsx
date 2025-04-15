@@ -7,6 +7,7 @@ import {
   fetchCourseDetailsById,
 } from "../../redux/auth/courseSlice";
 import VideoPlayer from "../../components/VideoPlayer";
+import CustomSpinner from "../../components/CustomSpinner";
 
 const EditCourseModelPage = () => {
   const { courseId } = useParams();
@@ -25,7 +26,7 @@ const EditCourseModelPage = () => {
     };
   }, [courseId, dispatch]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <CustomSpinner />;
   if (error) return <div>Error: {error}</div>;
   return (
     <div className="container">

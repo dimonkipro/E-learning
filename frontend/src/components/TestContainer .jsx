@@ -2,12 +2,15 @@
 import { useState } from "react";
 import { submitTest } from "../redux/auth/moduleSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchTestResults } from "../redux/auth/courseSlice";
 
 const TestContainer = ({
   selectedTest,
   currentQuestionIndex,
   setCurrentQuestionIndex,
   clearTest,
+  courseId,
+  passedTestsIdList,
 }) => {
   const dispatch = useDispatch();
 
@@ -15,6 +18,8 @@ const TestContainer = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const { user } = useSelector((state) => state.auth);
+  const isTestPassed =
+    passedTestsIdList && passedTestsIdList.includes(selectedTest._id);
   console.log(selectedTest);
   const handleNextQuestion = () => {
     if (currentQuestionIndex < selectedTest.questions.length - 1) {
@@ -35,11 +40,13 @@ const TestContainer = ({
     )
       .unwrap()
       .then((res) => {
-        // The backend returns:
-        // { msg, score, passed, totalQuestions, correctCount, results, testResultId }
+        if (user?.role === "learner" && courseId) {
+          setTimeout(() => {
+            dispatch(fetchTestResults(courseId));
+          }, 10000);
+        }
+        // The backend returns: { msg, score, passed, totalQuestions, correctCount, results, testResultId }
         setTestResults(res);
-        console.log("res", res);
-
         setIsSubmitted(true);
       })
       .catch((error) => {
@@ -63,6 +70,9 @@ const TestContainer = ({
         <h5 className="text-decoration-underline">
           Test: {selectedTest.module_id?.title}
         </h5>
+        {isTestPassed && (
+          <i className="bi bi-clipboard-check-fill h5"> Passé</i>
+        )}
         <div className="d-flex flex-wrap justify-content-center gap-3 align-items-center">
           <div className="d-flex flex-column badge bg-success rounded-pill p-2">
             <span className="fw-normal">Minimum</span>
@@ -75,6 +85,7 @@ const TestContainer = ({
         </div>
       </div>
 
+      {/* Test Result if Passed */}
       {!isSubmitted ? (
         <>
           {selectedTest.questions[currentQuestionIndex] && (
@@ -119,13 +130,12 @@ const TestContainer = ({
                     </div>
                   )
                 )}
-                {user?.role === "instructor" ||
-                  (user?.role === "admin" && (
-                    <p className="text-center text-success fw-bold">
-                      {`✓ ${selectedTest.questions[currentQuestionIndex].correct_answer}
+                {(user?.role === "instructor" || user?.role === "admin") && (
+                  <p className="text-center text-success fw-bold">
+                    {`✓ ${selectedTest.questions[currentQuestionIndex].correct_answer}
                      ✓`}
-                    </p>
-                  ))}
+                  </p>
+                )}
               </div>
               <div className="d-flex justify-content-between mt-4">
                 <button
@@ -161,6 +171,7 @@ const TestContainer = ({
           )}
         </>
       ) : (
+        //  Test Result if not passed
         <div className="test-results">
           <h4 className="mb-4">Test Results</h4>
           <div

@@ -31,6 +31,7 @@ import EditCourseModelPage from "./pages/instructor/EditCourseModelPage";
 import CourseDetails from "./pages/learner/CourseDetails";
 import CourseContent from "./pages/learner/CourseContent";
 import ErrorPage from "./components/ErrorPage";
+import CustomSpinner from "./components/CustomSpinner";
 
 function App() {
   const dispatch = useDispatch();
@@ -54,7 +55,7 @@ function App() {
     user?.role === "learner";
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <CustomSpinner />;
   }
   return (
     <>

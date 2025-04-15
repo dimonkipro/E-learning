@@ -4,31 +4,16 @@ import { toast } from "react-toastify";
 
 const API_URL_ADMIN = "http://localhost:5000/api/admin";
 const API_URL_USER = "http://localhost:5000/api";
-const token = localStorage.getItem("token");
-
-// // Fetch all inscriptions
-// export const fetchInscriptions = createAsyncThunk(
-//   "inscriptions/fetchInscriptions",
-//   async (_, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.get(`${API_URL_ADMIN}/inscriptions`, {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-//       return response.data.data; // Extract data array
-//     } catch (error) {
-//       return rejectWithValue(
-//         error.response?.data?.msg || "Failed to fetch inscriptions"
-//       );
-//     }
-//   }
-// );
 
 // Fetch inscriptions with status filter
 export const fetchInscriptions = createAsyncThunk(
   "inscriptions/fetchInscriptions",
   async (status, { rejectWithValue }) => {
     try {
-      const url = `${API_URL_ADMIN}/inscriptions${status ? `?status=${status}` : ''}`;
+      const token = localStorage.getItem("token");
+      const url = `${API_URL_ADMIN}/inscriptions${
+        status ? `?status=${status}` : ""
+      }`;
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -46,6 +31,7 @@ export const updateInscriptionStatus = createAsyncThunk(
   "inscriptions/updateStatus",
   async ({ id, status }, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.put(
         `${API_URL_ADMIN}/inscriptions/${id}/status`,
         { status },

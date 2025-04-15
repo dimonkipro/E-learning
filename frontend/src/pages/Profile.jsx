@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../redux/auth/authSlice";
 import { useState } from "react";
 import Notifications from "../components/Notifications";
-import Footer from "../components/Footer"
+import Footer from "../components/Footer";
+import CustomSpinner from "../components/CustomSpinner";
 
 const Profile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
+  const { user, isLoading } = useSelector((state) => state.auth);
 
   const [notification, setNotification] = useState(null);
 
@@ -24,6 +25,9 @@ const Profile = () => {
       setNotification({ type: "error", message: error });
     }
   };
+
+  if (isLoading) return <CustomSpinner />;
+
   return (
     <div className="col-12">
       <div className="container">
@@ -39,7 +43,7 @@ const Profile = () => {
             </p>
           </div>
         )}
-  
+
         {/* Render the notification component when set */}
         {notification && (
           <Notifications

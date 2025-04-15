@@ -3,7 +3,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const API_URL = "http://localhost:5000/api";
-const token = localStorage.getItem("token");
 // Fetch all courses
 export const fetchCourses = createAsyncThunk(
   "courses/fetchAll",
@@ -22,6 +21,7 @@ export const addCourse = createAsyncThunk(
   "courses/add",
   async (formData, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.post(
         `${API_URL}/admin/course/new`,
         formData,
@@ -47,7 +47,7 @@ export const fetchCourseById = createAsyncThunk(
       const response = await axios.get(`${API_URL}/courses/${courseId}`);
       return response.data.course;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || error.message);
+      return rejectWithValue(error.response?.data?.msg || error.message);
     }
   }
 );
@@ -56,6 +56,7 @@ export const fetchCourseDetailsById = createAsyncThunk(
   "courses/fetchById/details",
   async (courseId, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(
         `${API_URL}/course/${courseId}/details`,
         {
@@ -68,7 +69,30 @@ export const fetchCourseDetailsById = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || error.message);
+      return rejectWithValue(error.response?.data?.msg || error.message);
+    }
+  }
+);
+
+export const deleteCourseById = createAsyncThunk(
+  "course/delete",
+  async (courseId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(
+        `${API_URL}/admin/courses/${courseId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      toast.success(response.data.msg);
+      // Return the deleted course id so you can update the state accordingly.
+      return { courseId };
+    } catch (error) {
+      toast.error(error.response?.data?.msg || error.message);
+      return rejectWithValue(
+        error.response?.data?.msg || error.message || "Failed to delete test"
+      );
     }
   }
 );
@@ -77,6 +101,7 @@ export const fetchTestResults = createAsyncThunk(
   "courses/fetchTestResults",
   async (courseId, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(
         `${API_URL}/learner/course/${courseId}/testResults`,
         {
@@ -84,6 +109,28 @@ export const fetchTestResults = createAsyncThunk(
         }
       );
       return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.msg || error.message);
+    }
+  }
+);
+
+export const toggleCourseArchive = createAsyncThunk(
+  "courses/toggleArchive",
+  async (courseId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        `${API_URL}/admin/courses/${courseId}/toggle-archive`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      toast.success(response.data.msg);
+      return response.data.course;
     } catch (error) {
       return rejectWithValue(error.response?.data?.msg || error.message);
     }
@@ -109,6 +156,7 @@ const courseSlice = createSlice({
       state.courseModules = null;
       state.tests = [];
       state.testProgress = null;
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -170,7 +218,7 @@ const courseSlice = createSlice({
       })
       .addCase(fetchTestResults.fulfilled, (state, action) => {
         state.loading = false;
-        state.testProgress = action.payload; // { totalTests, passedTests, progressPercentage }
+        state.testProgress = action.payload;
       })
       .addCase(fetchTestResults.rejected, (state, action) => {
         state.loading = false;

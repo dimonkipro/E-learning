@@ -4,6 +4,7 @@ import { createInscription } from "../redux/auth/enrollmentSlice";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { clearCurrentCourse, fetchCourseById } from "../redux/auth/courseSlice";
 import Footer from "../components/Footer";
+import CustomSpinner from "../components/CustomSpinner";
 
 const ApplyEnrollment = () => {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ const ApplyEnrollment = () => {
 
   const { user } = useSelector((state) => state.auth);
   const { loading } = useSelector((state) => state.enrollments);
-  const { currentCourse } = useSelector((state) => state.courses);
+  const { currentCourse, loading: isLoading } = useSelector((state) => state.courses);
 
   useEffect(() => {
     dispatch(fetchCourseById(courseId));
@@ -60,6 +61,8 @@ const ApplyEnrollment = () => {
     }
   };
   if (!user?.isEmailVerified) return <Navigate to={"/verify-email"} />;
+    if (isLoading) return <CustomSpinner />;
+
   return (
     <div className="col-12">
       {/* Hero */}

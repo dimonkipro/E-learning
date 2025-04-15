@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
+import CustomSpinner from "./CustomSpinner";
 
 // eslint-disable-next-line react/prop-types
 const ProtectedRoute = ({ allowedRoles }) => {
@@ -7,7 +8,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
 
   // Prevent redirect until auth check completes
   if (!isAuthChecked) {
-    return <div>Loading...</div>;
+    return <CustomSpinner />;
   }
 
   if (!user) {

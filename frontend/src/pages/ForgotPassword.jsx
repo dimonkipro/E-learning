@@ -6,6 +6,7 @@ import { forgotPassword } from "../redux/auth/authSlice";
 import Lottie from "lottie-react";
 import ForgotLottie from "../assets/forgot.json";
 import Footer from "../components/Footer";
+import CustomSpinner from "../components/CustomSpinner";
 
 const ForgotPassword = () => {
   const dispatch = useDispatch();
@@ -24,6 +25,7 @@ const ForgotPassword = () => {
       setNotification({ type: "error", message: error });
     }
   };
+  if (isLoading) return <CustomSpinner />;
 
   return (
     <div className="col-12">

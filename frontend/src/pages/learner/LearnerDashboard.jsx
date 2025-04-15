@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import userImage from "../../assets/user.png";
+import CustomSpinner from "../../components/CustomSpinner";
 
 const LearnerDashboard = () => {
   const [formData, setFormData] = useState({
@@ -9,7 +10,7 @@ const LearnerDashboard = () => {
   });
 
   const { user } = useSelector((state) => state.auth);
-  const { userEnrollments, loading } = useSelector(
+  const { userEnrollments, loading, error } = useSelector(
     (state) => state.enrollments
   );
 
@@ -32,6 +33,9 @@ const LearnerDashboard = () => {
   const totalRejected =
     userEnrollments?.filter((enrollment) => enrollment?.status === "rejected")
       .length || 0;
+
+  if (loading) return <CustomSpinner />;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="col-11 mx-auto">
@@ -98,71 +102,67 @@ const LearnerDashboard = () => {
       </div>
 
       {/* Enrollments Cards */}
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        userEnrollments?.length > 0 && (
-          <div>
-            <h2>Inscriptions</h2>
-            <div className="container col-11 mx-auto row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
-              <div className="col my-3">
-                <div
-                  className="card  py-2"
-                  style={{ borderLeft: " 10px solid rgb(42, 144, 167)" }}
-                >
-                  <div className="card-body">
-                    <div className="col d-flex align-items-center justify-content-between text-info-emphasis text-uppercase">
-                      Mes inscriptions{" "}
-                      <div className="h3 mb-0 fw-bold ">{totalEnrollments}</div>
-                    </div>
+      {userEnrollments?.length > 0 && (
+        <div>
+          <h2>Inscriptions</h2>
+          <div className="container col-11 mx-auto row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+            <div className="col my-3">
+              <div
+                className="card  py-2"
+                style={{ borderLeft: " 10px solid rgb(42, 144, 167)" }}
+              >
+                <div className="card-body">
+                  <div className="col d-flex align-items-center justify-content-between text-info-emphasis text-uppercase">
+                    Mes inscriptions{" "}
+                    <div className="h3 mb-0 fw-bold ">{totalEnrollments}</div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="col my-3">
-                <div
-                  className="card py-2"
-                  style={{ borderLeft: " 10px solid rgb(25, 135, 84)" }}
-                >
-                  <div className="card-body">
-                    <div className="col d-flex align-items-center justify-content-between text-success text-uppercase">
-                      Inscriptions acceptée
-                      <div className="h3 mb-0 fw-bold ">{totalApproved}</div>
-                    </div>
+            <div className="col my-3">
+              <div
+                className="card py-2"
+                style={{ borderLeft: " 10px solid rgb(25, 135, 84)" }}
+              >
+                <div className="card-body">
+                  <div className="col d-flex align-items-center justify-content-between text-success text-uppercase">
+                    Inscriptions acceptée
+                    <div className="h3 mb-0 fw-bold ">{totalApproved}</div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="col my-3">
-                <div
-                  className="card py-2"
-                  style={{ borderLeft: " 10px solid rgb(255, 193, 7) " }}
-                >
-                  <div className="card-body">
-                    <div className="col d-flex align-items-center justify-content-between text-warning-emphasis text-uppercase">
-                      Inscription en attente
-                      <div className="h3 mb-0 fw-bold ">{totalPending}</div>
-                    </div>
+            <div className="col my-3">
+              <div
+                className="card py-2"
+                style={{ borderLeft: " 10px solid rgb(255, 193, 7) " }}
+              >
+                <div className="card-body">
+                  <div className="col d-flex align-items-center justify-content-between text-warning-emphasis text-uppercase">
+                    Inscription en attente
+                    <div className="h3 mb-0 fw-bold ">{totalPending}</div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="col my-3">
-                <div
-                  className="card py-2"
-                  style={{ borderLeft: " 10px solid rgb(220, 53, 69)" }}
-                >
-                  <div className="card-body">
-                    <div className="col d-flex align-items-center justify-content-between text-danger-emphasis text-uppercase">
-                      Inscription rejetée
-                      <div className="h3 mb-0 fw-bold ">{totalRejected}</div>
-                    </div>
+            <div className="col my-3">
+              <div
+                className="card py-2"
+                style={{ borderLeft: " 10px solid rgb(220, 53, 69)" }}
+              >
+                <div className="card-body">
+                  <div className="col d-flex align-items-center justify-content-between text-danger-emphasis text-uppercase">
+                    Inscription rejetée
+                    <div className="h3 mb-0 fw-bold ">{totalRejected}</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        )
+        </div>
       )}
     </div>
   );

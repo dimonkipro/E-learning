@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories, addCategory } from "../redux/auth/categorySlice";
-import { addCourse } from "../redux/auth/courseSlice";
+import { addCourse, fetchCourses } from "../redux/auth/courseSlice";
 import { fetchUsers } from "../redux/auth/userSlice";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -61,7 +61,12 @@ const AddCourseForm = () => {
       courseData.append(key, formData[key]);
     });
     courseData.append("createdBy", user?._id);
-    dispatch(addCourse(courseData));
+    dispatch(addCourse(courseData))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchCourses());
+      })
+      .catch((error) => console.error(error));
   };
 
   return (

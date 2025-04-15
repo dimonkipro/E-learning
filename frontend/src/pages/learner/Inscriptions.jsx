@@ -3,6 +3,7 @@ import { fetchUserInscriptions } from "../../redux/auth/enrollmentSlice";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Pagination from "../../components/Pagination";
+import CustomSpinner from "../../components/CustomSpinner";
 
 const Inscriptions = () => {
   const dispatch = useDispatch();
@@ -11,7 +12,7 @@ const Inscriptions = () => {
 
   const [status, setStatus] = useState("all");
   const { user } = useSelector((state) => state.auth);
-  const { userEnrollments, loading } = useSelector(
+  const { userEnrollments, loading, error } = useSelector(
     (state) => state.enrollments
   );
 
@@ -37,10 +38,9 @@ const Inscriptions = () => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return `${date.getFullYear()}/${String(date.getDate()).padStart(
-      2,
-      "0"
-    )}/${String(date.getMonth() + 1).padStart(2, "0")}`;
+    return `${String(date.getDate()).padStart(2, "0")}/${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}/${date.getFullYear()}`;
   };
 
   // Handle pagination actions
@@ -53,11 +53,11 @@ const Inscriptions = () => {
     setSearchParams({ page: 1 });
   };
 
+  if (loading) return <CustomSpinner />;
+  if (error) return <div>Error: {error}</div>;
   return (
     <div className="col-11 mx-auto">
-      {loading ? (
-        <p>Loading...</p>
-      ) : userEnrollments.length > 0 ? (
+      {userEnrollments.length > 0 ? (
         <>
           {/* Upper Pagination */}
           <div className="d-flex justify-content-between align-items-center flex-wrap mb-4">

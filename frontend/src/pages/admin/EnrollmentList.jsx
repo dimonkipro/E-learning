@@ -6,6 +6,7 @@ import {
 } from "../../redux/auth/enrollmentSlice";
 import { Link } from "react-router-dom";
 import { LinkToolTip } from "../learner/CourseDetails";
+import CustomSpinner from "../../components/CustomSpinner";
 
 const EnrollmentList = () => {
   const dispatch = useDispatch();
@@ -13,7 +14,9 @@ const EnrollmentList = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedMotivation, setSelectedMotivation] = useState("");
 
-  const { enrollments, loading } = useSelector((state) => state.enrollments);
+  const { enrollments, loading, error } = useSelector(
+    (state) => state.enrollments
+  );
 
   useEffect(() => {
     dispatch(fetchInscriptions());
@@ -27,11 +30,14 @@ const EnrollmentList = () => {
     ? enrollments.filter((enr) => enr.status === "pending")
     : enrollments;
 
+  if (loading) return <CustomSpinner />;
+  if (error) return <div>Error: {error}</div>;
+
   return (
     <div className="col-11 mx-auto">
-      {loading && (
+      {/* {loading && (
         <p className="position-absolute top-50 start-50">Loading...</p>
-      )}
+      )} */}
       <div className=" pb-4 d-flex justify-content-between align-items-center">
         <h2>Liste des inscriptions</h2>
         <LinkToolTip
@@ -61,14 +67,14 @@ const EnrollmentList = () => {
           </thead>
           {filteredEnrollments.length > 0 ? (
             <tbody className="text-center">
-              {filteredEnrollments.map((enrollment) => (
+              {filteredEnrollments?.map((enrollment) => (
                 <tr key={enrollment._id}>
-                  <td>{`${enrollment.formData.name} (${enrollment.formData.email})`}</td>
-                  <td>{enrollment.formData.cin}</td>
-                  <td>{enrollment.formData.tel}</td>
-                  <td>{enrollment.formData.paymentMethod}</td>
-                  <td>{enrollment.courseId.title}</td>
-                  {enrollment.formData.motivation.length > 1 ? (
+                  <td>{`${enrollment.formData?.name} (${enrollment.formData?.email})`}</td>
+                  <td>{enrollment.formData?.cin}</td>
+                  <td>{enrollment.formData?.tel}</td>
+                  <td>{enrollment.formData?.paymentMethod}</td>
+                  <td>{enrollment.courseId?.title}</td>
+                  {enrollment.formData?.motivation.length > 1 ? (
                     <td>
                       {/* Button to open the modal */}
                       <Link

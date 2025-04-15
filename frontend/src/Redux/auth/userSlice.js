@@ -2,13 +2,13 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const API_URL = "http://localhost:5000/api/admin";
-const token = localStorage.getItem("token");
 
 // Fetch all users
 export const fetchUsers = createAsyncThunk(
   "users/fetchUsers",
   async (_, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(`${API_URL}/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -28,6 +28,7 @@ export const editUserRole = createAsyncThunk(
   "users/editUserRole",
   async ({ id, role }, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.put(
         `${API_URL}/users/${id}/role`,
         { role }, // Body should contain only the role
@@ -51,6 +52,7 @@ export const deleteUser = createAsyncThunk(
   "users/deleteUser",
   async (id, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       await axios.delete(`${API_URL}/users/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -69,6 +71,7 @@ export const verifyUser = createAsyncThunk(
   "users/verifyUser",
   async (id, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token");
       if (!token) throw new Error("No authentication token found");
 
       const response = await axios.put(

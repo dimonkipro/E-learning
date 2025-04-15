@@ -5,6 +5,7 @@ import {
   clearCurrentCourse,
   fetchCourseById,
 } from "../../redux/auth/courseSlice";
+import CustomSpinner from "../../components/CustomSpinner";
 
 const EditCoursePage = () => {
   const { courseId } = useParams();
@@ -21,7 +22,7 @@ const EditCoursePage = () => {
     };
   }, [courseId, dispatch]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <CustomSpinner />;
   if (error) return <div>Error: {error}</div>;
   return (
     <div>

@@ -6,6 +6,7 @@ import Notifications from "../components/Notifications";
 import Lottie from "lottie-react";
 import VerifyLottie from "../assets/verify.json";
 import Footer from "../components/Footer";
+import CustomSpinner from "../components/CustomSpinner";
 
 const VerifyEmail = () => {
   const dispatch = useDispatch();
@@ -73,6 +74,7 @@ const VerifyEmail = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code]);
+  if (isLoading) return <CustomSpinner />;
 
   return (
     <div>

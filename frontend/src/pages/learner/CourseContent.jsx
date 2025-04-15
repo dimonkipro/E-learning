@@ -147,25 +147,23 @@ const CourseContent = () => {
   };
 
   if (loading || isLoadiing) return <CustomSpinner />;
-if (error) {
-  return (
-    <ErrorPage
-      emojis="😢🚫"
-      text={
-        error === "Course not found or archived"
-          ? "Cette formation est archivée ou n'existe pas."
-          : "Une erreur est survenue. Veuillez réessayer plus tard."
-      }
-      to="/courses"
-    />
-  );
-}
+  if (error) {
+    return (
+      <ErrorPage
+        emojis="😢🚫"
+        text={
+          error === "Course not found or archived"
+            ? "Cette formation est archivée ou n'existe pas."
+            : error
+        }
+      />
+    );
+  }
   if (!isEnrolled && !isInstructor) {
     return (
       <ErrorPage
         text={"Vous n'avez pas accès à cette page"}
         emojis={"(❁´⁔`❁)"}
-        to={user?.role === "instructor" ? "/instructor/courses" : "/"}
       />
     );
   }
@@ -191,7 +189,9 @@ if (error) {
         {/* Test Container */}
         {selectedTest ? (
           <TestContainer
+            courseId={courseId}
             selectedTest={selectedTest}
+            passedTestsIdList={passedTestsIdList}
             currentQuestionIndex={currentQuestionIndex}
             setCurrentQuestionIndex={setCurrentQuestionIndex}
             clearTest={() => setSelectedTest(null)}

@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useSearchParams } from "react-router-dom";
-import { fetchCourses, toggleCourseArchive } from "../redux/auth/courseSlice";
+import {
+  deleteCourseById,
+  fetchCourses,
+  toggleCourseArchive,
+} from "../redux/auth/courseSlice";
 import AddCourseForm from "./AddCourseForm";
 import Pagination from "./Pagination";
 import { LinkToolTip } from "../pages/learner/CourseDetails";
@@ -99,6 +103,8 @@ const Courses = () => {
   const handlePageChange = (pageNumber) => {
     setSearchParams({ page: pageNumber });
   };
+
+  // handle Archive Toggle
   const handleArchiveToggle = (courseId) => {
     dispatch(toggleCourseArchive(courseId))
       .unwrap()
@@ -107,6 +113,22 @@ const Courses = () => {
       })
       .catch((error) => console.error(error));
   };
+
+  // handle Delete Course;
+  const handleDeleteCourse = (courseId) => {
+    const confirmDelete = window.confirm(
+      "Êtes-vous sûr de vouloir supprimer ce cours ?"
+    );
+    if (!confirmDelete) return;
+
+    dispatch(deleteCourseById(courseId))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchCourses());
+      })
+      .catch((error) => console.error(error));
+  };
+
   if (loading) return <CustomSpinner />;
   if (error) return <div>Error: {error}</div>;
 
@@ -303,7 +325,8 @@ const Courses = () => {
           {currentcourses.length > 0 ? (
             currentcourses.map((course) => (
               <div className="col mb-2" key={course._id}>
-                <div className="card text-center shadow bounce-hover">
+                <div className="card text-center shadow">
+                  {/* <div className="card text-center shadow bounce-hover"> */}
                   {/* <div className="card h-100 text-center shadow"> */}
                   <Link
                     to={`/courses/${course._id}`}
@@ -353,6 +376,7 @@ const Courses = () => {
                     <div className="card-footer">
                       <div className="d-flex justify-content-between align-items-center">
                         <Link
+                          title="Consulter la formation"
                           to={`/admin/course/${course._id}`}
                           className="link-success link-offset-2 link-underline-opacity-25 
                           link-underline-opacity-100-hover"
@@ -361,17 +385,29 @@ const Courses = () => {
                         </Link>
                         <button
                           className="btn border-0 p-0"
-                          title={course.archived ? "Désarchiver" : "Archiver"}
+                          title={
+                            course.archived
+                              ? "Désarchiver la formation"
+                              : "Archiver la formation"
+                          }
                           onClick={() => handleArchiveToggle(course._id)}
                         >
                           <i className="bi bi-archive"></i>
                         </button>
                         <Link
+                          title="Modifier la formation"
                           to={`/admin/edit-course/${course._id}`}
                           className="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                         >
                           Modifier
                         </Link>
+                        <button
+                          className="btn border-0 p-0"
+                          onClick={() => handleDeleteCourse(course._id)}
+                          title={"Suprimer la formation"}
+                        >
+                          <i className="bi bi-x-circle text-danger"></i>
+                        </button>
                       </div>
                     </div>
                   ) : (

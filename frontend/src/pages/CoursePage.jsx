@@ -51,7 +51,6 @@ console.log("Error value:", error);
             ? "Cette formation est archivée ou n'existe pas."
             : "Une erreur est survenue. Veuillez réessayer plus tard."
         }
-        to="/courses"
       />
     );
   }

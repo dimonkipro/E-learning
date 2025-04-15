@@ -1,6 +1,15 @@
 import { Category } from "../models/Category.model.js";
 import { Course } from "../models/Course.model.js";
+import Module from "../models/Module.model.js";
+import Test from "../models/Test.model.js";
+import Video from "../models/Video.model.js";
+import Progress from "../models/Progress.js";
+import Question from "../models/Question.model.js";
+import TestResult from "../models/TestResult.model.js";
+import {Inscription} from "../models/Inscription.model.js";
 
+import fs from "fs";
+import path from "path";
 // ------------------Category----------------------------
 
 export const addCategory = async (req, res) => {
@@ -171,6 +180,64 @@ export const archiveCourse = async (req, res) => {
     res.json({ msg: `Course has been ${statusText} successfully.`, course });
   } catch (error) {
     console.error("Error toggling archive status:", error);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
+export const deleteCourse = async (req, res) => {
+  try {
+    const courseId = req.params.courseId;
+
+    // Find the course
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ msg: "Formation non trouvée" });
+    }
+
+    // Find all modules associated with the course.
+    const modules = await Module.find({ course_id: courseId });
+
+    // Loop through each module.
+    for (const module of modules) {
+      // Delete all videos related to the module.
+      const videos = await Video.find({ module_id: module._id });
+      const __dirname = path.resolve();
+      for (const video of videos) {
+        const filePath = path.join(__dirname, video.video_url);
+        try {
+          // Delete the video file.
+          await fs.promises.unlink(filePath);
+        } catch (err) {
+          console.error("Failed to delete video file:", err);
+          // Optionally continue even if file deletion fails.
+        }
+        // Remove the video document.
+        await Video.findByIdAndDelete(video._id);
+        // Delete all progress records associated with this video.
+        await Progress.deleteMany({ video: video._id });
+      }
+
+      // Delete the test associated with the module.
+      const test = await Test.findOneAndDelete({ module_id: module._id });
+      if (test) {
+        // Delete all questions linked to the test.
+        await Question.deleteMany({ test_id: test._id });
+        // Delete all test results associated with this test.
+        await TestResult.deleteMany({ test: test._id });
+      }
+
+      // Delete the module itself.
+      await Module.findByIdAndDelete(module._id);
+    }
+
+    // Delete all inscriptions associated with the course.
+    await Inscription.deleteMany({ courseId });
+
+    // Finally, delete the course.
+    await Course.findByIdAndDelete(courseId);
+
+    res.json({ msg: "Formation supprimée avec succès" });
+  } catch (error) {
+    console.error("Error deleting course", error);
     res.status(500).json({ msg: "Server error" });
   }
 };

@@ -74,7 +74,7 @@ const VideoPlayer = ({ video, setSelectedVideo, videoList, onNext }) => {
         <button
           className="btn btn-outline-primary"
           onClick={onNext}
-          disabled={currentIndex === videoList?.length - 1 || !isCompleted}
+          disabled={!isCompleted}
         >
           Suivant <i className="bi bi-caret-right"></i>
         </button>

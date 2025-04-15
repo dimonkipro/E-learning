@@ -67,14 +67,14 @@ const EnrollmentList = () => {
           </thead>
           {filteredEnrollments.length > 0 ? (
             <tbody className="text-center">
-              {filteredEnrollments.map((enrollment) => (
+              {filteredEnrollments?.map((enrollment) => (
                 <tr key={enrollment._id}>
-                  <td>{`${enrollment.formData.name} (${enrollment.formData.email})`}</td>
-                  <td>{enrollment.formData.cin}</td>
-                  <td>{enrollment.formData.tel}</td>
-                  <td>{enrollment.formData.paymentMethod}</td>
-                  <td>{enrollment.courseId.title}</td>
-                  {enrollment.formData.motivation.length > 1 ? (
+                  <td>{`${enrollment.formData?.name} (${enrollment.formData?.email})`}</td>
+                  <td>{enrollment.formData?.cin}</td>
+                  <td>{enrollment.formData?.tel}</td>
+                  <td>{enrollment.formData?.paymentMethod}</td>
+                  <td>{enrollment.courseId?.title}</td>
+                  {enrollment.formData?.motivation.length > 1 ? (
                     <td>
                       {/* Button to open the modal */}
                       <Link

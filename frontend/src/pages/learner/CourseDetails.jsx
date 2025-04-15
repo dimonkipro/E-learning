@@ -179,9 +179,8 @@ const CourseDetails = () => {
         text={
           error === "Course not found or archived"
             ? "Cette formation est archivée ou n'existe pas."
-            : "Une erreur est survenue. Veuillez réessayer plus tard."
+            : error
         }
-        to="/courses"
       />
     );
   }
@@ -190,7 +189,6 @@ const CourseDetails = () => {
       <ErrorPage
         text={"Vous n'avez pas accès à cette page"}
         emojis={"(❁´⁔`❁)"}
-        to={user?.role === "instructor" ? "/instructor/courses" : "/"}
       />
     );
   }
@@ -334,7 +332,7 @@ const CourseDetails = () => {
             />
           ))
         ) : (
-          <p>No modules available.</p>
+          <p>Aucun module disponible.</p>
         )}
       </div>
 

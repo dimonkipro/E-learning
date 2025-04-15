@@ -134,6 +134,7 @@ const ModuleContent = ({
                   <button
                     className="btn border-0"
                     onClick={() => handleDeleteVideo(video._id)}
+                    title={"Suprimer la vidéo"}
                   >
                     <i className="bi bi-trash h5 mb-0 ms-2 text-danger"></i>
                   </button>
@@ -161,6 +162,7 @@ const ModuleContent = ({
                 <button
                   className="btn border-0"
                   onClick={() => handleDeleteTest(module?.test._id)}
+                  title={"Suprimer le test"}
                 >
                   <i className="bi bi-trash h5 mb-0 text-danger"></i>
                 </button>

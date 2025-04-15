@@ -139,6 +139,7 @@ export const deleteModule = async (req, res) => {
       }
       // Remove the video from the database.
       await Video.findByIdAndDelete(video._id);
+      await Progress.deleteMany({ video: video._id });
     }
 
     // Delete the test.
@@ -147,6 +148,7 @@ export const deleteModule = async (req, res) => {
     // If a test was deleted, remove its associated questions.
     if (test) {
       await Question.deleteMany({ test_id: test._id });
+      await TestResult.deleteMany({ test: test._id });
     }
 
     // Delete the module.
@@ -295,11 +297,11 @@ export const getAllCourseDetails = async (req, res) => {
       .populate("instructor", "name");
 
     if (!course) {
-      return res.status(404).json({ msg: "Course not found" });
+      return res.status(404).json({ msg: "Formation non trouvé" });
     }
 
     if (course.archived && (!req.user || req.user.role !== "admin")) {
-      return res.status(404).send({ msg: "Course not found or archived" });
+      return res.status(404).send({ msg: "Formation non trouvé ou archivé" });
     }
     // Find all modules linked to the course
     const modules = await Module.find({ course_id: courseId }).sort({

@@ -74,6 +74,29 @@ export const fetchCourseDetailsById = createAsyncThunk(
   }
 );
 
+export const deleteCourseById = createAsyncThunk(
+  "course/delete",
+  async (courseId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(
+        `${API_URL}/admin/courses/${courseId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      toast.success(response.data.msg);
+      // Return the deleted course id so you can update the state accordingly.
+      return { courseId };
+    } catch (error) {
+      toast.error(error.response?.data?.msg || error.message);
+      return rejectWithValue(
+        error.response?.data?.msg || error.message || "Failed to delete test"
+      );
+    }
+  }
+);
+
 export const fetchTestResults = createAsyncThunk(
   "courses/fetchTestResults",
   async (courseId, { rejectWithValue }) => {
@@ -114,7 +137,6 @@ export const toggleCourseArchive = createAsyncThunk(
   }
 );
 
-
 const courseSlice = createSlice({
   name: "courses",
   initialState: {
@@ -134,7 +156,7 @@ const courseSlice = createSlice({
       state.courseModules = null;
       state.tests = [];
       state.testProgress = null;
-      state.error = null
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -196,7 +218,7 @@ const courseSlice = createSlice({
       })
       .addCase(fetchTestResults.fulfilled, (state, action) => {
         state.loading = false;
-        state.testProgress = action.payload; // { totalTests, passedTests, progressPercentage }
+        state.testProgress = action.payload;
       })
       .addCase(fetchTestResults.rejected, (state, action) => {
         state.loading = false;

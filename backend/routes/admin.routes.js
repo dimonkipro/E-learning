@@ -3,6 +3,7 @@ import {
   addCategory,
   addCourse,
   archiveCourse,
+  deleteCourse,
 } from "../controllers/course.controller.js";
 import { uploadImage } from "../utils/multerConfig.js";
 import {
@@ -27,6 +28,8 @@ router.post(
 );
 
 router.put("/courses/:courseId/toggle-archive", archiveCourse);
+
+router.delete("/courses/:courseId", deleteCourse);
 // ------------------usersRoute----------------------------
 
 router.get("/users", getAllUsers);

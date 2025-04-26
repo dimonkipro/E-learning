@@ -100,10 +100,10 @@ const Inscriptions = () => {
                         className="position-absolute top-0 start-0 badge rounded-pill 
                           text-bg-secondary m-2 shadow opacity-75 p-2"
                       >
-                        {inscription.courseId.category.name}
+                        {inscription.courseId.category?.name}
                       </span>
                       <img
-                        src={`http://localhost:5000/${inscription.courseId.image.replace(
+                        src={`http://localhost:5000/${inscription.courseId.image?.replace(
                           /\\/g,
                           "/"
                         )}`}

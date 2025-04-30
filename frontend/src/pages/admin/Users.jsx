@@ -51,9 +51,7 @@ const Users = () => {
       const response = await dispatch(verifyUser(id)).unwrap();
       if (response) {
         toast.success("Utilisateur verifié");
-        setTimeout(() => {
-          window.location.reload();
-        }, 5000);
+         dispatch(fetchUsers());
       }
     } catch (error) {
       toast.error(error);

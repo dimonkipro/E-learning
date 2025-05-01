@@ -6,10 +6,12 @@ import Video from "../models/Video.model.js";
 import Progress from "../models/Progress.js";
 import Question from "../models/Question.model.js";
 import TestResult from "../models/TestResult.model.js";
-import {Inscription} from "../models/Inscription.model.js";
+import { Inscription } from "../models/Inscription.model.js";
+import Certificate from "../models/Certificate.model.js";
 
 import fs from "fs";
 import path from "path";
+import { generateCertificate } from "../utils/certificateTemplate.js";
 // ------------------Category----------------------------
 
 export const addCategory = async (req, res) => {
@@ -239,5 +241,39 @@ export const deleteCourse = async (req, res) => {
   } catch (error) {
     console.error("Error deleting course", error);
     res.status(500).json({ msg: "Server error" });
+  }
+};
+
+export const downloadCertificate = (req, res) => {
+  const { learnerName, courseTitle, completionDate, instructorName } = req.body;
+
+  // Set the response headers for PDF download
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", "attachment; filename=certificate.pdf");
+
+  // Generate the certificate and pipe it to the response
+  generateCertificate(
+    { learnerName, courseTitle, completionDate, instructorName },
+    res
+  );
+};
+
+export const getOrCreateCertificate = async (req, res) => {
+  try {
+    const { learnerId, courseId, instructorId } = req.body;
+
+    // Check if the certificate already exists
+    let certificate = await Certificate.findOne({ learnerId, courseId });
+
+    if (!certificate) {
+      // Create a new certificate if it doesn't exist
+      certificate = new Certificate({ learnerId, courseId, instructorId });
+      await certificate.save();
+    }
+
+    res.status(200).json({ success: true, certificate });
+  } catch (error) {
+    console.error("Error generating or retrieving certificate:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };

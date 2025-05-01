@@ -4,8 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import {
   clearCurrentCourse,
+  downloadCertificate,
   fetchCourseDetailsById,
   fetchTestResults,
+  getOrCreateCertificate,
 } from "../../redux/auth/courseSlice";
 import { OverlayTrigger, ProgressBar, Tooltip } from "react-bootstrap";
 import ErrorPage from "../../components/ErrorPage";
@@ -40,6 +42,7 @@ const CourseDetails = () => {
     tests,
     videos,
     testProgress,
+    certificate,
   } = useSelector((state) => state.courses);
 
   const { userEnrollments, loading: isLoading } = useSelector(
@@ -56,6 +59,15 @@ const CourseDetails = () => {
     videoDuration: "",
     video: null,
   });
+  const isEnrolled =
+    user?.role === "admin" ||
+    userEnrollments?.some(
+      (enrollment) =>
+        enrollment?._id === enrollementId &&
+        enrollment?.userId === user?._id &&
+        enrollment?.courseId?._id === courseId &&
+        (enrollment?.status === "approved" || enrollment?.status === "pending")
+    );
   // Fetch Course Details By Id
   useEffect(() => {
     if (courseId) {
@@ -89,15 +101,29 @@ const CourseDetails = () => {
     }
   }, [userId, dispatch, courseModules, user?.role]);
 
-  const isEnrolled =
-    user?.role === "admin" ||
-    userEnrollments?.some(
-      (enrollment) =>
-        enrollment?._id === enrollementId &&
-        enrollment?.userId === user?._id &&
-        enrollment?.courseId?._id === courseId &&
-        (enrollment?.status === "approved" || enrollment?.status === "pending")
-    );
+  useEffect(() => {
+    if (
+      user &&
+      currentCourse &&
+      isEnrolled &&
+      testProgress?.overallProgress === 100
+    ) {
+      dispatch(
+        getOrCreateCertificate({
+          learnerId: user?._id,
+          courseId: currentCourse?._id,
+          instructorId: currentCourse?.instructor?._id,
+        })
+      );
+    }
+  }, [
+    user,
+    currentCourse,
+    dispatch,
+    isEnrolled,
+    testProgress?.overallProgress,
+  ]);
+
   const passedTestsId = testProgress?.passedTestsId;
   const getLevelBadgeClass = (level) => {
     switch (level?.toLowerCase()) {
@@ -169,6 +195,17 @@ const CourseDetails = () => {
         setShowVideoModal(false);
       })
       .catch((error) => console.error(error));
+  };
+
+  const handleDownloadCertificate = () => {
+    dispatch(
+      downloadCertificate({
+        learnerName: user?.name,
+        courseTitle: currentCourse?.title,
+        completionDate: new Date().toLocaleDateString(),
+        instructorName: currentCourse?.instructor?.name,
+      })
+    );
   };
 
   if (loading || isLoading) return <CustomSpinner animation="border" />;
@@ -333,6 +370,18 @@ const CourseDetails = () => {
           ))
         ) : (
           <p>Aucun module disponible.</p>
+        )}
+        {testProgress?.overallProgress === 100 && certificate && (
+          <div className="col-6 mx-auto">
+            <h3>Certification</h3>
+            <p>Vous avez obtenu un certificat pour cette formation !</p>
+            <button
+              className="btn btn-warning"
+              onClick={handleDownloadCertificate}
+            >
+              Télécharger le certificat
+            </button>
+          </div>
         )}
       </div>
 

@@ -16,6 +16,8 @@ import {
   getAllCourses,
   getCourseById,
   getCoursesByCategory,
+  downloadCertificate,
+  getOrCreateCertificate,
 } from "../controllers/course.controller.js";
 import {
   createInscription,
@@ -25,7 +27,11 @@ import {
   getVideoProgress,
   updateVideoProgress,
 } from "../controllers/video.controller.js";
-import { getAllCourseDetails, getLearnerCourseProgress, submitTest } from "../controllers/module.controller.js";
+import {
+  getAllCourseDetails,
+  getLearnerCourseProgress,
+  submitTest,
+} from "../controllers/module.controller.js";
 
 const router = express.Router();
 
@@ -98,4 +104,10 @@ router.get(
   isLearner,
   getLearnerCourseProgress
 );
+
+// ------------------CertificationRoutes----------------------------
+
+router.post("/certificate/download", downloadCertificate);
+router.post("/certificate", verifyToken, isLearner, getOrCreateCertificate);
+
 export default router;

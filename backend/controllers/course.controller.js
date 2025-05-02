@@ -12,6 +12,7 @@ import { fileURLToPath } from "url";
 import fs from "fs";
 import path from "path";
 import { generateCertificate } from "../utils/certificateTemplate.js";
+import { generateCertificate2 } from "../utils/certificateTemplateV2.js";
 // ------------------Category----------------------------
 
 export const addCategory = async (req, res) => {
@@ -253,7 +254,7 @@ export const downloadCertificate = (req, res) => {
   res.setHeader("Content-Disposition", "attachment; filename=certificate.pdf");
 
   // Generate the certificate and pipe it to the response
-  generateCertificate(
+  generateCertificate2(
     {
       learnerName,
       courseTitle,

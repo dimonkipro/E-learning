@@ -8,7 +8,7 @@ import Question from "../models/Question.model.js";
 import TestResult from "../models/TestResult.model.js";
 import { Inscription } from "../models/Inscription.model.js";
 import Certificate from "../models/Certificate.model.js";
-
+import { fileURLToPath } from "url";
 import fs from "fs";
 import path from "path";
 import { generateCertificate } from "../utils/certificateTemplate.js";
@@ -246,14 +246,21 @@ export const deleteCourse = async (req, res) => {
 
 export const downloadCertificate = (req, res) => {
   const { learnerName, courseTitle, completionDate, instructorName } = req.body;
-
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
   // Set the response headers for PDF download
   res.setHeader("Content-Type", "application/pdf");
   res.setHeader("Content-Disposition", "attachment; filename=certificate.pdf");
 
   // Generate the certificate and pipe it to the response
   generateCertificate(
-    { learnerName, courseTitle, completionDate, instructorName },
+    {
+      learnerName,
+      courseTitle,
+      completionDate,
+      instructorName,
+      logoPath: path.join(__dirname, "../uploads/Logo.png"),
+    },
     res
   );
 };

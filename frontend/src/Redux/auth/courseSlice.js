@@ -291,9 +291,9 @@ const courseSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(getOrCreateCertificate.fulfilled, (state) => {
+      .addCase(getOrCreateCertificate.fulfilled, (state, action) => {
         state.loading = false;
-        state.certificate = true;
+        state.certificate = action.payload;
       })
       .addCase(getOrCreateCertificate.rejected, (state, action) => {
         state.loading = false;

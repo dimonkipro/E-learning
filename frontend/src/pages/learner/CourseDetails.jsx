@@ -101,6 +101,7 @@ const CourseDetails = () => {
     }
   }, [userId, dispatch, courseModules, user?.role]);
 
+  // Get or Create certificate
   useEffect(() => {
     if (
       user &&
@@ -197,12 +198,22 @@ const CourseDetails = () => {
       .catch((error) => console.error(error));
   };
 
+  const date = (dateS) => {
+    const date = new Date(dateS);
+    return `${String(date.getDate()).padStart(2, "0")}/${String(
+      date.getMonth() + 1
+    ).padStart(
+      2,
+      "0"
+    )}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
+  };
+
   const handleDownloadCertificate = () => {
     dispatch(
       downloadCertificate({
         learnerName: user?.name,
         courseTitle: currentCourse?.title,
-        completionDate: new Date().toLocaleDateString(),
+        completionDate: date(certificate.issuedAt),
         instructorName: currentCourse?.instructor?.name,
       })
     );

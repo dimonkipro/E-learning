@@ -17,7 +17,7 @@ export function generateCertificate2(
   }
   doc.pipe(stream);
 
-  doc.rect(0, 0, doc.page.width, doc.page.height).fill("#A3A9AA");
+  doc.rect(0, 0, doc.page.width, doc.page.height).fill("#eeeee4");
 
   doc.fontSize(10);
 
@@ -40,6 +40,7 @@ export function generateCertificate2(
   const maxWidth = 180;
   const maxHeight = 100;
 
+  // Logo
   doc.image(
     "../backend/uploads/Logo.png",
     doc.page.width / 2 - maxWidth / 2,
@@ -49,6 +50,12 @@ export function generateCertificate2(
       align: "center",
     }
   );
+
+  // Stamp
+  doc.image("../backend/uploads/stamp.png", doc.page.width / 2 - 150, 400, {
+    align: "center",
+    width: 300,
+  });
 
   jumpLine(doc, 5);
 
@@ -65,7 +72,7 @@ export function generateCertificate2(
   // Content
   doc
     .font("Courier-Bold")
-    .fontSize(30)
+    .fontSize(35)
     .fill("#021c27")
     .text("CERTIFICATE OF COMPLETION", {
       align: "center",
@@ -73,9 +80,13 @@ export function generateCertificate2(
 
   jumpLine(doc, 1);
 
-  doc.font("Courier-Bold").fontSize(14).fill("#021c27").text("Present to", {
-    align: "center",
-  });
+  doc
+    .font("Courier-Bold")
+    .fontSize(14)
+    .fill("#021c27")
+    .text("This certificate is proudly presented to", {
+      align: "center",
+    });
 
   jumpLine(doc, 2);
 
@@ -89,13 +100,13 @@ export function generateCertificate2(
     .font("Courier-Bold")
     .fontSize(16)
     .fill("#021c27")
-    .text(`Successfully completed the course ${courseTitle}.`, {
+    .text(`For the successful completion of the course " ${courseTitle} ".`, {
       align: "center",
     });
 
   jumpLine(doc, 1);
   doc
-    .font("Courier-Bold")
+    .font("Courier")
     .fontSize(14)
     .fill("#021c27")
     .text(`Date of Completion: ${completionDate}`, {
@@ -122,10 +133,6 @@ export function generateCertificate2(
 
   const startLine2 = endLine1 + 32;
   const endLine2 = startLine2 + lineSize;
-  doc
-    .moveTo(startLine2, signatureHeight)
-    .lineTo(endLine2, signatureHeight)
-    .stroke();
 
   const startLine3 = endLine2 + 32;
   const endLine3 = startLine3 + lineSize;
@@ -133,6 +140,17 @@ export function generateCertificate2(
     .moveTo(startLine3, signatureHeight)
     .lineTo(endLine3, signatureHeight)
     .stroke();
+
+  // Instructor Signature
+  doc.image(
+    "../backend/uploads/signature2.png",
+    doc.page.width / 2 - 250,
+    400,
+    {
+      align: "center",
+      width: 100,
+    }
+  );
 
   doc
 
@@ -148,10 +166,10 @@ export function generateCertificate2(
     });
 
   doc
-    .font("Courier-Bold")
+    .font("Courier")
     .fontSize(12)
     .fill("#021c27")
-    .text("Associate Professor", startLine1, signatureHeight + 45, {
+    .text("Associate Instructor", startLine1, signatureHeight + 45, {
       columns: 1,
       columnGap: 0,
       height: 40,
@@ -159,30 +177,16 @@ export function generateCertificate2(
       align: "center",
     });
 
-  doc
-
-    .font("Courier-Bold")
-    .fontSize(16)
-    .fill("#021c27")
-    .text(learnerName, startLine2, signatureHeight + 10, {
-      columns: 1,
-      columnGap: 0,
-      height: 40,
-      width: lineSize,
+  // Director Signature
+  doc.image(
+    "../backend/uploads/signature1.png",
+    doc.page.width / 2 + 145,
+    425,
+    {
       align: "center",
-    });
-
-  doc
-    .font("Courier-Bold")
-    .fontSize(12)
-    .fill("#021c27")
-    .text("Student", startLine2, signatureHeight + 45, {
-      columns: 1,
-      columnGap: 0,
-      height: 40,
-      width: lineSize,
-      align: "center",
-    });
+      width: 130,
+    }
+  );
 
   doc
     .font("Courier-Bold")
@@ -197,7 +201,7 @@ export function generateCertificate2(
     });
 
   doc
-    .font("Courier-Bold")
+    .font("Courier")
     .fontSize(12)
     .fill("#021c27")
     .text("Director", startLine3, signatureHeight + 45, {

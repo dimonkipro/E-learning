@@ -260,7 +260,7 @@ const CourseDetails = () => {
           </p>
           <h4 className=" m-5 fw-light">{currentCourse?.description}</h4>
 
-          {/* Count And Progress */}
+          {/* Counts And Progress */}
           <div className="col-10 col-md-5">
             <span className="badge bg-secondary p-2">
               {courseModules?.length} Module(s)
@@ -382,12 +382,14 @@ const CourseDetails = () => {
         ) : (
           <p>Aucun module disponible.</p>
         )}
+
+        {/* Certificate Download Button */}
         {testProgress?.overallProgress === 100 && certificate && (
-          <div className="col-6 mx-auto">
+          <div className="custom-card col-10 col-md-8 mx-auto p-4 rounded-4 text-center mt-5 mb-4">
             <h3>Certification</h3>
             <p>Vous avez obtenu un certificat pour cette formation !</p>
             <button
-              className="btn btn-warning"
+              className="btn btn-warning animate p-2"
               onClick={handleDownloadCertificate}
             >
               Télécharger le certificat

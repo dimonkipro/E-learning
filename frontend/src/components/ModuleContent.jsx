@@ -102,7 +102,7 @@ const ModuleContent = ({
           <div className="d-flex text-start align-items-end">
             <i
               className={`bi ${
-                allVideosCompleted && isTestPassed
+                allVideosCompleted && (!module.test || isTestPassed)
                   ? "bi-check-circle-fill"
                   : "bi-check-circle"
               } p-2 h5 mb-0`}

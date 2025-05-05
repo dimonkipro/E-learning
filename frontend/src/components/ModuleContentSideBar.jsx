@@ -54,7 +54,7 @@ const ModuleContentSideBar = ({
       >
         <i
           className={`bi ${
-            allVideosCompleted && isTestPassed
+            allVideosCompleted && (!module.test || isTestPassed)
               ? "bi-check-circle-fill"
               : "bi-check-circle"
           } p-2 h4 mb-0`}

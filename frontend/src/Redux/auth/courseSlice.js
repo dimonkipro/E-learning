@@ -137,6 +137,58 @@ export const toggleCourseArchive = createAsyncThunk(
   }
 );
 
+// Thunk to download certificate
+export const downloadCertificate = createAsyncThunk(
+  "courses/downloadCertificate",
+  async (
+    { learnerName, courseTitle, completionDate, instructorName },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/certificate/download`,
+        { learnerName, courseTitle, completionDate, instructorName },
+        { responseType: "blob" }
+      );
+
+      // Create a link to download the file
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "certificate.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      return true;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || "Error downloading certificate"
+      );
+    }
+  }
+);
+
+// Thunk to get or create certificate
+export const getOrCreateCertificate = createAsyncThunk(
+  "courses/getOrCreateCertificate",
+  async ({ learnerId, courseId, instructorId }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `${API_URL}/certificate`,
+        { learnerId, courseId, instructorId },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data.certificate;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.msg || error.message);
+    }
+  }
+);
+
 const courseSlice = createSlice({
   name: "courses",
   initialState: {
@@ -146,6 +198,7 @@ const courseSlice = createSlice({
     videos: [],
     tests: [],
     testProgress: null,
+    certificate: false, // Added certificate state
     loading: false,
     error: null,
   },
@@ -221,6 +274,28 @@ const courseSlice = createSlice({
         state.testProgress = action.payload;
       })
       .addCase(fetchTestResults.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(downloadCertificate.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(downloadCertificate.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(downloadCertificate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getOrCreateCertificate.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getOrCreateCertificate.fulfilled, (state, action) => {
+        state.loading = false;
+        state.certificate = action.payload;
+      })
+      .addCase(getOrCreateCertificate.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

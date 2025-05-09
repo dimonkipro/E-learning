@@ -201,8 +201,7 @@ const CourseContent = () => {
             key={selectedVideo._id}
             video={selectedVideo}
             setSelectedVideo={setSelectedVideo}
-            videoList={courseModules
-              .flatMap((m) => m.videos)
+            videoList={courseModules?.flatMap((m) => m.videos)
               .filter((v) => !!v)}
             onNext={handleNextContent}
           />

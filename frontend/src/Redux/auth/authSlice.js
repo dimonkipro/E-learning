@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const API_URL = "http://localhost:5000/api";
 
@@ -89,6 +90,9 @@ export const checkAuth = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Authentication check failed"
+      );
       return rejectWithValue(
         error.response?.data?.message || "Authentication check failed"
       );

@@ -19,7 +19,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
     const info = await transporter.sendMail({
       from: sender,
       to: email,
-      subject: "Verify your email",
+      subject: "Vérifiez votre adresse email",
       html,
     });
     console.log("Verification Email sent successfully", info);
@@ -36,7 +36,7 @@ export const sendWelcomeEmail = async (email, name) => {
     const info = await transporter.sendMail({
       from: sender,
       to: email,
-      subject: "Welcome to E-ghazala",
+      subject: "Bienvenue à E-ghazala",
       html,
     });
     console.log("Welcome Email sent successfully", info);
@@ -55,7 +55,7 @@ export const sendPasswordResetEmail = async (email, resetURL) => {
     const info = await transporter.sendMail({
       from: sender,
       to: email,
-      subject: "Reset your password",
+      subject: "Réinitialisez votre mot de passe",
       html,
     });
     console.log("Password reset email sent successfully", info);
@@ -70,7 +70,7 @@ export const sendResetSuccessEmail = async (email) => {
     const info = await transporter.sendMail({
       from: sender,
       to: email,
-      subject: "Password Reset Successful",
+      subject: "Réinitialisation du mot de passe réussie",
       html: PASSWORD_RESET_SUCCESS_TEMPLATE,
     });
     console.log("Password reset success email sent successfully", info);
@@ -80,19 +80,25 @@ export const sendResetSuccessEmail = async (email) => {
   }
 };
 
-export const sendSuccessEnrollment = async (email, name, courseTitle, status) => {
+export const sendEnrollmentStatus = async (email, name, courseTitle, status) => {
   try {
+    const statusMap = {
+      approved: "approuvé",
+      pending: "en attente",
+      rejected: "refusé",
+    };
+    const statusFr = statusMap[status] || status;
     const html = SUCCESS_ENROLLMENT_EMAIL_TEMPLATE.replace("{name}", name)
       .replace("{courseTitle}", courseTitle)
-      .replace("{status}", status);
+      .replace("{status}", statusFr);
 
     const info = await transporter.sendMail({
       from: sender,
       to: email,
-      subject: "Inscription au formation validée",
+      subject: "Statut de votre inscription",
       html,
     });
-    console.log("Enrollment approvement Email sent successfully", info.envelope);
+    console.log(`Enrollment (${status}) email sent to ${email}`, info.envelope);
   } catch (error) {
     console.error("Error sending enrollment approvement email", error);
     throw new Error(`Error sending enrollment approvement email: ${error}`);

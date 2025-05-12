@@ -70,6 +70,24 @@ export const forgotPassword = createAsyncThunk(
   }
 );
 
+export const resetPassword = createAsyncThunk(
+  "auth/resetPassword",
+  async ({ token, password }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/user/reset-password/${token}`,
+        { password }
+      );
+      toast.success(response.data.message);
+      return response.data;
+    } catch (error) {
+      const msg = error.response?.data?.message || "Password reset failed";
+      toast.error(msg);
+      return rejectWithValue(msg);
+    }
+  }
+);
+
 export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
   localStorage.removeItem("token");
   return null;
@@ -108,10 +126,14 @@ const authSlice = createSlice({
     isLoading: false,
     isAuthChecked: false,
     error: null,
+    resetSuccess: false,
   },
   reducers: {
     clearError: (state) => {
       state.error = null;
+    },
+    clearResetSuccess: (state) => {
+      state.resetSuccess = false;
     },
   },
   extraReducers: (builder) => {
@@ -155,6 +177,24 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
+      // resetPassword
+      .addCase(resetPassword.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.resetSuccess = false;
+      })
+      .addCase(resetPassword.fulfilled, (state) => {
+        state.isLoading = false;
+        state.resetSuccess = true;
+        state.error = null;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+        state.resetSuccess = false;
+      })
+
+      // Logout
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.token = null;

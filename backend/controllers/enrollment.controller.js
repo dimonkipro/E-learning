@@ -1,5 +1,5 @@
 import { Inscription } from "../models/Inscription.model.js";
-import { sendSuccessEnrollment } from "../mails/emailService.js";
+import { sendEnrollmentStatus } from "../mails/emailService.js";
 import { User } from "../models/user.model.js";
 
 export const createInscription = async (req, res) => {
@@ -83,7 +83,7 @@ export const updateInscriptionStatus = async (req, res) => {
       await User.findByIdAndUpdate(userId._id, { role: "learner" });
     }
 
-    await sendSuccessEnrollment(email, name, courseTitle, status);
+    await sendEnrollmentStatus(email, name, courseTitle, status);
 
     res.json({
       msg: "Inscription status updated successfully",

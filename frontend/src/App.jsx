@@ -32,6 +32,7 @@ import CourseDetails from "./pages/learner/CourseDetails";
 import CourseContent from "./pages/learner/CourseContent";
 import ErrorPage from "./components/ErrorPage";
 import CustomSpinner from "./components/CustomSpinner";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   const dispatch = useDispatch();
@@ -77,6 +78,7 @@ function App() {
         <Route path="/courses/:courseId" element={<CoursePage />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         {/* ------------------UserRoute---------------------------- */}
 

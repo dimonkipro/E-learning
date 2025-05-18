@@ -29,58 +29,51 @@ const ForgotPassword = () => {
 
   return (
     <div className="col-12">
-      <div className="container text-center col-8 rounded-4 my-5 py-4 shadow">
-        <div className="col-8 mx-auto text-center">
-          <h1>Mot de passe oublié ?</h1>
-          <p>
-            Nous l&apos;obtenons, des trucs comme ça se passe. Veuillez entrer
-            votre e-mail, nous vous enverrons un lien pour réinitialiser votre
-            mot de passe.
-          </p>
+      <div className=" text-center col-10 mx-auto row rounded-4 my-5 py-4 shadow">
+        <h1>Mot de passe oublié ?</h1>
+
+        <div className=" col-md-6  mx-auto d-flex justify-content-center">
+          <Lottie animationData={ForgotLottie} loop={true} />
         </div>
-        <div>
-          <div className=" col-12 d-flex justify-content-center">
-            <Lottie
-              animationData={ForgotLottie}
-              loop={true}
-              style={{ width: "40%" }}
-            />
-          </div>
-          <div className="col-10 mx-auto text-center my-4">
-            <form onSubmit={handleSubmit}>
-              <div className="form-floating mb-3 col-10 mx-auto">
-                <input
-                  type="email"
-                  value={email}
-                  name="email"
-                  className="form-control rounded-5 focus-ring focus-ring-warning border"
-                  id="email"
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email"
-                  required
-                  autoFocus
-                />
+        <div className="col-md-6 mx-auto text-center my-4">
+          <form onSubmit={handleSubmit}>
+            <p>
+              Nous l&apos;obtenons, des trucs comme ça se passe. Veuillez entrer
+              votre e-mail, nous vous enverrons un lien pour réinitialiser votre
+              mot de passe.
+            </p>
+            <div className="form-floating mb-3 col-10 mx-auto">
+              <input
+                type="email"
+                value={email}
+                name="email"
+                className="form-control rounded-5 focus-ring focus-ring-warning border"
+                id="email"
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                required
+                autoFocus
+              />
 
-                <label htmlFor="email" className="form-label">
-                  E-mail
-                </label>
-              </div>
-              <div className="d-grid col-6 mx-auto my-4">
-                <button
-                  type="submit"
-                  className="btn btn-warning rounded-5 p-2"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Envoie en cours..." : "Envoyer"}
-                </button>
-              </div>
-            </form>
-            <hr className="col-8 mx-auto my-4" />
+              <label htmlFor="email" className="form-label">
+                E-mail
+              </label>
+            </div>
+            <div className="d-grid col-6 mx-auto my-4">
+              <button
+                type="submit"
+                className="btn btn-warning rounded-5 p-2"
+                disabled={isLoading}
+              >
+                {isLoading ? "Envoie en cours..." : "Envoyer"}
+              </button>
+            </div>
+          </form>
+          <hr className="col-8 mx-auto my-4" />
 
-            <Link className="small text-secondary" to="/login">
-              Vous vous en souvenez ?
-            </Link>
-          </div>
+          <Link className="small text-secondary" to="/login">
+            Vous vous en souvenez ?
+          </Link>
         </div>
       </div>
       {notification && (

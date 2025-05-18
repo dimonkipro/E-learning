@@ -62,16 +62,16 @@ const Signup = () => {
 
   return (
     <div className="col-12">
-      <div className="container col-11 col-lg-8 rounded-4 p-4 my-5 shadow">
+      <div className="col-10 mx-auto row rounded-4 p-4 my-5  shadow">
         <div className="row text-center">
-          <h2>Créer un compte </h2>
+          <h1>Créer un compte </h1>
           <p className="m-0">C&apos;est simple et rapide.</p>
-          <div className=" col-6 mx-auto d-flex justify-content-center">
+          <div className=" col-md-6 mx-auto d-flex justify-content-center">
             <Lottie animationData={RegisterLottie} loop={true} />
           </div>
-          <div className="col-11 mx-auto text-center my-4">
+          <div className="col-md-6 col-sm-9 mx-auto text-center my-4">
             <form onSubmit={handleSubmit}>
-              <div className="row g-2 mb-3">
+              <div className="row g-2 mb-2">
                 <div className="col-md">
                   <div className="form-floating">
                     <input
@@ -109,7 +109,7 @@ const Signup = () => {
                 </div>
               </div>
 
-              <div className="form-floating mb-3">
+              <div className="form-floating">
                 <input
                   type="email"
                   className="form-control rounded-5 focus-ring focus-ring-warning border"
@@ -124,11 +124,11 @@ const Signup = () => {
                 <label htmlFor="email" className="form-label">
                   E-mail
                 </label>
-                <div id="emailHelp" className="form-text">
+                <div id="emailHelp" className="form-text mb-2">
                   We&apos;ll never share your email with anyone else (❁´◡`❁) .
                 </div>
               </div>
-              <div className="form-floating mb-3">
+              <div className="form-floating mb-2">
                 <input
                   type="text"
                   className="form-control rounded-5 focus-ring focus-ring-warning border"

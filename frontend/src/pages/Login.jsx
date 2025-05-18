@@ -26,12 +26,12 @@ const Login = () => {
   if (isLoading) return <CustomSpinner />;
   return (
     <div className="col-12">
-      <div className="container col-11 col-md-8 col-lg-6 rounded-4 my-5 py-4  shadow">
-        <h2 className="text-center">Se connecter</h2>
-        <div className="col-6 mx-auto d-flex justify-content-center">
+      <div className="col-10 mx-auto row rounded-4 my-5 py-4 align-items-center shadow">
+        <h1 className="text-center">Se connecter</h1>
+        <div className="col-md-6 mx-auto d-flex justify-content-center">
           <Lottie animationData={LoginLottie} loop={true} />
         </div>
-        <div className=" container col-10 col-sm-8 col-md-8 col-lg-8 text-center my-4">
+        <div className=" container col-md-6 p-5 text-center my-4">
           <form onSubmit={handleSubmit}>
             <div className="form-floating mb-3">
               <input

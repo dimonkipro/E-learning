@@ -78,19 +78,15 @@ const VerifyEmail = () => {
 
   return (
     <div>
-      <div className="container col-8 my-5 py-4 rounded-4 shadow">
-        <div className="text-center">
-          <h1>Verifier votre E-mail</h1>
+      <div className="col-8 mx-auto row my-5 py-4 rounded-4 align-items-center shadow">
+        <h1 className="text-center">Verifier votre E-mail</h1>
+        <div className=" col-md-6 mx-auto d-flex justify-content-center p-4">
+          <Lottie animationData={VerifyLottie} loop={true} />
         </div>
-        <div className=" col-12 d-flex justify-content-center">
-          <Lottie
-            animationData={VerifyLottie}
-            loop={true}
-            style={{ width: "40%" }}
-          />
-        </div>
-        <div className="col-10 my-2 mx-auto text-center">
-          <p>Entrez le code à 6 chiffres envoyé à votre adresse e-mail.</p>
+        <div className="col-md-6 mx-auto my-2 mx-auto text-center ">
+          <p className="mb-5">
+            Entrez le code à 6 chiffres envoyé à votre adresse e-mail.
+          </p>
 
           <form onSubmit={handleSubmit}>
             <div className="input-group  mb-4">
@@ -100,7 +96,7 @@ const VerifyEmail = () => {
                   ref={(el) => (inputRefs.current[index] = el)}
                   type="text"
                   maxLength="6"
-                  className="form-control text-center rounded-pill mb-2 mx-1 focus-ring focus-ring-warning border"
+                  className="form-control text-center rounded-pill mb-2 p-0 mx-1 focus-ring focus-ring-warning border"
                   value={digit}
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}

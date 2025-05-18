@@ -2,104 +2,271 @@ export const VERIFICATION_EMAIL_TEMPLATE = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verify Your Email</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>vérifier votre E-mail</title>
 </head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
-    <h1 style="color: white; margin: 0;">Verify Your Email</h1>
-  </div>
-  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-    <p>Hello,</p>
-    <p>Thank you for signing up! Your verification code is:</p>
-    <div style="text-align: center; margin: 30px 0;">
-      <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #4CAF50;">{verificationCode}</span>
+
+<body
+    style="margin:0; padding:0; background-color:#121212; color:#d5d5d5; line-height:1.6; font-family:Arial, sans-serif;">
+    <div
+        style="width:75%; max-width:800px; margin:2rem auto; background-color:#212529; text-align:center; padding:0 24px; box-sizing:border-box;">
+
+        <div style="margin-top:2rem;">
+            <h1 style="font-size:2.5rem; font-weight:300; margin:1rem 0 2rem;">
+                vérifier votre E-mail
+            </h1>
+        </div>
+
+        <div
+            style="background-color:#000000; padding:24px; border-radius:0.5rem; box-sizing:border-box; margin-bottom:2rem;">
+            <p style="margin:0 0 1rem 0;">Bonjour,</p>
+            <p style="margin:0 0 1rem 0;">
+                Merci de vous être inscrit(e) ! Votre code de vérification est :
+            </p>
+
+            <div style="margin:1.5rem 0; text-align:center;">
+                <hr style="width:50%; margin:0 auto 1rem; border:none; border-top:1px solid #444;" />
+                <span style="display:block; font-size:2.5rem; font-weight:700; color:#ffc107; margin:0.5rem 0;">
+                    {verificationCode}
+                </span>
+                <hr style="width:50%; margin:1rem auto 0; border:none; border-top:1px solid #444;" />
+            </div>
+
+            <p style="margin:0 0 1rem 0;">
+                Veuillez entrer ce code sur la page de vérification pour finaliser votre inscription.
+            </p>
+            <p style="margin:0 0 1rem 0;">
+                Ce code expirera dans 15 minutes pour des raisons de sécurité.
+            </p>
+            <p style="margin:0 0 1rem 0;">
+                Si vous n’avez pas créé de compte chez nous, veuillez ignorer cet e-mail.
+            </p>
+            <p style="margin:0;">
+                Cordialement,<br />L’équipe E-ghazala
+            </p>
+        </div>
+
+        <div style="font-size:0.8em; color:#6c757d; padding:1rem 0;">
+            <p style="margin:0;">
+                Ceci est un message automatique, merci de ne pas répondre à cet e-mail.
+            </p>
+        </div>
     </div>
-    <p>Enter this code on the verification page to complete your registration.</p>
-    <p>This code will expire in 15 minutes for security reasons.</p>
-    <p>If you didn't create an account with us, please ignore this email.</p>
-    <p>Best regards,<br>E-ghazala Team</p>
-  </div>
-  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
-    <p>This is an automated message, please do not reply to this email.</p>
-  </div>
 </body>
 </html>
 `;
 
 export const PASSWORD_RESET_SUCCESS_TEMPLATE = `
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Password Reset Successful</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Réinitialisation du mot de passe réussie</title>
 </head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
-    <h1 style="color: white; margin: 0;">Password Reset Successful</h1>
-  </div>
-  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-    <p>Hello,</p>
-    <p>We're writing to confirm that your password has been successfully reset.</p>
-    <div style="text-align: center; margin: 30px 0;">
-      <div style="background-color: #4CAF50; color: white; width: 50px; height: 50px; line-height: 50px; border-radius: 50%; display: inline-block; font-size: 30px;">
-        ✓
-      </div>
+
+<body
+    style="margin:0; padding:0; background-color:#121212; color:#d5d5d5; line-height:1.6; font-family:Arial, sans-serif;">
+    <div
+        style="width:75%; max-width:800px; margin:2rem auto; background-color:#212529; text-align:center; padding:0 24px; box-sizing:border-box;">
+
+        <!-- Header / Title -->
+        <div style="margin-top:2rem;">
+            <h1 style="font-size:2.5rem; font-weight:300; margin:1rem 0 2rem; color:#ffffff;">
+                Réinitialisation réussie
+            </h1>
+        </div>
+
+        <!-- Content Box -->
+        <div
+            style="background-color:#000000; padding:24px; border-radius:0.5rem; box-sizing:border-box; margin-bottom:2rem;">
+
+            <p style="margin:0 0 1rem 0;">Bonjour,</p>
+            <p style="margin:0 0 1rem 0;">
+                Nous confirmons que votre mot de passe a été réinitialisé avec succès.
+            </p>
+
+            <!-- Check Icon -->
+            <div style="text-align:center; margin:1.5rem 0;">
+                <div style="
+             background-color:#28a745;
+             color:white;
+             width:60px;
+             height:60px;
+             line-height:60px;
+             border-radius:50%;
+             display:inline-block;
+             font-size:2rem;
+             ">
+                    ✓
+                </div>
+            </div>
+
+            <p style="margin:0;">
+                Si vous n’êtes pas à l’origine de cette réinitialisation, veuillez contacter notre équipe d’assistance
+                immédiatement.
+            </p>
+            <p style="margin:0 0 1rem 0;">
+                contact@laghazala.tn
+            </p>
+            <p>
+                Pour des raisons de sécurité, nous vous recommandons de :
+            </p>
+
+            <!-- Recommendations List -->
+            <div style="text-align:left; display:inline-block; margin-bottom:1rem;">
+                <ul style="padding-left:1.2em; margin:0;">
+                    <li style="margin-bottom:0.5rem;">Utiliser un mot de passe fort et unique</li>
+                    <li style="margin-bottom:0.5rem;">Éviter d’utiliser le même mot de passe sur plusieurs sites</li>
+                </ul>
+            </div>
+
+            <p style="margin:0 0 1rem 0;">
+                Merci de nous aider à sécuriser votre compte.
+            </p>
+            <p style="margin:0;">
+                Cordialement,<br />L’équipe E-ghazala
+            </p>
+        </div>
+
+        <!-- Footer Note -->
+        <div style="font-size:0.8em; color:#6c757d; padding:1rem 0;">
+            <p style="margin:0;">
+                Ceci est un message automatique, merci de ne pas répondre à cet e-mail.
+            </p>
+        </div>
     </div>
-    <p>If you did not initiate this password reset, please contact our support team immediately.</p>
-    <p>For security reasons, we recommend that you:</p>
-    <ul>
-      <li>Use a strong, unique password</li>
-      <li>Enable two-factor authentication if available</li>
-      <li>Avoid using the same password across multiple sites</li>
-    </ul>
-    <p>Thank you for helping us keep your account secure.</p>
-    <p>Best regards,<br>E-ghazala Team</p>
-  </div>
-  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
-    <p>This is an automated message, please do not reply to this email.</p>
-  </div>
 </body>
 </html>
 `;
 
 export const PASSWORD_RESET_REQUEST_TEMPLATE = `
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reset Your Password</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Réinitialisation du mot de passe</title>
 </head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
-    <h1 style="color: white; margin: 0;">Password Reset</h1>
-  </div>
-  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-    <p>Hello,</p>
-    <p>We received a request to reset your password. If you didn't make this request, please ignore this email.</p>
-    <p>To reset your password, click the button below:</p>
-    <div style="text-align: center; margin: 30px 0;">
-      <a href="{resetURL}" style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Reset Password</a>
+
+<body style="margin:0; padding:0; background-color:#121212; color:#d5d5d5; line-height:1.6; font-family:Arial, sans-serif;">
+  <div style="width:75%; max-width:800px; margin:2rem auto; background-color:#212529; text-align:center; padding:0 24px; box-sizing:border-box;">
+
+    <!-- En-tête -->
+    <div style="margin-top:2rem; padding:1.5rem 0; background:linear-gradient(to right,rgb(226, 178, 36), #ffc107);">
+      <h1 style="color:#000; font-size:2.5rem; margin:0;">Réinitialisation du mot de passe</h1>
     </div>
-    <p>This link will expire in 1 hour for security reasons.</p>
-    <p>Best regards,<br>E-ghazala Team</p>
-  </div>
-  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
-    <p>This is an automated message, please do not reply to this email.</p>
+
+    <!-- Contenu -->
+    <div style="background-color:#000000; padding:24px; border-radius:0 0 0.5rem 0.5rem; box-sizing:border-box; margin-bottom:2rem;">
+      <p style="margin:0 0 1rem;">Bonjour,</p>
+      <p style="margin:0 0 1rem;">
+        Nous avons reçu une demande pour réinitialiser votre mot de passe. Si vous n’êtes pas à l’origine de cette demande, ignorez simplement cet e-mail.
+      </p>
+      <p style="margin:0 0 1rem;">Pour réinitialiser votre mot de passe, cliquez sur le bouton ci-dessous :</p>
+
+      <div style="text-align:center; margin:1.5rem 0;">
+        <a
+          href="{resetURL}"
+          style="
+            display:inline-block;
+            background-color:#ffc107;
+            color:#000;
+            padding:12px 24px;
+            text-decoration:none;
+            border-radius:0.5rem;
+            font-weight:bold;
+          "
+        >Réinitialiser le mot de passe</a>
+      </div>
+
+      <p style="margin:0 0 1rem;">
+        Ce lien expirera dans 1 heure pour des raisons de sécurité.
+      </p>
+      <p style="margin:0;">
+        Cordialement,<br/>L’équipe E-ghazala
+      </p>
+    </div>
+
+    <!-- Pied de page -->
+    <div style="font-size:0.8em; color:#6c757d; padding:1rem 0;">
+      <p style="margin:0;">
+        Ceci est un message automatique, merci de ne pas répondre à cet e-mail.
+      </p>
+    </div>
   </div>
 </body>
+
 </html>
 `;
 
 export const WELCOME_EMAIL_TEMPLATE = `
-<p>Hello {name},</p>
-   <p>Welcome to E-ghazala! We're glad to have you on board.</p>
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bienvenue chez E-ghazala</title>
+</head>
+
+<body style="margin:0; padding:0; background-color:#121212; color:#d5d5d5; line-height:1.6; font-family:Arial, sans-serif;">
+  <div style="width:75%; max-width:800px; margin:2rem auto; background-color:#212529; text-align:center; padding:24px; border-radius:0.5rem;">
+
+    <h1 style="font-size:2rem; font-weight:300; margin-bottom:1rem; color:#ffffff;">
+      Bienvenue, {name} !
+    </h1>
+    <p style="margin:0 0 1rem;">
+      Nous sommes ravis de vous compter parmi nous chez E-ghazala.
+    </p>
+    <p style="margin:0;">
+      Explorez nos cours et commencez votre apprentissage dès aujourd’hui !
+    </p>
+
+    <div style="font-size:0.8em; color:#6c757d; margin-top:2rem;">
+      <p style="margin:0;">
+        Ceci est un message automatique, merci de ne pas répondre à cet e-mail.
+      </p>
+    </div>
+  </div>
+</body>
+
+</html>
 `;
 
 export const SUCCESS_ENROLLMENT_EMAIL_TEMPLATE = `
-<p>Hello {name},</p>
-   <p>Your subscription to the course {courseTitle} is {status}.</p>
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inscription au cours</title>
+</head>
+
+<body style="margin:0; padding:0; background-color:#121212; color:#d5d5d5; line-height:1.6; font-family:Arial, sans-serif;">
+  <div style="width:75%; max-width:800px; margin:2rem auto; background-color:#212529; text-align:center; padding:24px; border-radius:0.5rem;">
+
+    <h1 style="font-size:2rem; font-weight:300; margin-bottom:1rem; color:#ffffff;">
+      Bonjour {name},
+    </h1>
+    <p style="margin:0 0 1rem;">
+      Votre inscription au cours « {courseTitle} » a été <strong style="color:#28a745;">{status}</strong>.
+    </p>
+    <p style="margin:0;">
+      Merci de votre confiance et bon apprentissage !
+    </p>
+
+    <div style="font-size:0.8em; color:#6c757d; margin-top:2rem;">
+      <p style="margin:0;">
+        Ceci est un message automatique, merci de ne pas répondre à cet e-mail.
+      </p>
+    </div>
+  </div>
+</body>
+
+</html>
 `;

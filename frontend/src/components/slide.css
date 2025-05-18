@@ -1,0 +1,25 @@
+.carousel-container {
+    animation: carousel-move var(--duration, 15s) infinite;
+    left: var(--carousel-offset, 0px);
+}
+
+.image-container-carousel {
+    aspect-ratio: 16 / 9;
+}
+
+.image-container-carousel img {
+    object-fit: contain;
+    width: 50%;
+    height: 100%;
+}
+
+
+@keyframes carousel-move {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}

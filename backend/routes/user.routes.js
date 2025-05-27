@@ -32,6 +32,7 @@ import {
   getLearnerCourseProgress,
   submitTest,
 } from "../controllers/module.controller.js";
+import { updateUser } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
@@ -109,5 +110,9 @@ router.get(
 
 router.post("/certificate/download", downloadCertificate);
 router.post("/certificate", verifyToken, isLearner, getOrCreateCertificate);
+
+// ------------------UserRoutes----------------------------
+
+router.put("/user/update/:id", verifyToken, updateUser); // Added route for updating user
 
 export default router;

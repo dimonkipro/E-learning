@@ -134,7 +134,7 @@ export const getCourseById = async (req, res) => {
   try {
     const course = await Course.findById(req.params.courseId)
       .populate("category", "name")
-      .populate("instructor", "name");
+      .populate("instructor", "name email");
     if (!course || course.archived) {
       return res.status(404).send({ msg: "Course not found or archived" });
     }
@@ -153,7 +153,7 @@ export const getCoursesByCategory = async (req, res) => {
 
     const courses = await Course.find({ category: categoryId })
       .populate("category", "name")
-      .populate("instructor", "name")
+      .populate("instructor", "name email")
       .sort({ title: 1 });
 
     res.send(courses);

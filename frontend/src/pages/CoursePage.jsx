@@ -40,7 +40,6 @@ const CoursePage = () => {
         return "bg-secondary";
     }
   };
-console.log("Error value:", error);
   if (loading) return <CustomSpinner />;
   if (error) {
     return (
@@ -183,7 +182,7 @@ console.log("Error value:", error);
                         </p>
 
                         <p className="card-text">
-                          {currentCourse.instructor?._id}
+                          {currentCourse.instructor?.email}
                         </p>
                       </div>
                     </div>

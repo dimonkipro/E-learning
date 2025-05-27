@@ -126,15 +126,15 @@ const Sidebar = () => {
                     Dashboard <i className="bi bi-speedometer2 ms-2"></i>
                   </Nav.Link>
 
-                  {/* Courses */}
+                  {/* My Courses */}
                   <Nav.Link
                     as={Link}
-                    to="/instructor/courses"
+                    to="/instructor/my-courses"
                     onClick={handleClose}
                     // className={theme === "light" ? "text-white" : "text-dark"}
                     className="link-secondary"
                   >
-                    Formations <i className="bi bi-box-seam ms-2"></i>
+                    Mes formations <i className="bi bi-box-seam ms-2"></i>
                   </Nav.Link>
                 </>
               )}

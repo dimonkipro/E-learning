@@ -1,4 +1,5 @@
 import { User } from "../models/user.model.js";
+import bcryptjs from "bcryptjs";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -11,6 +12,7 @@ export const getAllUsers = async (req, res) => {
     }
   }
 };
+
 export const deleteUser = async (req, res) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.params.id).select(
@@ -27,6 +29,7 @@ export const deleteUser = async (req, res) => {
     }
   }
 };
+
 export const editUserRole = async (req, res) => {
   try {
     const { role } = req.body;
@@ -52,6 +55,7 @@ export const editUserRole = async (req, res) => {
     res.status(500).send({ msg: "Internal Server Error" });
   }
 };
+
 export const verifyUser = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
@@ -68,5 +72,39 @@ export const verifyUser = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send({ msg: "Internal Server Error" });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { password, tel } = req.body;
+
+    const updates = {};
+
+    // Handle password update
+    if (password) {
+      const salt = await bcryptjs.genSalt(10);
+      updates.password = await bcryptjs.hash(password, 10);
+    }
+
+    // Handle phone number update
+    if (tel) {
+      updates.tel = tel;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true, // Ensures validation rules are applied
+    }).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    res.json({ msg: "User updated successfully", user: updatedUser });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ msg: "Internal Server Error" });
   }
 };

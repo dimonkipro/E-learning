@@ -74,7 +74,7 @@ const Home = () => {
 
       <div
         id="courseCarousel"
-        className="carousel slide container mb-5 p-4"
+        className="carousel slide col-12 mb-5 p-4"
         data-bs-ride="carousel"
       >
         <div className="carousel-indicators">
@@ -103,7 +103,7 @@ const Home = () => {
                     to={`/courses/${course._id}`}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <div className="row animate">
+                    <div className="row animate col-10 mx-auto">
                       <div
                         className={`col-md-7 ${
                           index % 2 === 0 && "order-md-2"

@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Signup from "./pages/Signup";
 import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -27,7 +28,6 @@ import Inscriptions from "./pages/learner/Inscriptions";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import InstructorDashboard from "./pages/instructor/InstructorDashboard";
-import EditCourseModelPage from "./pages/instructor/EditCourseModelPage";
 import CourseDetails from "./pages/learner/CourseDetails";
 import CourseContent from "./pages/learner/CourseContent";
 import ErrorPage from "./components/ErrorPage";
@@ -61,7 +61,12 @@ function App() {
   return (
     <>
       {!hideHeader ? <Header /> : <Sidebar />}
-      <ToastContainer />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        closeOnClick
+      />
       <Routes>
         {/* ------------------PublicRoute---------------------------- */}
 
@@ -120,15 +125,11 @@ function App() {
           <Route path="/instructor" element={<AdminLayout />}>
             <Route index element={<InstructorDashboard />} />
             <Route path="dashboard" element={<InstructorDashboard />} />
-            <Route path="courses" element={<Courses />} />
+            <Route path="my-courses" element={<Courses />} />
             <Route path="course/:courseId" element={<CourseDetails />} />
             <Route
               path="course/content/:courseId"
               element={<CourseContent />}
-            />
-            <Route
-              path="edit-course/:courseId"
-              element={<EditCourseModelPage />}
             />
           </Route>
         </Route>

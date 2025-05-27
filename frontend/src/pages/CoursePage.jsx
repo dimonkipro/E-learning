@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCourseById, clearCurrentCourse } from "../redux/auth/courseSlice";
+import {
+  fetchCourseById,
+  clearCurrentCourse,
+  updateCourse,
+} from "../redux/auth/courseSlice";
+import { fetchUsers } from "../redux/auth/userSlice";
 import { toast } from "react-toastify";
 import Footer from "../components/Footer";
 import CustomSpinner from "../components/CustomSpinner";
@@ -15,6 +20,9 @@ const CoursePage = () => {
   const { currentCourse, loading, error } = useSelector(
     (state) => state.courses
   );
+  const [isEditing, setIsEditing] = useState(false);
+  const [instructors, setInstructors] = useState([]);
+
   useEffect(() => {
     dispatch(fetchCourseById(courseId));
 
@@ -22,6 +30,29 @@ const CoursePage = () => {
       dispatch(clearCurrentCourse());
     };
   }, [courseId, dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchUsers())
+      .unwrap()
+      .then((users) => {
+        const instructorList = users.filter(
+          (user) => user.role === "instructor"
+        );
+        setInstructors(instructorList);
+      })
+      .catch(() => {
+        toast.error("Failed to fetch instructors");
+      });
+  }, [dispatch]);
+
+  const [formData, setFormData] = useState({
+    title: currentCourse?.title,
+    description: currentCourse?.description,
+    longDescription: currentCourse?.longDescription,
+    goals: currentCourse?.goals,
+    instructor: currentCourse?.instructor?._id,
+    price: currentCourse?.price,
+  });
   const isInstructor = currentCourse?.instructor?._id === user?._id;
 
   const [activeLink, setActiveLink] = useState("desc");
@@ -40,6 +71,35 @@ const CoursePage = () => {
         return "bg-secondary";
     }
   };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(updateCourse({ id: currentCourse._id, ...formData }))
+      .unwrap()
+      .then(() => {
+        dispatch(fetchCourseById(courseId));
+      })
+      .catch(() => {});
+    setIsEditing(false);
+  };
+
+  useEffect(() => {
+    if (currentCourse) {
+      setFormData({
+        title: currentCourse.title,
+        description: currentCourse.description,
+        longDescription: currentCourse.longDescription,
+        goals: currentCourse.goals,
+        instructor: currentCourse.instructor?._id,
+        price: currentCourse.price,
+      });
+    }
+  }, [currentCourse]);
+
   if (loading) return <CustomSpinner />;
   if (error) {
     return (
@@ -53,48 +113,166 @@ const CoursePage = () => {
       />
     );
   }
-
   return (
     <div className="col-12">
       {currentCourse && (
         <>
           {/* Hero */}
-          {/* <div className="col-12 text-white shadow"> */}
           <div className="col-11 mx-auto text-white shadow rounded-5">
-            <div className="col-10 mb-5">
+            <div className={`mb-5 ${isEditing ? "col-8 mx-auto" : "col-10"}`}>
               <div className="p-3">
-                <span className="d-inline-block bg-light small rounded-3 px-3 py-2 text-dark">
-                  Certificat obtenue à la fin de la formation 🤩
-                </span>
+                {isEditing ? (
+                  <form onSubmit={handleSubmit}>
+                    <h1 className="text-center my-4">Modifier la formation</h1>
+                    <label
+                      className="fw-bold mb-1 text-secondary ms-2"
+                      htmlFor="title"
+                    >
+                      Titre de formation
+                    </label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      className="form-control mb-2"
+                      placeholder="Course Title"
+                    />
+                    <label
+                      className="fw-bold mb-1 text-secondary ms-2"
+                      htmlFor="title"
+                    >
+                      Description
+                    </label>
 
-                <p
-                  className="m-3 lh-base display-2"
-                  style={{ fontWeight: "300" }}
-                >
-                  {currentCourse?.title}
-                </p>
-                <h4 className=" m-5 fw-light">{currentCourse?.description}</h4>
-                <div className="d-flex flex-wrap d-block d-md-none mt-4">
-                  <span
-                    className={`badge ${getLevelBadgeClass(
-                      currentCourse.level
-                    )} rounded-pill p-2 me-2 mt-3`}
-                  >
-                    Niveau: {currentCourse.level}
-                  </span>
-                  <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
-                    Formateur: {currentCourse.instructor?.name}
-                  </span>
-                  <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
-                    Categorie: {currentCourse.category?.name}
-                  </span>
-                  <span
-                    className="badge rounded-pill p-2 mt-3"
-                    style={{ backgroundColor: "#28c76f" }}
-                  >
-                    Prix: {currentCourse?.price} TND
-                  </span>
-                </div>
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      className="form-control mb-2"
+                      placeholder="Course Description"
+                    ></textarea>
+                    <label
+                      className="fw-bold mb-1 text-secondary ms-2"
+                      htmlFor="title"
+                    >
+                      Description détaillée
+                    </label>
+
+                    <textarea
+                      name="longDescription"
+                      value={formData.longDescription}
+                      onChange={handleChange}
+                      className="form-control mb-2"
+                      placeholder="Course Long Description"
+                      rows="5"
+                    ></textarea>
+                    <label
+                      className="fw-bold mb-1 text-secondary ms-2"
+                      htmlFor="title"
+                    >
+                      Objectifs
+                    </label>
+
+                    <textarea
+                      name="goals"
+                      value={formData.goals}
+                      onChange={handleChange}
+                      className="form-control mb-2"
+                      placeholder="Course Goals"
+                      rows="5"
+                    ></textarea>
+                    <label
+                      className="fw-bold mb-1 text-secondary ms-2"
+                      htmlFor="instructor"
+                    >
+                      Instructeur
+                    </label>
+                    <select
+                      name="instructor"
+                      value={formData.instructor}
+                      onChange={handleChange}
+                      className="form-control mb-2"
+                    >
+                      <option value="">Select an Instructor</option>
+                      {instructors.map((instructor) => (
+                        <option key={instructor._id} value={instructor._id}>
+                          {instructor.name}
+                        </option>
+                      ))}
+                    </select>
+                    <label
+                      className="fw-bold mb-1 text-secondary ms-2"
+                      htmlFor="title"
+                    >
+                      Prix de formation
+                    </label>
+
+                    <input
+                      type="number"
+                      name="price"
+                      value={formData.price}
+                      onChange={handleChange}
+                      className="form-control mb-2"
+                      placeholder="Course Price"
+                    />
+                    <button type="submit" className="btn btn-success">
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary ms-2"
+                      onClick={() => setIsEditing(false)}
+                    >
+                      Cancel
+                    </button>
+                  </form>
+                ) : (
+                  <>
+                    <span className="d-inline-block bg-light small rounded-3 px-3 py-2 text-dark">
+                      Certificat obtenue à la fin de la formation 🤩
+                    </span>
+
+                    <p
+                      className="m-3 lh-base display-2"
+                      style={{ fontWeight: "300" }}
+                    >
+                      {currentCourse?.title}
+                    </p>
+                    <h4 className=" m-5 fw-light">
+                      {currentCourse?.description}
+                    </h4>
+                    {user?.role === "admin" && (
+                      <button
+                        className="btn btn-warning"
+                        onClick={() => setIsEditing(true)}
+                      >
+                        Modifer la formation
+                      </button>
+                    )}
+                    <div className="d-flex flex-wrap d-block d-md-none mt-4">
+                      <span
+                        className={`badge ${getLevelBadgeClass(
+                          currentCourse.level
+                        )} rounded-pill p-2 me-2 mt-3`}
+                      >
+                        Niveau: {currentCourse.level}
+                      </span>
+                      <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
+                        Formateur: {currentCourse.instructor?.name}
+                      </span>
+                      <span className="badge bg-secondary rounded-pill p-2 me-2 mt-3">
+                        Categorie: {currentCourse.category?.name}
+                      </span>
+                      <span
+                        className="badge rounded-pill p-2 mt-3"
+                        style={{ backgroundColor: "#28c76f" }}
+                      >
+                        Prix: {currentCourse?.price} TND
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -106,11 +284,7 @@ const CoursePage = () => {
               <div className="col-12 col-md-7 mx-auto mt-5">
                 <div className="card-body">
                   {/* Nav Links */}
-                  <ul
-                    // className={`nav nav-tabs position-sticky top-0
-                    // bg-${theme === "dark" ? "dark" : "white"}`}
-                    className="nav nav-tabs position-sticky top-0 custom-bg rounded border-0 shadow z-3"
-                  >
+                  <ul className="nav nav-tabs position-sticky top-0 custom-bg rounded border-0 shadow z-3">
                     <li className="nav-item">
                       <a
                         className={`nav-link link-secondary ${

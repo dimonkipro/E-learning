@@ -4,6 +4,7 @@ import {
   addCourse,
   archiveCourse,
   deleteCourse,
+  updateCourse,
 } from "../controllers/course.controller.js";
 import { uploadImage } from "../utils/multerConfig.js";
 import {
@@ -28,6 +29,7 @@ router.post(
 );
 
 router.put("/courses/:courseId/toggle-archive", archiveCourse);
+router.put("/courses/:courseId", updateCourse);
 
 router.delete("/courses/:courseId", deleteCourse);
 // ------------------usersRoute----------------------------

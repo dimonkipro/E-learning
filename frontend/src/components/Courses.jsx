@@ -378,7 +378,7 @@ const Courses = () => {
                         </button>
                         <Link
                           title="Modifier la formation"
-                          to={`/admin/edit-course/${course._id}`}
+                          to={`/courses/${course._id}`}
                           className="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                         >
                           Modifier

@@ -285,3 +285,26 @@ export const getOrCreateCertificate = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const updateCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const updates = req.body;
+
+    const updatedCourse = await Course.findByIdAndUpdate(courseId, updates, {
+      new: true,
+      runValidators: true,
+    })
+      .populate("category", "name")
+      .populate("instructor", "name email");
+
+    if (!updatedCourse) {
+      return res.status(404).json({ msg: "Course not found" });
+    }
+
+    res.json({ msg: "Course updated successfully", course: updatedCourse });
+  } catch (error) {
+    console.error("Error updating course:", error);
+    res.status(500).json({ msg: "Internal Server Error" });
+  }
+};

@@ -106,6 +106,7 @@ export const checkAuth = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
+
       return response.data;
     } catch (error) {
       toast.error(
@@ -114,6 +115,29 @@ export const checkAuth = createAsyncThunk(
       return rejectWithValue(
         error.response?.data?.message || "Authentication check failed"
       );
+    }
+  }
+);
+
+export const updateUser = createAsyncThunk(
+  "auth/updateUser",
+  async ({ id, password, tel }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        `${API_URL}/user/update/${id}`,
+        { password, tel },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const msg = error.response?.data?.msg || "Failed to update user";
+      toast.error(msg);
+      return rejectWithValue(msg);
     }
   }
 );
@@ -215,6 +239,18 @@ const authSlice = createSlice({
         state.token = null;
         state.error = action.payload;
         state.isAuthChecked = true;
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = { ...state.user, ...action.payload.user };
+        state.error = null;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
       });
   },
 });

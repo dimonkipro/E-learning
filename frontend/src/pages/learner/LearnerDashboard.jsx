@@ -1,15 +1,21 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import userImage from "../../assets/user.png";
 import CustomSpinner from "../../components/CustomSpinner";
+import { Link } from "react-router";
+import { updateUser } from "../../redux/auth/authSlice";
+import { toast } from "react-toastify";
 
 const LearnerDashboard = () => {
+  const dispatch = useDispatch();
+
+  const [showProfilePanel, setShowProfilePanel] = useState(true);
   const [formData, setFormData] = useState({
     password: "",
     tel: "",
   });
 
-  const { user } = useSelector((state) => state.auth);
+  const { user, isLoading } = useSelector((state) => state.auth);
   const { userEnrollments, loading, error } = useSelector(
     (state) => state.enrollments
   );
@@ -17,6 +23,17 @@ const LearnerDashboard = () => {
   const handleChange = (e) => {
     e.preventDefault();
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(updateUser({ id: user?._id, ...formData })).unwrap()
+      .then(() => {
+        toast.success("Informations mises à jour avec succès");
+      })
+      .catch((error) => {
+        toast.error(error);
+      });
   };
 
   const totalEnrollments =
@@ -38,25 +55,48 @@ const LearnerDashboard = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="col-11 mx-auto">
-      <h2 className="mb-5 text-center">Bienvenue, {user?.name} ^_^</h2>
-      <div className="col-12 mb-4 d-flex">
-        <div className="col-6 d-flex align-items-center flex-column">
+    <div className="row col-11 mx-auto">
+      <h2 className=" text-center">Bienvenue, {user?.name} ^_^</h2>
+      {/* Show Profile Panel Button */}
+      <div
+        className="d-flex justify-content-start position-sticky top me-1 mb-2"
+        style={{ top: "50px" }}
+      >
+        <i
+          className="bi bi-person-vcard fs-4 cursor-pointer p-2 rounded-pill text-bg-secondary"
+          style={{
+            cursor: "pointer",
+            zIndex: 1000,
+            transition: "all 0.3s ease",
+          }}
+          onClick={() => setShowProfilePanel(!showProfilePanel)}
+        />
+      </div>
+      {/* Profile Panel  */}
+      <div
+        className={`mb-4 flex-column ${
+          showProfilePanel ? "d-flex col-md-3" : "d-none"
+        }`}
+      >
+        <div className="d-flex align-items-center flex-column">
           <img src={userImage} alt="" className="col-6" />
-          <button className="btn btn-outline-secondary">
-            <i className="bi bi-upload"> Changer</i>
-          </button>
+          <h5 className="text-center mt-2">{user?.name}</h5>
+          <p className="text-secondary text-center">{user?.role}</p>
+          <p className="text-secondary text-center">
+            {user?.isVerified ? "Compte vérifié" : "Compte non vérifié"}
+            <span className="text-danger">
+              {user?.isVerified ? "" : " (Veuillez vérifier votre compte)"}
+            </span>
+          </p>
         </div>
-        <div className="col-6">
-          <h2 className="text-center text-decoration-underline text-white fw-light">
-            Coordonnées
-          </h2>
-          <h3 className="text-secondary">E-mail</h3>
-          <h4 className="text-center  fw-light">{user?.email}</h4>
-
+        <div>
           <form>
-            <div className="col mx-auto my-3">
-              <div className="row col-12 mb-3">
+            <div className="">
+              <div className="mb-3">
+                <div className="col-md">
+                  <label className="text-secondary">E-mail</label>
+                  <h6 className="text-center ">{user?.email}</h6>
+                </div>
                 <div className="col-md">
                   <label htmlFor="Tel" className="form-label">
                     Numéro de téléphone
@@ -73,7 +113,7 @@ const LearnerDashboard = () => {
                 </div>
                 <div className="col-md">
                   <label htmlFor="Password" className="form-label">
-                    Password
+                    Nouveau mot de passe
                   </label>
                   <input
                     type="password"
@@ -89,11 +129,11 @@ const LearnerDashboard = () => {
               <div className="d-grid col-8 mx-auto my-4">
                 <button
                   type="submit"
-                  className="btn btn-primary rounded p-2"
-                  // disabled={isLoading}
+                  className="btn btn-warning rounded p-2"
+                  onClick={handleSubmit}
+                  disabled={isLoading}
                 >
-                  Confirmer
-                  {/* {isLoading ? "Connexion en cours..." : "Se connecter"} */}
+                  {isLoading ? "Mise à jour..." : "Confirmer"}
                 </button>
               </div>
             </div>
@@ -103,64 +143,69 @@ const LearnerDashboard = () => {
 
       {/* Enrollments Cards */}
       {userEnrollments?.length > 0 && (
-        <div>
-          <h2>Inscriptions</h2>
-          <div className="container col-11 mx-auto row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
-            <div className="col my-3">
-              <div
-                className="card  py-2"
-                style={{ borderLeft: " 10px solid rgb(42, 144, 167)" }}
-              >
-                <div className="card-body">
-                  <div className="col d-flex align-items-center justify-content-between text-info-emphasis text-uppercase">
-                    Mes inscriptions{" "}
-                    <div className="h3 mb-0 fw-bold ">{totalEnrollments}</div>
+        <div className={showProfilePanel ? "col-md-9" : "col-md-12"}>
+          <h2>Mes inscriptions</h2>
+          <div className="container col-11 mx-auto row row-cols-1 row-cols-sm-2 ">
+            <Link to={"/learner/my-courses"} className="text-decoration-none">
+              <div className="col my-3">
+                <div
+                  className="card  py-2"
+                  style={{ borderLeft: " 10px solid rgb(42, 144, 167)" }}
+                >
+                  <div className="card-body">
+                    <div className="col d-flex align-items-center justify-content-between text-info-emphasis text-uppercase">
+                      Mes inscriptions{" "}
+                      <div className="h3 mb-0 fw-bold ">{totalEnrollments}</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="col my-3">
-              <div
-                className="card py-2"
-                style={{ borderLeft: " 10px solid rgb(25, 135, 84)" }}
-              >
-                <div className="card-body">
-                  <div className="col d-flex align-items-center justify-content-between text-success text-uppercase">
-                    Inscriptions acceptée
-                    <div className="h3 mb-0 fw-bold ">{totalApproved}</div>
+            </Link>
+            <Link to={"/learner/my-courses"} className="text-decoration-none">
+              <div className="col my-3">
+                <div
+                  className="card py-2"
+                  style={{ borderLeft: " 10px solid rgb(25, 135, 84)" }}
+                >
+                  <div className="card-body">
+                    <div className="col d-flex align-items-center justify-content-between text-success text-uppercase">
+                      Inscriptions acceptée
+                      <div className="h3 mb-0 fw-bold ">{totalApproved}</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="col my-3">
-              <div
-                className="card py-2"
-                style={{ borderLeft: " 10px solid rgb(255, 193, 7) " }}
-              >
-                <div className="card-body">
-                  <div className="col d-flex align-items-center justify-content-between text-warning-emphasis text-uppercase">
-                    Inscription en attente
-                    <div className="h3 mb-0 fw-bold ">{totalPending}</div>
+            </Link>
+            <Link to={"/learner/my-courses"} className="text-decoration-none">
+              <div className="col my-3">
+                <div
+                  className="card py-2"
+                  style={{ borderLeft: " 10px solid rgb(255, 193, 7) " }}
+                >
+                  <div className="card-body">
+                    <div className="col d-flex align-items-center justify-content-between text-warning-emphasis text-uppercase">
+                      Inscription en attente
+                      <div className="h3 mb-0 fw-bold ">{totalPending}</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="col my-3">
-              <div
-                className="card py-2"
-                style={{ borderLeft: " 10px solid rgb(220, 53, 69)" }}
-              >
-                <div className="card-body">
-                  <div className="col d-flex align-items-center justify-content-between text-danger-emphasis text-uppercase">
-                    Inscription rejetée
-                    <div className="h3 mb-0 fw-bold ">{totalRejected}</div>
+            </Link>
+            <Link to={"/learner/my-courses"} className="text-decoration-none">
+              <div className="col my-3">
+                <div
+                  className="card py-2"
+                  style={{ borderLeft: " 10px solid rgb(220, 53, 69)" }}
+                >
+                  <div className="card-body">
+                    <div className="col d-flex align-items-center justify-content-between text-danger-emphasis text-uppercase">
+                      Inscription rejetée
+                      <div className="h3 mb-0 fw-bold ">{totalRejected}</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       )}

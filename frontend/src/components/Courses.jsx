@@ -20,7 +20,7 @@ const Courses = () => {
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [showMyCourses, setShowMyCourses] = useState(false);
+
   const [showArchivedCourses, setShowArchivedCourses] = useState(false);
   const [showOffcanvas, setShowOffcanvas] = useState(false);
   const [sortOrder, setSortOrder] = useState("all"); // or "desc"
@@ -47,7 +47,7 @@ const Courses = () => {
     (course) => !course?.archived
   );
 
-  if (user?.role === "instructor" && showMyCourses) {
+  if (user?.role === "instructor") {
     finalFilteredCourses = filteredCourses.filter(
       (course) => course?.instructor?._id === user?._id
     );
@@ -206,24 +206,6 @@ const Courses = () => {
 
             {/* Filter */}
             <div className="offcanvas-body">
-              {/* Instructor Filter */}
-              {user?.role === "instructor" && (
-                <div className="mb-3">
-                  <LinkToolTip
-                    title="Trier"
-                    placement={"bottom"}
-                    onClick={() => {
-                      setShowMyCourses(!showMyCourses);
-                      setShowOffcanvas(false);
-                    }}
-                    className={
-                      "link-primary fs-5 link-offset-2 bounce-hover link-underline-opacity-25 link-underline-opacity-100-hover me-4"
-                    }
-                  >
-                    {showMyCourses ? "Afficher tout" : "Cours attribués"} {">"}
-                  </LinkToolTip>
-                </div>
-              )}
               {/* Admin Filter */}
               {user?.role === "admin" && (
                 <div className="mb-3">

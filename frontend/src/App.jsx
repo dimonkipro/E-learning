@@ -20,7 +20,6 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import Users from "./pages/admin/Users";
 import Courses from "./components/Courses";
 import CoursePage from "./pages/CoursePage";
-import EditCoursePage from "./pages/admin/EditCoursePage";
 import EnrollmentList from "./pages/admin/EnrollmentList";
 import ApplyEnrollment from "./pages/ApplyEnrollment";
 import LearnerDashboard from "./pages/learner/LearnerDashboard";
@@ -109,7 +108,6 @@ function App() {
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="users" element={<Users />} />
             <Route path="courses" element={<Courses />} />
-            <Route path="edit-course/:courseId" element={<EditCoursePage />} />
             <Route path="enrollments" element={<EnrollmentList />} />
             <Route path="course/:courseId" element={<CourseDetails />} />
             <Route

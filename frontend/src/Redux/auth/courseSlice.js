@@ -189,6 +189,29 @@ export const getOrCreateCertificate = createAsyncThunk(
   }
 );
 
+export const updateCourse = createAsyncThunk(
+  "courses/update",
+  async ({ id, ...updates }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        `${API_URL}/admin/courses/${id}`,
+        updates,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      toast.success("Course updated successfully");
+      return response.data.course;
+    } catch (error) {
+      toast.error(error.response?.data?.msg || "Failed to update course");
+      return rejectWithValue(error.response?.data?.msg || error.message);
+    }
+  }
+);
+
 const courseSlice = createSlice({
   name: "courses",
   initialState: {
@@ -296,6 +319,23 @@ const courseSlice = createSlice({
         state.certificate = action.payload;
       })
       .addCase(getOrCreateCertificate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateCourse.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateCourse.fulfilled, (state, action) => {
+        state.loading = false;
+        // Update the course in the state
+        const index = state.courses.findIndex(
+          (course) => course._id === action.payload._id
+        );
+        if (index !== -1) {
+          state.courses[index] = action.payload;
+        }
+      })
+      .addCase(updateCourse.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

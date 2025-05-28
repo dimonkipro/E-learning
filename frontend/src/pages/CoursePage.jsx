@@ -13,16 +13,17 @@ import CustomSpinner from "../components/CustomSpinner";
 import ErrorPage from "../components/ErrorPage";
 
 const CoursePage = () => {
-  // const theme = localStorage.getItem("theme");
   const { courseId } = useParams();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { currentCourse, loading, error } = useSelector(
     (state) => state.courses
   );
+  const { userEnrollments } = useSelector((state) => state.enrollments);
   const [isEditing, setIsEditing] = useState(false);
   const [instructors, setInstructors] = useState([]);
-
+  const [hasEnrolled, setHasEnrolled] = useState(false);
+  const [enrollementId, setEnrollementId] = useState(null);
   useEffect(() => {
     dispatch(fetchCourseById(courseId));
 
@@ -32,18 +33,46 @@ const CoursePage = () => {
   }, [courseId, dispatch]);
 
   useEffect(() => {
-    dispatch(fetchUsers())
-      .unwrap()
-      .then((users) => {
-        const instructorList = users.filter(
-          (user) => user.role === "instructor"
+    if (user?.role === "admin") {
+      dispatch(fetchUsers())
+        .unwrap()
+        .then((users) => {
+          const instructorList = users.filter(
+            (user) => user.role === "instructor"
+          );
+          setInstructors(instructorList);
+        })
+        .catch(() => {
+          toast.error("Failed to fetch instructors");
+        });
+      return;
+    }
+  }, [dispatch, user?.role]);
+
+  // Check if the user has enrolled in the course
+  useEffect(() => {
+    if (user?.role === "learner") {
+      const isEnrolled = userEnrollments?.some(
+        (enrollment) =>
+          enrollment.courseId?._id === courseId &&
+          enrollment.status === "approved"
+      );
+
+      if (isEnrolled) {
+        const enrollment = userEnrollments.find(
+          (enrollment) => enrollment.courseId?._id === courseId
         );
-        setInstructors(instructorList);
-      })
-      .catch(() => {
-        toast.error("Failed to fetch instructors");
-      });
-  }, [dispatch]);
+        setEnrollementId(enrollment?._id);
+      }
+      // Only show toast if user wasn't previously enrolled and now is enrolled
+      if (isEnrolled && !hasEnrolled) {
+        setHasEnrolled(true);
+        toast.success("Vous êtes déjà inscrit à cette formation !");
+      } else if (!isEnrolled) {
+        setHasEnrolled(false);
+      }
+    }
+  }, [courseId, user?.role, userEnrollments, hasEnrolled]);
 
   const [formData, setFormData] = useState({
     title: currentCourse?.title,
@@ -121,6 +150,7 @@ const CoursePage = () => {
           <div className="col-11 mx-auto text-white shadow rounded-5">
             <div className={`mb-5 ${isEditing ? "col-8 mx-auto" : "col-10"}`}>
               <div className="p-3">
+                {/* Admin Edit Course */}
                 {isEditing ? (
                   <form onSubmit={handleSubmit}>
                     <h1 className="text-center my-4">Modifier la formation</h1>
@@ -342,7 +372,7 @@ const CoursePage = () => {
                   <div id="trainer">
                     <h3 className="m-4">Formateur</h3>
                     {/* trainer Card */}
-                    <div className="card col-6 col-lg-4 text-center shadow px-4">
+                    <div className="card col-8 col-sm-6 text-center shadow px-4">
                       <div className="d-flex position-relative">
                         <img
                           src="https://placehold.co/400"
@@ -415,7 +445,8 @@ const CoursePage = () => {
                           S&apos;inscrire
                         </Link>
                       ) : (user.role === "user" || user.role === "learner") &&
-                        user.isVerified ? (
+                        user.isVerified &&
+                        !hasEnrolled ? (
                         // Show apply link for verified regular users
                         <Link
                           to={`/course/${currentCourse._id}/apply`}
@@ -435,6 +466,14 @@ const CoursePage = () => {
                           }
                         >
                           S&apos;inscrire
+                        </Link>
+                      ) : hasEnrolled ? (
+                        <Link
+                          to={`/learner/course/${currentCourse._id}/${enrollementId}`}
+                          className="link-secondary link-offset-2 link-underline-opacity-25
+                   link-underline-opacity-100-hover"
+                        >
+                          Consulter
                         </Link>
                       ) : null}
                     </div>
@@ -506,6 +545,13 @@ const CoursePage = () => {
                 ) : !user ? (
                   <Link className="btn btn-light rounded-5" to={"/login"}>
                     Inscrivez-vous maintenant
+                  </Link>
+                ) : hasEnrolled ? (
+                  <Link
+                    to={`/learner/course/${currentCourse._id}/${enrollementId}`}
+                    className="btn btn-light rounded-5"
+                  >
+                    Consulter la formation
                   </Link>
                 ) : !user?.isVerified ? (
                   <>

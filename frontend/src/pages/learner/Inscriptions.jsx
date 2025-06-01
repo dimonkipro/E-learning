@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Pagination from "../../components/Pagination";
 import CustomSpinner from "../../components/CustomSpinner";
+import ErrorPage from "../../components/ErrorPage";
 
 const Inscriptions = () => {
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ const Inscriptions = () => {
   );
 
   let finalUserEnrollments = userEnrollments;
-  if (user?.role === "learner" && status) {
+  if (user && status) {
     finalUserEnrollments = userEnrollments.filter(
       (enrollment) => enrollment?.status === status || status === "all"
     );
@@ -162,7 +163,7 @@ const Inscriptions = () => {
           />
         </>
       ) : (
-        <p>No courses found</p>
+        <ErrorPage emojis="😢" text={"Pas d'inscriptions"} />
       )}
     </div>
   );

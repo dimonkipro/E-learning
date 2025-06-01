@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import Footer from "../components/Footer";
 import CustomSpinner from "../components/CustomSpinner";
 import ErrorPage from "../components/ErrorPage";
+import { fetchUserInscriptions } from "../redux/auth/enrollmentSlice";
 
 const CoursePage = () => {
   const { courseId } = useParams();
@@ -31,7 +32,11 @@ const CoursePage = () => {
       dispatch(clearCurrentCourse());
     };
   }, [courseId, dispatch]);
-
+useEffect(() => {
+    if (user?.isVerified) {
+      dispatch(fetchUserInscriptions());
+    }
+  }, [dispatch, user?.isVerified]);
   useEffect(() => {
     if (user?.role === "admin") {
       dispatch(fetchUsers())
@@ -51,11 +56,11 @@ const CoursePage = () => {
 
   // Check if the user has enrolled in the course
   useEffect(() => {
-    if (user?.role === "learner") {
       const isEnrolled = userEnrollments?.some(
         (enrollment) =>
           enrollment.courseId?._id === courseId &&
-          enrollment.status === "approved"
+          enrollment.status === "approved" ||
+          enrollment.status === "pending"
       );
 
       if (isEnrolled) {
@@ -71,7 +76,6 @@ const CoursePage = () => {
       } else if (!isEnrolled) {
         setHasEnrolled(false);
       }
-    }
   }, [courseId, user?.role, userEnrollments, hasEnrolled]);
 
   const [formData, setFormData] = useState({
@@ -146,6 +150,21 @@ const CoursePage = () => {
     <div className="col-12">
       {currentCourse && (
         <>
+          {!user?.isVerified && (
+            <div
+              className="alert alert-warning alert-dismissible fade show"
+              role="alert"
+            >
+              <strong>Utilisateur non verifié!</strong> Vous devriez attendre
+              l&apos;approbation de l&apos;administrateur.
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+          )}
           {/* Hero */}
           <div className="col-11 mx-auto text-white shadow rounded-5">
             <div className={`mb-5 ${isEditing ? "col-8 mx-auto" : "col-10"}`}>
@@ -467,7 +486,7 @@ const CoursePage = () => {
                         >
                           S&apos;inscrire
                         </Link>
-                      ) : hasEnrolled ? (
+                      ) : hasEnrolled && user?.role === "learner" ? (
                         <Link
                           to={`/learner/course/${currentCourse._id}/${enrollementId}`}
                           className="link-secondary link-offset-2 link-underline-opacity-25

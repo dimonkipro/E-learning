@@ -45,11 +45,11 @@ const Home = () => {
           <h1>
             Moins de pression, <span></span>
           </h1>
-          <h1>
-            Plus d’apprentissage. <span></span>
+          <h1 className="text-break">
+            Plus d&apos;apprentissage. <span></span>
           </h1>
           <p className="col-10 mx-auto fw-bold mt-5 ">
-            Une nouvelle façon d’apprendre, 100% chill mais 100% efficace. T’as
+            Une nouvelle façon d&apos;apprendre, 100% chill mais 100% efficace. T&apos;as
             envie de progresser sans te prendre la tête ? Bienvenue chez nous.{" "}
             <span></span>
           </p>

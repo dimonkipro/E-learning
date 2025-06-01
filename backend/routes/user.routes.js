@@ -59,7 +59,6 @@ router.get(
   "/inscriptions/me",
   verifyToken,
   isVerified,
-  isLearner,
   getUserInscriptions
 );
 // ------------------EnrollmentRoutes----------------------------

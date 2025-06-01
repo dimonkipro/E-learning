@@ -2,17 +2,16 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signupUser } from "../redux/auth/authSlice";
 import { Link, useNavigate } from "react-router-dom";
-import Notifications from "../components/Notifications";
 import RegisterLottie from "../assets/register.json";
 import Lottie from "lottie-react";
 import Footer from "../components/Footer";
 import CustomSpinner from "../components/CustomSpinner";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoading } = useSelector((state) => state.auth);
-  const [notification, setNotification] = useState(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -31,31 +30,19 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      setNotification({
-        type: "error",
-        message: "Passwords do not match!",
-      });
+      toast.error("Mot de passe et confirmation ne correspondent pas");
       return;
     }
     try {
-      const res = await dispatch(signupUser(formData));
+      const res = dispatch(signupUser(formData));
       if (res.type === "auth/signupUser/fulfilled") {
-        setNotification({
-          type: "success",
-          message: "Account created successfully",
-        });
+        toast.success("Account created successfully");
         navigate("/verify-email");
       } else {
-        setNotification({
-          type: "error",
-          message: res.payload || "Signup failed",
-        });
+        toast.error(res.payload || "Signup failed");
       }
     } catch (error) {
-      setNotification({
-        type: "error",
-        message: error.message || "An unexpected error occurred",
-      });
+      toast.error(error.message || "An unexpected error occurred");
     }
   };
   if (isLoading) return <CustomSpinner />;
@@ -196,13 +183,6 @@ const Signup = () => {
             </Link>
           </div>
         </div>
-        {/* Render the notification component when set */}
-        {notification && (
-          <Notifications
-            type={notification.type}
-            message={notification.message}
-          />
-        )}
       </div>
       <Footer />
     </div>

@@ -32,7 +32,7 @@ const CoursePage = () => {
       dispatch(clearCurrentCourse());
     };
   }, [courseId, dispatch]);
-useEffect(() => {
+  useEffect(() => {
     if (user?.isVerified) {
       dispatch(fetchUserInscriptions());
     }
@@ -56,26 +56,26 @@ useEffect(() => {
 
   // Check if the user has enrolled in the course
   useEffect(() => {
-      const isEnrolled = userEnrollments?.some(
-        (enrollment) =>
-          enrollment.courseId?._id === courseId &&
-          enrollment.status === "approved" ||
-          enrollment.status === "pending"
-      );
+    const isEnrolled = userEnrollments?.some(
+      (enrollment) =>
+        (enrollment.courseId?._id === courseId &&
+          enrollment.status === "approved") ||
+        enrollment.status === "pending"
+    );
 
-      if (isEnrolled) {
-        const enrollment = userEnrollments.find(
-          (enrollment) => enrollment.courseId?._id === courseId
-        );
-        setEnrollementId(enrollment?._id);
-      }
-      // Only show toast if user wasn't previously enrolled and now is enrolled
-      if (isEnrolled && !hasEnrolled) {
-        setHasEnrolled(true);
-        toast.success("Vous êtes déjà inscrit à cette formation !");
-      } else if (!isEnrolled) {
-        setHasEnrolled(false);
-      }
+    if (isEnrolled) {
+      const enrollment = userEnrollments.find(
+        (enrollment) => enrollment.courseId?._id === courseId
+      );
+      setEnrollementId(enrollment?._id);
+    }
+    // Only show toast if user wasn't previously enrolled and now is enrolled
+    if (isEnrolled && !hasEnrolled) {
+      setHasEnrolled(true);
+      toast.success("Vous êtes déjà inscrit à cette formation !");
+    } else if (!isEnrolled) {
+      setHasEnrolled(false);
+    }
   }, [courseId, user?.role, userEnrollments, hasEnrolled]);
 
   const [formData, setFormData] = useState({
@@ -152,7 +152,7 @@ useEffect(() => {
         <>
           {!user?.isVerified && (
             <div
-              className="alert alert-warning alert-dismissible fade show"
+              className="alert alert-warning alert-dismissible fade show text-center"
               role="alert"
             >
               <strong>Utilisateur non verifié!</strong> Vous devriez attendre
@@ -266,14 +266,14 @@ useEffect(() => {
                       placeholder="Course Price"
                     />
                     <button type="submit" className="btn btn-success">
-                      Save
+                      Enregistrer les modifications
                     </button>
                     <button
                       type="button"
                       className="btn btn-secondary ms-2"
                       onClick={() => setIsEditing(false)}
                     >
-                      Cancel
+                      Annuler
                     </button>
                   </form>
                 ) : (
@@ -292,12 +292,14 @@ useEffect(() => {
                       {currentCourse?.description}
                     </h4>
                     {user?.role === "admin" && (
-                      <button
-                        className="btn btn-warning"
-                        onClick={() => setIsEditing(true)}
-                      >
-                        Modifer la formation
-                      </button>
+                      <div className="d-flex justify-content-end">
+                        <button
+                          className="btn btn-warning"
+                          onClick={() => setIsEditing(true)}
+                        >
+                          Modifer la formation
+                        </button>
+                      </div>
                     )}
                     <div className="d-flex flex-wrap d-block d-md-none mt-4">
                       <span
@@ -499,20 +501,13 @@ useEffect(() => {
                   </div>
                   {user?.role == "admin" ? (
                     <div className="card-footer">
-                      <div className="d-flex justify-content-between">
+                      <div className="d-flex justify-content-end">
                         <Link
                           to={`/admin/course/${currentCourse._id}`}
                           className="link-success link-offset-2 link-underline-opacity-25 
                         link-underline-opacity-100-hover"
                         >
                           Consulter
-                        </Link>
-                        <Link
-                          to={`/admin/edit-course/${currentCourse._id}`}
-                          className="link-secondary link-offset-2 link-underline-opacity-25 
-                        link-underline-opacity-100-hover"
-                        >
-                          Modifier
                         </Link>
                       </div>
                     </div>

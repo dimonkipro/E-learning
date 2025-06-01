@@ -17,7 +17,7 @@ const Login = () => {
     e.preventDefault();
     try {
       await dispatch(loginUser({ email, password })).unwrap(); // Get returned user data
-      toast.success("Logged in successfully");
+      toast.success("Connecté avec succès");
     } catch (error) {
       toast.error(error);
     }

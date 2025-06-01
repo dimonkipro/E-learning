@@ -72,7 +72,7 @@ const LearnerDashboard = () => {
     <>
       {!user?.isVerified && (
         <div
-          className="alert alert-warning alert-dismissible fade show"
+          className="alert alert-warning alert-dismissible fade show text-center"
           role="alert"
         >
           <strong>Utilisateur non verifié!</strong> Vous devriez attendre
@@ -86,7 +86,7 @@ const LearnerDashboard = () => {
         </div>
       )}
       <div className="row col-11 mx-auto">
-        <h2 className=" text-center">Bienvenue, {user?.name} ^_^</h2>
+        <h2 className=" text-center bounce">Bienvenue, {user?.name} ^_^</h2>
         {/* Show Profile Panel Button */}
         <div
           className="d-flex justify-content-start position-sticky top me-1 mb-2"

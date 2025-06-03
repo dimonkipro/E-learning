@@ -59,8 +59,8 @@ const CoursePage = () => {
     const isEnrolled = userEnrollments?.some(
       (enrollment) =>
         (enrollment.courseId?._id === courseId &&
-          enrollment.status === "approved") ||
-        enrollment.status === "pending"
+          (enrollment.status === "approved" ||
+          enrollment.status === "pending"))
     );
 
     if (isEnrolled) {
@@ -150,7 +150,7 @@ const CoursePage = () => {
     <div className="col-12">
       {currentCourse && (
         <>
-          {!user?.isVerified && (
+          {user && !user?.isVerified && (
             <div
               className="alert alert-warning alert-dismissible fade show text-center"
               role="alert"

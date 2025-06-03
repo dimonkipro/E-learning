@@ -37,7 +37,7 @@ const Home = () => {
 
   return (
     <div className="col-12">
-      {!user?.isEmailVerified && (
+      {user && !user?.isEmailVerified && (
         <div
           className="alert alert-warning alert-dismissible fade show text-center"
           role="alert"

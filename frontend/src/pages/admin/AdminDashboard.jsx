@@ -22,9 +22,6 @@ const AdminDashboard = () => {
   });
 
   const { courses, loading, error } = useSelector((state) => state.courses);
-  // const instructorCourses = courses.filter(
-  //   (course) => course?.instructor?._id === user?._id
-  // );
 
   useEffect(() => {
     dispatch(fetchCourses());

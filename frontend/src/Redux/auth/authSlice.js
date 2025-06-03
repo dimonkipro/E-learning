@@ -90,6 +90,7 @@ export const resetPassword = createAsyncThunk(
 
 export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
   localStorage.removeItem("token");
+  localStorage.removeItem("role");
   return null;
 });
 

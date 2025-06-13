@@ -1,28 +1,27 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Notifications from "../components/Notifications";
 import { Link, useNavigate } from "react-router-dom";
 import { forgotPassword } from "../redux/auth/authSlice";
 import Lottie from "lottie-react";
 import ForgotLottie from "../assets/forgot.json";
 import Footer from "../components/Footer";
 import CustomSpinner from "../components/CustomSpinner";
+import { toast } from "react-toastify";
 
 const ForgotPassword = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [notification, setNotification] = useState(null);
   const { isLoading } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await dispatch(forgotPassword({ email })).unwrap();
-      setNotification({ type: "success", message: "Email sent successfully" });
+      toast.success("Email envoyé avec succès");
       navigate("/login");
     } catch (error) {
-      setNotification({ type: "error", message: error });
+      toast.error(error);
     }
   };
   if (isLoading) return <CustomSpinner />;
@@ -76,12 +75,6 @@ const ForgotPassword = () => {
           </Link>
         </div>
       </div>
-      {notification && (
-        <Notifications
-          type={notification.type}
-          message={notification.message}
-        />
-      )}
       <Footer />
     </div>
   );

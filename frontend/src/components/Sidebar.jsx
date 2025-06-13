@@ -60,8 +60,6 @@ const Sidebar = () => {
             className="flex-column p-2"
             style={{ width: "250px", minHeight: "73vh" }}
           >
-            {/* <p className="text-white">Logged in as: {user?.name}</p> */}
-
             {/* Links */}
             <Nav.Item>
               {/* Admin Navs - Visible only for Admin */}
@@ -140,7 +138,7 @@ const Sidebar = () => {
               )}
 
               {/* Learner Navs - Visible only for Users with Inscriptions */}
-              {isLearner && (
+              {user?.role === "learner" && (
                 <>
                   <Nav.Link
                     as={Link}
@@ -189,11 +187,6 @@ const Sidebar = () => {
 
       {/* Header */}
       <div className="navbar py-0 px-5 mb-4">
-        {/* Dark Mode Button */}
-        {/* <div className="rounded-pill bg-body-secondary p-2">
-          <DarkModeToggle drop={"bottom-centered"} />
-        </div> */}
-
         {/* Logo */}
         <Nav.Item>
           <Nav.Link as={Link} to="/">
@@ -206,12 +199,120 @@ const Sidebar = () => {
           </Nav.Link>
         </Nav.Item>
 
-        {/* SideBar Button */}
-        <Button variant="warning" onClick={handleShow}>
+        {/* SideBar Button - Visible only on small screens */}
+        <Button variant="warning" onClick={handleShow} className="d-md-none">
           <i className="bi bi-list h3"></i>
         </Button>
-      </div>
 
+        {/* NavLink header */}
+        <div className="d-none d-md-flex flex-wrap">
+          {/* Admin Navs - Visible only for Admin */}
+          {user?.role === "admin" && (
+            <>
+              {/* Dashboard */}
+              <Nav.Link
+                as={Link}
+                to="/admin/dashboard"
+                className="link-secondary mx-2"
+                onClick={handleClose}
+              >
+                Dashboard
+              </Nav.Link>
+
+              {/* Courses Management */}
+              <Nav.Link
+                as={Link}
+                to="/admin/courses"
+                onClick={handleClose}
+                className="link-secondary mx-2"
+              >
+                Formations
+              </Nav.Link>
+
+              {/* Users Management */}
+              <Nav.Link
+                as={Link}
+                to="/admin/users"
+                onClick={handleClose}
+                className="link-secondary mx-2"
+              >
+                Utilisateurs
+              </Nav.Link>
+
+              {/* Inscriptions */}
+              <Nav.Link
+                as={Link}
+                to="/admin/enrollments"
+                onClick={handleClose}
+                className="link-secondary mx-2"
+              >
+                Inscriptions
+              </Nav.Link>
+            </>
+          )}
+
+          {/* Instructor Navs - Visible only for Instructor */}
+          {user?.role === "instructor" && (
+            <>
+              <Nav.Link
+                as={Link}
+                to="/instructor/dashboard"
+                className="link-secondary mx-2"
+                onClick={handleClose}
+              >
+                Dashboard
+              </Nav.Link>
+
+              {/* My Courses */}
+              <Nav.Link
+                as={Link}
+                to="/instructor/my-courses"
+                onClick={handleClose}
+                className="link-secondary mx-2"
+              >
+                Mes formations
+              </Nav.Link>
+            </>
+          )}
+
+          {/* Learner Navs - Visible only for Users with Inscriptions */}
+          {user?.role === "learner" && (
+            <>
+              <Nav.Link
+                as={Link}
+                to="/learner/dashboard"
+                onClick={handleClose}
+                className="link-secondary mx-2"
+              >
+                Dashboard
+              </Nav.Link>
+              <Nav.Link
+                as={Link}
+                to="/learner/courses"
+                onClick={handleClose}
+                className="link-secondary mx-2"
+              >
+                Formations
+              </Nav.Link>
+              <Nav.Link
+                as={Link}
+                to="/learner/my-courses"
+                onClick={handleClose}
+                className="link-secondary mx-2"
+              >
+                Mes Inscriptions
+              </Nav.Link>
+            </>
+          )}
+          <Nav.Link
+            className="link-danger mx-2"
+            data-bs-toggle="modal"
+            data-bs-target="#logoutModal"
+          >
+            Déconnecter
+          </Nav.Link>
+        </div>
+      </div>
       {/* Logout Modal */}
       <div
         className="modal"

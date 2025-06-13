@@ -15,7 +15,7 @@ export const loginUser = createAsyncThunk(
 
       // Save token in localStorage
       localStorage.setItem("token", response.data.token);
-      window.location.reload();
+      // window.location.reload();
 
       return response.data;
     } catch (error) {
@@ -90,6 +90,7 @@ export const resetPassword = createAsyncThunk(
 
 export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
   localStorage.removeItem("token");
+  localStorage.removeItem("role");
   return null;
 });
 

@@ -65,6 +65,7 @@ function App() {
         autoClose={5000}
         hideProgressBar={false}
         closeOnClick
+        theme="dark"
       />
       <Routes>
         {/* ------------------PublicRoute---------------------------- */}
@@ -98,6 +99,7 @@ function App() {
             }
           />
           <Route path="/course/:courseId/apply" element={<ApplyEnrollment />} />
+          <Route path="my-courses" element={<Inscriptions />} />
         </Route>
 
         {/* ------------------AdminRoute---------------------------- */}

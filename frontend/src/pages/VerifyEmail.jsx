@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { verifyEmail } from "../redux/auth/authSlice";
-import Notifications from "../components/Notifications";
 import Lottie from "lottie-react";
 import VerifyLottie from "../assets/verify.json";
 import Footer from "../components/Footer";
 import CustomSpinner from "../components/CustomSpinner";
+import { toast } from "react-toastify";
 
 const VerifyEmail = () => {
   const dispatch = useDispatch();
@@ -14,7 +14,6 @@ const VerifyEmail = () => {
   const inputRefs = useRef([]);
   const { isLoading } = useSelector((state) => state.auth);
   const [code, setCode] = useState(["", "", "", "", "", ""]);
-  const [notification, setNotification] = useState(null);
 
   const handleChange = (index, value) => {
     const newCode = [...code];
@@ -50,22 +49,13 @@ const VerifyEmail = () => {
     try {
       const res = await dispatch(verifyEmail({ code: verificationCode }));
       if (res.type === "auth/verifyEmail/fulfilled") {
-        setNotification({
-          type: "success",
-          message: "Email verified successfully",
-        });
+        toast.success("Email verifié avec succès 🎉");
         navigate("/login");
       } else {
-        setNotification({
-          type: "error",
-          message: res.payload || "Verifying email failed",
-        });
+        toast.error("Verification email échouée 😢");
       }
     } catch (error) {
-      setNotification({
-        type: "error",
-        message: error.message || "An unexpected error occurred",
-      });
+      toast.error(error.message || "Une erreur s'est produite lors de la vérification de l'email");
     }
   };
   useEffect(() => {
@@ -114,12 +104,6 @@ const VerifyEmail = () => {
             </div>
           </form>
         </div>
-        {notification && (
-          <Notifications
-            type={notification.type}
-            message={notification.message}
-          />
-        )}
       </div>
       <Footer />
     </div>

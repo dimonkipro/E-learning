@@ -1,86 +1,180 @@
 import PDFDocument from "pdfkit";
-import fs from "fs";
 
 export function generateCertificate(
-  { learnerName, courseTitle, completionDate, instructorName, logoPath },
+  { learnerName, courseTitle, completionDate, instructorName },
   stream
 ) {
-  const doc = new PDFDocument({ size: "A4", layout: "landscape", margin: 50 });
+  const doc = new PDFDocument({
+    layout: "landscape",
+    size: "A4",
+  });
 
-  doc.pipe(stream);
-  doc.font("Courier-Bold");
-  // Add border
-  doc.rect(25, 25, doc.page.width - 50, doc.page.height - 50).stroke("#4CAF50");
-
-  // Add logo
-  if (logoPath && fs.existsSync(logoPath)) {
-    doc.image(logoPath, doc.page.width - 200, 40, { width: 170 });
+  // Helper to move to next line
+  function jumpLine(doc, lines) {
+    for (let index = 0; index < lines; index++) {
+      doc.moveDown();
+    }
   }
+  doc.pipe(stream);
 
-  // Add certificate title
+  doc.rect(0, 0, doc.page.width, doc.page.height).fill("#eeeee4");
+
+  doc.fontSize(10);
+
+  // Margin
+  const distanceMargin = 18;
+
   doc
-    .moveDown(4)
-    .fontSize(60)
-    .fillColor("#4CAF50")
-    .text("CERTIFICATE", { align: "center" })
-    .moveDown(0.2)
-    .fontSize(25)
-    .text("OF COMPLETION", {
+    .fillAndStroke("#3A4454")
+    .lineWidth(20)
+    .lineJoin("round")
+    .rect(
+      distanceMargin,
+      distanceMargin,
+      doc.page.width - distanceMargin * 2,
+      doc.page.height - distanceMargin * 2
+    )
+    .stroke();
+
+  // Header
+  const maxWidth = 180;
+  const maxHeight = 100;
+
+  // Logo
+  doc.image(
+    "../backend/uploads/Logo.png",
+    doc.page.width / 2 - maxWidth / 2,
+    25,
+    {
+      fit: [maxWidth, maxHeight],
       align: "center",
-    })
-    .moveDown(0.5);
+    }
+  );
 
-  // Add learner's name
-  doc
-    .fontSize(20)
-    .fillColor("#000000")
-    .text(`This certificate is presented to`, { align: "center" })
-    .moveDown(0.5);
+  // Stamp
+  doc.image("../backend/uploads/stamp.png", doc.page.width / 2 - 150, 400, {
+    align: "center",
+    width: 300,
+  });
 
-  doc
-    .fontSize(30)
-    .fillColor("#4CAF50")
-    .text(learnerName, { align: "center" })
-    .moveDown(0.5);
-
-  // Add course title
-  doc
-    .fontSize(20)
-    .fillColor("#000000")
-    .text(`for the completion of the course`, { align: "center" })
-    .moveDown(0.5);
+  jumpLine(doc, 5);
 
   doc
-    .fontSize(24)
-    .fillColor("#4CAF50")
-    .text(courseTitle, { align: "center", underline: true })
-    .moveDown(1);
-
-  // Add completion date and instructor name
-  doc
-    .fontSize(16)
-    .fillColor("#000000")
-    .text(`Date of Completion: ${completionDate}`, { align: "center" })
-    .moveDown(0.5);
-
-  // Add signatures
-  const signatureY = doc.page.height - 140;
-
-  doc
-    .fontSize(16)
-    .text("_________________________", 100, signatureY, { align: "left" })
-    .text("MR.NOURI khaireddine", 120, signatureY + 20)
-    .text(`REPRÉSENTANT`, 140, signatureY + 50, { align: "left" });
-
-  doc
-    .fontSize(16)
-    .text("_________________________", doc.page.width - 300, signatureY, {
-      align: "right",
-    })
-    .text(instructorName, doc.page.width - 250, signatureY + 20)
-    .text(`FORMATEUR`, doc.page.width - 250, signatureY + 50, {
+    .font("Courier-Bold")
+    .fontSize(12)
+    .fill("#021c27")
+    .text("Société Laghazala du désert formations et services", {
       align: "center",
     });
 
+  jumpLine(doc, 2);
+
+  // Content
+  doc
+    .font("Courier-Bold")
+    .fontSize(35)
+    .fill("#021c27")
+    .text("CERTIFICATE OF COMPLETION", {
+      align: "center",
+    });
+
+  jumpLine(doc, 1);
+
+  doc
+    .font("Courier-Bold")
+    .fontSize(14)
+    .fill("#021c27")
+    .text("This certificate is proudly presented to", {
+      align: "center",
+    });
+
+  jumpLine(doc, 2);
+
+  doc.font("Courier-Bold").fontSize(26).fill("#021c27").text(learnerName, {
+    align: "center",
+  });
+
+  jumpLine(doc, 1);
+
+  doc
+    .font("Courier-Bold")
+    .fontSize(16)
+    .fill("#021c27")
+    .text(`For the successful completion of the course " ${courseTitle} ".`, {
+      align: "center",
+    });
+
+  jumpLine(doc, 1);
+  doc
+    .font("Courier")
+    .fontSize(14)
+    .fill("#021c27")
+    .text(`Date of Completion: ${completionDate}`, {
+      align: "center",
+    });
+
+  jumpLine(doc, 7);
+
+  doc.lineWidth(1);
+
+  // Signatures
+  const lineSize = 174;
+  const signatureHeight = 470;
+
+  doc.fillAndStroke("#021c27");
+  doc.strokeOpacity(0.2);
+
+  const endLine1 = 128 + lineSize;
+
+  const startLine2 = endLine1 + 32;
+  const endLine2 = startLine2 + lineSize;
+
+  const startLine3 = endLine2 + 32;
+  const endLine3 = startLine3 + lineSize;
+
+  // Director Signature
+  doc
+    .moveTo(startLine3, signatureHeight)
+    .lineTo(endLine3, signatureHeight)
+    .stroke();
+
+  doc.image(
+    "../backend/uploads/signature1.png",
+    doc.page.width / 2 + 145,
+    425,
+    {
+      align: "center",
+      width: 130,
+    }
+  );
+
+  doc
+    .font("Courier-Bold")
+    .fontSize(16)
+    .fill("#021c27")
+    .text("MR.NOURI khaireddine", startLine3, signatureHeight + 10, {
+      columns: 1,
+      columnGap: 0,
+      height: 40,
+      width: lineSize,
+      align: "center",
+    });
+
+  doc
+    .font("Courier")
+    .fontSize(12)
+    .fill("#021c27")
+    .text("Director", startLine3, signatureHeight + 45, {
+      columns: 1,
+      columnGap: 0,
+      height: 40,
+      width: lineSize,
+      align: "center",
+    });
+
+  jumpLine(doc, 4);
+
   doc.end();
 }
+
+// https://medium.com/@eduardoqgomes/creating-a-certificate-template-with-pdfkit-in-node-js-dd843e09e6cf

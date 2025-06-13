@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import Footer from "../components/Footer";
 import CustomSpinner from "../components/CustomSpinner";
 import ErrorPage from "../components/ErrorPage";
+import { fetchUserInscriptions } from "../redux/auth/enrollmentSlice";
 
 const CoursePage = () => {
   const { courseId } = useParams();
@@ -31,7 +32,11 @@ const CoursePage = () => {
       dispatch(clearCurrentCourse());
     };
   }, [courseId, dispatch]);
-
+  useEffect(() => {
+    if (user?.isVerified) {
+      dispatch(fetchUserInscriptions());
+    }
+  }, [dispatch, user?.isVerified]);
   useEffect(() => {
     if (user?.role === "admin") {
       dispatch(fetchUsers())
@@ -51,26 +56,25 @@ const CoursePage = () => {
 
   // Check if the user has enrolled in the course
   useEffect(() => {
-    if (user?.role === "learner") {
-      const isEnrolled = userEnrollments?.some(
-        (enrollment) =>
-          enrollment.courseId?._id === courseId &&
-          enrollment.status === "approved"
-      );
+    const isEnrolled = userEnrollments?.some(
+      (enrollment) =>
+        (enrollment.courseId?._id === courseId &&
+          (enrollment.status === "approved" ||
+          enrollment.status === "pending"))
+    );
 
-      if (isEnrolled) {
-        const enrollment = userEnrollments.find(
-          (enrollment) => enrollment.courseId?._id === courseId
-        );
-        setEnrollementId(enrollment?._id);
-      }
-      // Only show toast if user wasn't previously enrolled and now is enrolled
-      if (isEnrolled && !hasEnrolled) {
-        setHasEnrolled(true);
-        toast.success("Vous êtes déjà inscrit à cette formation !");
-      } else if (!isEnrolled) {
-        setHasEnrolled(false);
-      }
+    if (isEnrolled) {
+      const enrollment = userEnrollments.find(
+        (enrollment) => enrollment.courseId?._id === courseId
+      );
+      setEnrollementId(enrollment?._id);
+    }
+    // Only show toast if user wasn't previously enrolled and now is enrolled
+    if (isEnrolled && !hasEnrolled) {
+      setHasEnrolled(true);
+      toast.success("Vous êtes déjà inscrit à cette formation !");
+    } else if (!isEnrolled) {
+      setHasEnrolled(false);
     }
   }, [courseId, user?.role, userEnrollments, hasEnrolled]);
 
@@ -146,6 +150,21 @@ const CoursePage = () => {
     <div className="col-12">
       {currentCourse && (
         <>
+          {user && !user?.isVerified && (
+            <div
+              className="alert alert-warning alert-dismissible fade show text-center"
+              role="alert"
+            >
+              <strong>Utilisateur non verifié!</strong> Vous devriez attendre
+              l&apos;approbation de l&apos;administrateur.
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+          )}
           {/* Hero */}
           <div className="col-11 mx-auto text-white shadow rounded-5">
             <div className={`mb-5 ${isEditing ? "col-8 mx-auto" : "col-10"}`}>
@@ -247,14 +266,14 @@ const CoursePage = () => {
                       placeholder="Course Price"
                     />
                     <button type="submit" className="btn btn-success">
-                      Save
+                      Enregistrer les modifications
                     </button>
                     <button
                       type="button"
                       className="btn btn-secondary ms-2"
                       onClick={() => setIsEditing(false)}
                     >
-                      Cancel
+                      Annuler
                     </button>
                   </form>
                 ) : (
@@ -273,12 +292,14 @@ const CoursePage = () => {
                       {currentCourse?.description}
                     </h4>
                     {user?.role === "admin" && (
-                      <button
-                        className="btn btn-warning"
-                        onClick={() => setIsEditing(true)}
-                      >
-                        Modifer la formation
-                      </button>
+                      <div className="d-flex justify-content-end">
+                        <button
+                          className="btn btn-warning"
+                          onClick={() => setIsEditing(true)}
+                        >
+                          Modifer la formation
+                        </button>
+                      </div>
                     )}
                     <div className="d-flex flex-wrap d-block d-md-none mt-4">
                       <span
@@ -467,7 +488,7 @@ const CoursePage = () => {
                         >
                           S&apos;inscrire
                         </Link>
-                      ) : hasEnrolled ? (
+                      ) : hasEnrolled && user?.role === "learner" ? (
                         <Link
                           to={`/learner/course/${currentCourse._id}/${enrollementId}`}
                           className="link-secondary link-offset-2 link-underline-opacity-25
@@ -480,20 +501,13 @@ const CoursePage = () => {
                   </div>
                   {user?.role == "admin" ? (
                     <div className="card-footer">
-                      <div className="d-flex justify-content-between">
+                      <div className="d-flex justify-content-end">
                         <Link
                           to={`/admin/course/${currentCourse._id}`}
                           className="link-success link-offset-2 link-underline-opacity-25 
                         link-underline-opacity-100-hover"
                         >
                           Consulter
-                        </Link>
-                        <Link
-                          to={`/admin/edit-course/${currentCourse._id}`}
-                          className="link-secondary link-offset-2 link-underline-opacity-25 
-                        link-underline-opacity-100-hover"
-                        >
-                          Modifier
                         </Link>
                       </div>
                     </div>

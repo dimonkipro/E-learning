@@ -105,9 +105,7 @@ export const getUserInscriptions = async (req, res) => {
     });
 
     if (!inscriptions || inscriptions.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No inscriptions found" });
+      return res.status(200).json({ success: true, inscriptions: [] });
     }
 
     res.status(200).json({ success: true, inscriptions });

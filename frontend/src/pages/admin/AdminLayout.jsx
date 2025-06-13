@@ -14,7 +14,6 @@ const AdminLayout = () => {
           Revenir en arrière
         </button>
       </div>
-      {/* <div className="main-content flex-grow-1 p-2 "> */}
       <div className="d-flex col-12">
         <Outlet />
       </div>

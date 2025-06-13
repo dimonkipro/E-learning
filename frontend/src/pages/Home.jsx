@@ -11,6 +11,7 @@ import PartnersSlide from "../components/PartnersSlide";
 const Home = () => {
   const dispatch = useDispatch();
   const { courses, loading, error } = useSelector((state) => state.courses);
+  const { user, isLoading } = useSelector((state) => state.auth);
   const [random, setRandom] = useState([]);
 
   useEffect(() => {
@@ -25,7 +26,7 @@ const Home = () => {
     }
   }, [courses, loading, error]);
 
-  if (loading) return <CustomSpinner />;
+  if (isLoading || loading) return <CustomSpinner />;
   if (error) return <div>Error: {error}</div>;
 
   // chunk into pairs of 2
@@ -36,6 +37,31 @@ const Home = () => {
 
   return (
     <div className="col-12">
+      {user && !user?.isEmailVerified && (
+        <div
+          className="alert alert-warning alert-dismissible fade show text-center"
+          role="alert"
+        >
+          <strong>Email non verifié!</strong> Vous devez vérifier votre e-mail,
+          nous vous avons envoyé un code de vérification {" "}
+          <Link
+            to="/verify-email"
+            className="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+          >
+             ici
+          </Link>
+          .
+          <br />
+          <strong>Note:</strong> Si vous ne trouvez pas l&apos;email, vérifiez
+          dans votre dossier spam ou courrier indésirable.
+          <button
+            type="button"
+            className="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+      )}
       {/* Hero Section */}
       <div
         id="hero"
@@ -45,13 +71,13 @@ const Home = () => {
           <h1>
             Moins de pression, <span></span>
           </h1>
-          <h1>
-            Plus d’apprentissage. <span></span>
+          <h1 className="text-break">
+            Plus d&apos;apprentissage. <span></span>
           </h1>
           <p className="col-10 mx-auto fw-bold mt-5 ">
-            Une nouvelle façon d’apprendre, 100% chill mais 100% efficace. T’as
-            envie de progresser sans te prendre la tête ? Bienvenue chez nous.{" "}
-            <span></span>
+            Une nouvelle façon d&apos;apprendre, 100% chill mais 100% efficace.
+            T&apos;as envie de progresser sans te prendre la tête ? Bienvenue
+            chez nous. <span></span>
           </p>
         </div>
         <div className="col-md-4 d-flex align-items-center">
